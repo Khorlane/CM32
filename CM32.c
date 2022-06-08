@@ -17,10 +17,10 @@
 
 */
 
-#define U32 unsigned long
-#define S32 long
-#define U16 unsigned int
-#define S16 int
+#define U32 unsigned int
+#define S32 int
+#define U16 unsigned short
+#define S16 short
 #define U8 unsigned char
 #define S8 char
 
@@ -2178,7 +2178,7 @@ static U32 lookup_member(U16 CrntStruc)
 
 static void define_symbol(U32 type, U32 dim_index)
 {
-	U32 index;
+	U32 index = 0;
 	U16 i, j;
 
 	if(in_function) {		/* within a function, use local */
