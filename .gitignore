@@ -1,0 +1,6 @@
+# Ignore everything
+*
+
+# Except these these files...
+!.gitignore
+!CM32.c
