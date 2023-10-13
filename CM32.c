@@ -24,9 +24,20 @@
 #define U8 unsigned char
 #define S8 char
 
-#pragma warning(disable : 4996) // added to reduce number of warnings and eliminate errors like "This function or variable may be unsafe."
-#pragma warning(disable : 4703) // added to eliminate "potentially uninitialized local pointer variable" error
-#pragma warning(disable : 4146) // added to eliminate "unary minus operator applied to unsigned type, result still unsigned	CM32"
+#pragma warning(disable : 4018)
+#pragma warning(disable : 4028)
+#pragma warning(disable : 4047)
+#pragma warning(disable : 4101)
+#pragma warning(disable : 4142)
+#pragma warning(disable : 4146)
+#pragma warning(disable : 4244)
+#pragma warning(disable : 4703)
+#pragma warning(disable : 4996)
+#pragma warning(disable : 6001)
+#pragma warning(disable : 6385)
+#pragma warning(disable : 6386)
+#pragma warning(disable : 6387)
+
 
 #include <ctype.h>
 #include <stdio.h>
