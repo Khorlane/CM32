@@ -174,7 +174,8 @@
     This cuts searching and comparison down to less than 4 compares
     worst case, 2 on the average!
 */
-    static unsigned char itoken[128] = {
+static unsigned char itoken[128] = 
+{
         0,   0,   0,   0,   0,   0,   0,   0,    /* 00 - 07  */
         0,   0,   0,   0,   0,   0,   0,   0,    /* 08 - 15  */
         0,   0,   0,   0,   0,   0,   0,   0,    /* 16 - 23  */
@@ -190,88 +191,90 @@
         0,   0,  41,  42,  46,  48,  50,  52,    /* 96 - 103 */
         0,  53,   0,   0,  56,   0,   0,   0,    /* 104- 111 */
         0,   0,  57,  59,  65,  66,  68,  69,    /* 112- 119 */
-        0,   0,   0,  70,  71,  74,  75,   0};   /* 120- 127 */
+        0,   0,   0,  70,  71,  74,  75,   0     /* 120- 127 */
+};
 
-    static char *tokens[] = {
-
-    /* token         number  priority  optype  ASCII */
-        "",          /* 00       0       0        0  */
-        "!=",        /* 01       9       2        33 */
-        "!",         /* 02       0       1           */
-        "%=",        /* 03       2       3        37 */
-        "%",         /* 04       13      2           */
-        "&&",        /* 05       5       4        38 */
-        "&=",        /* 06       2       3           */
-        "&",         /* 07       8       2           */
-        "(",         /* 08       0       0        40 */
-        ")",         /* 09       0       0        41 */
-        "*=",        /* 10       2       3        42 */
-        "*",         /* 11       13      2           */
-        "++",        /* 12       15      0        43 */
-        "+=",        /* 13       2       3           */
-        "+",         /* 14       12      2           */
-        ",",         /* 15       0       0        44 */
-        "--",        /* 16       15      0        45 */
-        "-=",        /* 17       2       3           */
-        "->",        /* 18       15      2           */
-        "-",         /* 19       12      2           */
-        "...",       /* 20       0       0        46 */
-        ".",         /* 21       15      2        46 */
-        "/=",        /* 22       2       3        47 */
-        "/",         /* 23       13      2           */
-        ":",         /* 24       0       0        58 */
-        ";",         /* 25       0       0        59 */
-        "<<=",       /* 26       2       3        60 */
-        "<<",        /* 27       11      2           */
-        "<=",        /* 28       10      2           */
-        "<",         /* 29       10      2           */
-        "==",        /* 30       9       2        61 */
-        "=",         /* 31       2       3           */
-        ">>=",       /* 32       2       3        62 */
-        ">>",        /* 33       11      2           */
-        ">=",        /* 34       10      2           */
-        ">",         /* 35       10      2           */
-        "?",         /* 36       3       4        63 */
-        "[",         /* 37       0       0        91 */
-        "]",         /* 38       0       0        93 */
-        "^=",        /* 39       2       3        94 */
-        "^",         /* 40       7       2           */
-        "break",     /* 41       0       0        98 */
-        "case",      /* 42       0       0        99 */
-        "char",      /* 43       0       0           */
-        "const",     /* 44       0       0           */
-        "continue",  /* 45       0       0           */
-        "default",   /* 46       0       0        100*/
-        "do",        /* 47       0       0           */
-        "else",      /* 48       0       0        101*/
-        "extern",    /* 49       0       0           */
-        "far",       /* 50       0       0        102*/
-        "for",       /* 51       0       0           */
-        "goto",      /* 52       0       0        103*/
-        "interrupt", /* 53       0       0        105*/
-        "int",       /* 54       0       0           */
-        "if",        /* 55       0       0           */
-        "long",      /* 56       0       0        108*/
-        "register",  /* 57       0       0        114*/
-        "return",    /* 58       0       0           */
-        "signed",    /* 59       0       0        115*/
-        "sizeof",    /* 60       0       1           */
-        "static",    /* 61       0       0           */
-        "struct",    /* 62       0       0           */
-        "switch",    /* 63       0       0           */
-        "short",     /* 64       0       0           */
-        "typedef",   /* 65       0       0        116*/
-        "unsigned",  /* 66       0       0        117*/
-        "union",     /* 67       0       0           */
-        "void",      /* 68       0       0        118*/
-        "while",     /* 69       0       0        119*/
-        "{",         /* 70       0       0        123*/
-        "||",        /* 71       4       4        124*/
-        "|=",        /* 72       2       3           */
-        "|",         /* 73       6       2           */
-        "}",         /* 74       0       0        125*/
-        "~",         /* 75       ?       1        126*/
-        0};          /* End of table                 */
+static char *tokens[] = 
+{
+/* token         number  priority  optype  ASCII */
+    "",          /* 00       0       0        0  */
+    "!=",        /* 01       9       2        33 */
+    "!",         /* 02       0       1           */
+    "%=",        /* 03       2       3        37 */
+    "%",         /* 04       13      2           */
+    "&&",        /* 05       5       4        38 */
+    "&=",        /* 06       2       3           */
+    "&",         /* 07       8       2           */
+    "(",         /* 08       0       0        40 */
+    ")",         /* 09       0       0        41 */
+    "*=",        /* 10       2       3        42 */
+    "*",         /* 11       13      2           */
+    "++",        /* 12       15      0        43 */
+    "+=",        /* 13       2       3           */
+    "+",         /* 14       12      2           */
+    ",",         /* 15       0       0        44 */
+    "--",        /* 16       15      0        45 */
+    "-=",        /* 17       2       3           */
+    "->",        /* 18       15      2           */
+    "-",         /* 19       12      2           */
+    "...",       /* 20       0       0        46 */
+    ".",         /* 21       15      2        46 */
+    "/=",        /* 22       2       3        47 */
+    "/",         /* 23       13      2           */
+    ":",         /* 24       0       0        58 */
+    ";",         /* 25       0       0        59 */
+    "<<=",       /* 26       2       3        60 */
+    "<<",        /* 27       11      2           */
+    "<=",        /* 28       10      2           */
+    "<",         /* 29       10      2           */
+    "==",        /* 30       9       2        61 */
+    "=",         /* 31       2       3           */
+    ">>=",       /* 32       2       3        62 */
+    ">>",        /* 33       11      2           */
+    ">=",        /* 34       10      2           */
+    ">",         /* 35       10      2           */
+    "?",         /* 36       3       4        63 */
+    "[",         /* 37       0       0        91 */
+    "]",         /* 38       0       0        93 */
+    "^=",        /* 39       2       3        94 */
+    "^",         /* 40       7       2           */
+    "break",     /* 41       0       0        98 */
+    "case",      /* 42       0       0        99 */
+    "char",      /* 43       0       0           */
+    "const",     /* 44       0       0           */
+    "continue",  /* 45       0       0           */
+    "default",   /* 46       0       0        100*/
+    "do",        /* 47       0       0           */
+    "else",      /* 48       0       0        101*/
+    "extern",    /* 49       0       0           */
+    "far",       /* 50       0       0        102*/
+    "for",       /* 51       0       0           */
+    "goto",      /* 52       0       0        103*/
+    "interrupt", /* 53       0       0        105*/
+    "int",       /* 54       0       0           */
+    "if",        /* 55       0       0           */
+    "long",      /* 56       0       0        108*/
+    "register",  /* 57       0       0        114*/
+    "return",    /* 58       0       0           */
+    "signed",    /* 59       0       0        115*/
+    "sizeof",    /* 60       0       1           */
+    "static",    /* 61       0       0           */
+    "struct",    /* 62       0       0           */
+    "switch",    /* 63       0       0           */
+    "short",     /* 64       0       0           */
+    "typedef",   /* 65       0       0        116*/
+    "unsigned",  /* 66       0       0        117*/
+    "union",     /* 67       0       0           */
+    "void",      /* 68       0       0        118*/
+    "while",     /* 69       0       0        119*/
+    "{",         /* 70       0       0        123*/
+    "||",        /* 71       4       4        124*/
+    "|=",        /* 72       2       3           */
+    "|",         /* 73       6       2           */
+    "}",         /* 74       0       0        125*/
+    "~",         /* 75       ?       1        126*/
+    0            /* End of table                 */
+};
 
 #define NE       1      /* '!='  */
 #define NOT      2      /* '!'   */
@@ -357,24 +360,25 @@
    Position in array is token number, while value
    in that position is priority. (15 is highest)
 */
-static char priority[] = {
-      0,   9,  0,  2, 13,  5,  2,  8,    /* 00 - 07 */
-      0,   0,  2, 13, 15,  2, 12,  0,    /* 08 - 15 */
-      15,  2, 15, 12,  0, 15,  2, 13,    /* 16 - 23 */
-      0,   0,  2, 11, 10, 10,  9,  2,    /* 24 - 31 */
-      2,  11, 10, 10,  3,  0,  0,  2,    /* 32 - 39 */
-      7,   0,  0,  0,  0,  0,  0,  0,    /* 40 - 47 */
-      0,   0,  0,  0,  0,  0,  0,  0,    /* 48 - 55 */
-      0,   0,  0,  0,  0,  0,  0,  0,    /* 56 - 63 */
-      0,   0,  0,  0,  0,  0,  0,  4,    /* 64 - 71 */
-      2,   6,  0,  0,  0,  0,  0,  0,    /* 72 - 79 */
-      0,   0,  0,  0,  0,  0,  0,  0,    /* 80 - 87 */
-      0,   0,  0,  0,  0,  0,  0,  0,    /* 88 - 95 */
-      0,   0,  0,  0,  0,  0,  0,  0,    /* 96 - 103*/
-      0,   0,  0,  0,  0,  0,  0,  0,    /* 104- 111*/
-      0,   0,  0,  0,  0,  0,  0,  0,    /* 112- 119*/
-      0,   0,  0,  0,  0,  0,  0,  0     /* 120- 127*/
-  };
+static char priority[] = 
+{
+  0,   9,  0,  2, 13,  5,  2,  8,    /* 00 - 07 */
+  0,   0,  2, 13, 15,  2, 12,  0,    /* 08 - 15 */
+  15,  2, 15, 12,  0, 15,  2, 13,    /* 16 - 23 */
+  0,   0,  2, 11, 10, 10,  9,  2,    /* 24 - 31 */
+  2,  11, 10, 10,  3,  0,  0,  2,    /* 32 - 39 */
+  7,   0,  0,  0,  0,  0,  0,  0,    /* 40 - 47 */
+  0,   0,  0,  0,  0,  0,  0,  0,    /* 48 - 55 */
+  0,   0,  0,  0,  0,  0,  0,  0,    /* 56 - 63 */
+  0,   0,  0,  0,  0,  0,  0,  4,    /* 64 - 71 */
+  2,   6,  0,  0,  0,  0,  0,  0,    /* 72 - 79 */
+  0,   0,  0,  0,  0,  0,  0,  0,    /* 80 - 87 */
+  0,   0,  0,  0,  0,  0,  0,  0,    /* 88 - 95 */
+  0,   0,  0,  0,  0,  0,  0,  0,    /* 96 - 103*/
+  0,   0,  0,  0,  0,  0,  0,  0,    /* 104- 111*/
+  0,   0,  0,  0,  0,  0,  0,  0,    /* 112- 119*/
+  0,   0,  0,  0,  0,  0,  0,  0     /* 120- 127*/
+};
 
 /* This table determines operator type.
    Two operators grouped Right to Left = 3.
@@ -383,24 +387,25 @@ static char priority[] = {
    Logical operators are not included. They are handled
    separately in the code (numbered as 4).
 */
-static char optype[] = {
-      0,  2,  1,  3,  2,  4,  3,  2,     /* 00 - 07 */
-      0,  0,  3,  2,  0,  3,  2,  0,     /* 08 - 15 */
-      0,  3,  2,  2,  0,  2,  3,  2,     /* 16 - 23 */
-      0,  0,  3,  2,  2,  2,  2,  3,     /* 24 - 31 */
-      3,  2,  2,  2,  4,  0,  0,  3,     /* 32 - 39 */
-      2,  0,  0,  0,  0,  0,  0,  0,     /* 40 - 47 */
-      0,  0,  0,  0,  0,  0,  0,  0,     /* 48 - 55 */
-      0,  0,  0,  0,  1,  0,  0,  0,     /* 56 - 63 */
-      0,  0,  0,  0,  0,  0,  0,  4,     /* 64 - 71 */
-      3,  2,  0,  1,  0,  0,  0,  0,     /* 72 - 79 */
-      0,  0,  0,  0,  0,  0,  0,  0,     /* 80 - 87 */
-      0,  0,  0,  0,  0,  0,  0,  0,     /* 88 - 95 */
-      0,  0,  0,  0,  0,  0,  0,  0,     /* 96 - 103*/
-      0,  0,  0,  0,  0,  0,  0,  0,     /* 104- 111*/
-      0,  0,  0,  0,  0,  0,  0,  0,     /* 112- 119*/
-      0,  0,  0,  0,  0,  0,  0,  0      /* 120- 127*/
-  };
+static char optype[] = 
+{
+  0,  2,  1,  3,  2,  4,  3,  2,     /* 00 - 07 */
+  0,  0,  3,  2,  0,  3,  2,  0,     /* 08 - 15 */
+  0,  3,  2,  2,  0,  2,  3,  2,     /* 16 - 23 */
+  0,  0,  3,  2,  2,  2,  2,  3,     /* 24 - 31 */
+  3,  2,  2,  2,  4,  0,  0,  3,     /* 32 - 39 */
+  2,  0,  0,  0,  0,  0,  0,  0,     /* 40 - 47 */
+  0,  0,  0,  0,  0,  0,  0,  0,     /* 48 - 55 */
+  0,  0,  0,  0,  1,  0,  0,  0,     /* 56 - 63 */
+  0,  0,  0,  0,  0,  0,  0,  4,     /* 64 - 71 */
+  3,  2,  0,  1,  0,  0,  0,  0,     /* 72 - 79 */
+  0,  0,  0,  0,  0,  0,  0,  0,     /* 80 - 87 */
+  0,  0,  0,  0,  0,  0,  0,  0,     /* 88 - 95 */
+  0,  0,  0,  0,  0,  0,  0,  0,     /* 96 - 103*/
+  0,  0,  0,  0,  0,  0,  0,  0,     /* 104- 111*/
+  0,  0,  0,  0,  0,  0,  0,  0,     /* 112- 119*/
+  0,  0,  0,  0,  0,  0,  0,  0      /* 120- 127*/
+};
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 //$ TOKENS32.H - End                                                                                                  $
@@ -424,7 +429,8 @@ U32  gvalue;
 char GPool[GBUFFSIZE];  /* Pool for symbol names (packed) */
 char LPool[LBUFFSIZE];  /* Pool for local symbol names (packed) */
 
-struct sym {
+struct sym 
+{
     U32 type;       /* 32 symbol type bits  */
     U16 itypedef;   /* index in symtab for type definition, or zero */
                     /* If strucmem, struct it belongs to */
@@ -433,8 +439,9 @@ struct sym {
     U16 strucoff;   /* size of strucdef (also offset for next new member), */
                     /*   if strucmem, it's member's offset in structure */
     U16 dindex;     /* rg for index to dim */
-    };              /* or index to proto list for arg types */
+                    /* or index to proto list for arg types */
                     /* or holds labels for for local Goto */
+};
 
 struct sym symtab[MAX_SYMBOLS];  /* SYM TABLE... */
 
@@ -479,12 +486,13 @@ char literal_pool[LITER_BUFF];
    When accessing the data pointed to, if this is NON-zero,
    we use the [ESI+NUM] addressing mode (Base+Offset). */
 
-struct expr {
-    U32 token;      /* Number, Symbol, String, In-Accumulator, etc. */
-    U32 value;      /* varies depending on token */
-    U32 type;       /* type from symtab */
-    U32 offset;     /* Offset of pointer in structure for access */
-    };
+struct expr 
+{
+  U32 token;      /* Number, Symbol, String, In-Accumulator, etc. */
+  U32 value;      /* varies depending on token */
+  U32 type;       /* type from symtab */
+  U32 offset;     /* Offset of pointer in structure for access */
+};
 
 struct expr expstk[EXPR_DEPTH];  /* Expression Stack */
 
@@ -516,7 +524,7 @@ U32 break_stack[LOOP_DEPTH],
     warn_count    = 0;
 
 
-    /* input/output pointers and buffer for for preprocessor */
+/* input/output pointers and buffer for for preprocessor */
 
 char buffer[LINE_MAX],
      *buffin_ptr,
@@ -529,14 +537,14 @@ char *define_index[MACROS],
       define_pool[MAC_BUFF],
      *define_ptr;
 
-    /* macro parameter: index, pool and top pointers */
+/* macro parameter: index, pool and top pointers */
 unsigned parm;
 char *parm_index[PARAMETERS],
       parm_pool[PARM_BUFF],
      *parm_ptr;
 
 
-    /* include: line stack & count, file pointers, filename */
+/* include: line stack & count, file pointers, filename */
 long include = 0,
      incl_line[INCL_DEPTH];
 
@@ -560,7 +568,7 @@ char fLISTOpen = 0,
      fCODEOpen = 0,
      fASMOpen  = 0;
 
-    /* misc. variables and flags */
+/* misc. variables and flags */
 char comment_flag = -1,
      fQuiet       = 0,
      fSource      = 0,
@@ -623,132 +631,133 @@ char zero_flag,
  4) Linefeeds (\n) should end each except for the last entry of a line.
 ******************************************************************************/
 
-char *peep_table[] = {
+char *peep_table[] = 
+{
+  /* 80386/80486 Optimizations */
 
-/* 80386/80486 Optimizations */
+  /* data movement & register usage optimizations */
+  "\tMOV \200,\201\n\tMOV \201,\200",
+  "\tMOV \200,\201",
 
-/* data movement & register usage optimizations */
-"\tMOV \200,\201\n\tMOV \201,\200",
-"\tMOV \200,\201",
+  "\tMOV \200,\201\n\tMOV \200,\202",
+  "\tMOV \200,\202",
 
-"\tMOV \200,\201\n\tMOV \200,\202",
-"\tMOV \200,\202",
+  "\tMOV \200,\201\n\tMOV \202,\200\n\tMOV \201,\200",
+  "\tMOV \202,\200\n\tMOV \200,\201",
 
-"\tMOV \200,\201\n\tMOV \202,\200\n\tMOV \201,\200",
-"\tMOV \202,\200\n\tMOV \200,\201",
+  "\tMOV EAX,\200\n\tMOV ECX,EAX",
+  "\tMOV ECX,\200",
 
-"\tMOV EAX,\200\n\tMOV ECX,EAX",
-"\tMOV ECX,\200",
+  "\tMOV ESI,\200\n\tMOV EAX,ESI",
+  "\tMOV EAX,\200",
 
-"\tMOV ESI,\200\n\tMOV EAX,ESI",
-"\tMOV EAX,\200",
+  "\tLEA ESI,\200\n\tMOV EAX,ESI",
+  "\tLEA EAX,\200",
 
-"\tLEA ESI,\200\n\tMOV EAX,ESI",
-"\tLEA EAX,\200",
+  "\tPUSH EAX\n\tLEA ESI,\200\n\tMOV EAX,ESI\n\tPOP EBX\n\tADD EAX,EBX",
+  "\tADD EAX,ESI\n\tLEA ESI,\200",
 
-"\tPUSH EAX\n\tLEA ESI,\200\n\tMOV EAX,ESI\n\tPOP EBX\n\tADD EAX,EBX",
-"\tADD EAX,ESI\n\tLEA ESI,\200",
+  "\tPOP EBX\n\tMOV EAX,EBX",
+  "\tPOP EAX",
 
-"\tPOP EBX\n\tMOV EAX,EBX",
-"\tPOP EAX",
+  /* indexing operations */
+  "\tMOV ECX,32\n\tMUL ECX",
+  "\tSHL EAX,5",
 
-/* indexing operations */
-"\tMOV ECX,32\n\tMUL ECX",
-"\tSHL EAX,5",
+  "\tMOV ECX,32\n\tIMUL ECX",
+  "\tSHL EAX,5",
 
-"\tMOV ECX,32\n\tIMUL ECX",
-"\tSHL EAX,5",
+  "\tMOV ECX,16\n\tMUL ECX",
+  "\tSHL EAX,4",
 
-"\tMOV ECX,16\n\tMUL ECX",
-"\tSHL EAX,4",
+  "\tMOV ECX,16\n\tIMUL ECX",
+  "\tSHL EAX,4",
 
-"\tMOV ECX,16\n\tIMUL ECX",
-"\tSHL EAX,4",
+  "\tMOV ECX,8\n\tMUL ECX",
+  "\tSHL EAX,3",
 
-"\tMOV ECX,8\n\tMUL ECX",
-"\tSHL EAX,3",
+  "\tMOV ECX,8\n\tIMUL ECX",
+  "\tSHL EAX,3",
 
-"\tMOV ECX,8\n\tIMUL ECX",
-"\tSHL EAX,3",
+  "\tMOV ECX,4\n\tMUL ECX",
+  "\tSHL EAX,2",
 
-"\tMOV ECX,4\n\tMUL ECX",
-"\tSHL EAX,2",
+  "\tMOV ECX,4\n\tIMUL ECX",
+  "\tSHL EAX,2",
 
-"\tMOV ECX,4\n\tIMUL ECX",
-"\tSHL EAX,2",
+  "\tMOV ECX,2\n\tMUL ECX",
+  "\tSHL EAX,1",
 
-"\tMOV ECX,2\n\tMUL ECX",
-"\tSHL EAX,1",
+  "\tMOV ECX,2\n\tIMUL ECX",
+  "\tSHL EAX,1",
 
-"\tMOV ECX,2\n\tIMUL ECX",
-"\tSHL EAX,1",
+  /* jump optimizations */
+  "\tJMP \200\n\200:",
+  "\200:",
 
-/* jump optimizations */
-"\tJMP \200\n\200:",
-"\200:",
+  "\tJMP \200\n\201:\n\200:",
+  "\200:\n\201:",
 
-"\tJMP \200\n\201:\n\200:",
-"\200:\n\201:",
+  "\tJMP \200\n\tJMP \201",
+  "\tJMP \200",
 
-"\tJMP \200\n\tJMP \201",
-"\tJMP \200",
+  "\tJNZ \200\n\tJMP \201\n\200:\n\tJMP \202\n\201:",
+  "\201:\n\tJMP \202\n\tJZ \201",
 
-"\tJNZ \200\n\tJMP \201\n\200:\n\tJMP \202\n\201:",
-"\201:\n\tJMP \202\n\tJZ \201",
+  "\tJZ \200\n\tJMP \201\n\200:\n\tJMP \202\n\201:",
+  "\201:\n\tJMP \202\n\tJNZ \201",
 
-"\tJZ \200\n\tJMP \201\n\200:\n\tJMP \202\n\201:",
-"\201:\n\tJMP \202\n\tJNZ \201",
+  "\tJNZ \200\n\tJMP \201\n\200:\n\tJMP SHORT \202",
+  "\tJMP \201\n\tJNZ \202",
 
-"\tJNZ \200\n\tJMP \201\n\200:\n\tJMP SHORT \202",
-"\tJMP \201\n\tJNZ \202",
+  "\tJZ \200\n\tJMP \201\n\200:\n\tJMP SHORT \202",
+  "\tJMP \201\n\tJZ \202",
 
-"\tJZ \200\n\tJMP \201\n\200:\n\tJMP SHORT \202",
-"\tJMP \201\n\tJZ \202",
+  /* conversion optimizations */
+  "\tMOV AL,\200\n\tMOVSX EAX,AL",
+  "\tMOVSX EAX,BYTE PTR \200",
 
-/* conversion optimizations */
-"\tMOV AL,\200\n\tMOVSX EAX,AL",
-"\tMOVSX EAX,BYTE PTR \200",
+  "\tMOV AL,\200\n\tMOVZX EAX,AL",
+  "\tMOVZX EAX,BYTE PTR \200",
 
-"\tMOV AL,\200\n\tMOVZX EAX,AL",
-"\tMOVZX EAX,BYTE PTR \200",
+  "\tMOV AX,\200\n\tMOVSX EAX,AX",
+  "\tMOVSX EAX,WORD PTR \200",
 
-"\tMOV AX,\200\n\tMOVSX EAX,AX",
-"\tMOVSX EAX,WORD PTR \200",
+  "\tMOV AX,\200\n\tMOVZX EAX,AX",
+  "\tMOVZX EAX,WORD PTR \200",
 
-"\tMOV AX,\200\n\tMOVZX EAX,AX",
-"\tMOVZX EAX,WORD PTR \200",
+  /* comparisons to ECX, or MOV into EAX for compare (when not needed) */
+  "\tMOV ECX,\200\n\tCMP EAX,ECX",
+  "\tCMP EAX,\200",
 
-/* comparisons to ECX, or MOV into EAX for compare (when not needed) */
-"\tMOV ECX,\200\n\tCMP EAX,ECX",
-"\tCMP EAX,\200",
+  "\tMOVSX ECX,BYTE PTR\200\n\tCMP EAX,ECX",
+  "\tCMP AL,BYTE PTR\200",
 
-"\tMOVSX ECX,BYTE PTR\200\n\tCMP EAX,ECX",
-"\tCMP AL,BYTE PTR\200",
+  "\tMOVZX ECX,BYTE PTR\200\n\tCMP EAX,ECX",
+  "\tCMP AL,BYTE PTR\200",
 
-"\tMOVZX ECX,BYTE PTR\200\n\tCMP EAX,ECX",
-"\tCMP AL,BYTE PTR\200",
+  /* stack/parameters */
+  "\tMOV EAX,[\200\n\tPUSH EAX",
+  "\tPUSH DWORD PTR [\200",
 
-/* stack/parameters */
-"\tMOV EAX,[\200\n\tPUSH EAX",
-"\tPUSH DWORD PTR [\200",
+  "\tMOV EAX,\200\n\tPUSH EAX",
+  "\tPUSH \200",
 
-"\tMOV EAX,\200\n\tPUSH EAX",
-"\tPUSH \200",
+  /* more simple optimizations */
+  "\tMOV EAX,0",
+  "\tXOR EAX,EAX",
 
-/* more simple optimizations */
-"\tMOV EAX,0",
-"\tXOR EAX,EAX",
+  "\tMOV AX,0",
+  "\tXOR AX,AX",
 
-"\tMOV AX,0",
-"\tXOR AX,AX",
+  "\tMOV AL,0",
+  "\tXOR AL,AL",
 
-"\tMOV AL,0",
-"\tXOR AL,AL",
+  "\tMOV AL,0",
+  "\tXOR AL,AL",
 
-"\tMOV AL,0",
-"\tXOR AL,AL",
-
-0 };
+  0  /* End of optimization table */
+};
 
 /* circular peep hole buffer & read/write pointers */
 char peep_buffer[OBUF_SIZE][OLINE_SIZE];
