@@ -48,6 +48,7 @@
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 //$ CM32.H - Begin                                                                                                    $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 /***********************************************
  Global definitions for the C MINUS 32 compiler.
  Derived from code Copyright (c) 1989, Dave Dunfield
@@ -95,9 +96,7 @@
  the name in the symbol table.  The tag may be reused to dine other
  structure variables. The members of a STRUCDEF follow the it directly
  in the sysbol table and are marked as STRUCMEM.  When a structure
- variable is actually defined it is simply marked as a STRUCT and
-*/
-
+ variable is actually defined it is simply marked as a STRUCT and */
 #define STRUCMEM    0x04000000L     /* structure member (follows strucdef) */
 #define STRUCDEF    0x02000000L     /* struct TAG define, members follow */
 #define TYPDEF      0x01000000L     /* for type definition & struct tags */
@@ -126,10 +125,9 @@
 
 #define SIZEMASK    0x00000070L     /* mask to test size only */
 
-/*************************************************
-  Tokens identifing value types.
-**************************************************/
-
+/******************************************************************************
+* Tokens identifing value types.
+******************************************************************************/
 #define NUMBER      100 /* numeric constant */
 #define STRING      101 /* literal constant */
 #define LABEL       102 /* label address */
@@ -152,6 +150,7 @@
 
 #define ON_STACK    112 /* Value actually on Processor stack */
 #define ION_STACK   113 /* Index to value actually on Processor stack */
+
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 //$ CM32.H - End                                                                                                      $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -160,6 +159,7 @@
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 //$ TOKENS32.H - Begin                                                                                                $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 /* TOKENS32.h
    Tokens for the C Minus compiler:
    The tokens are arranged in alphebetical order by the first
@@ -403,7 +403,6 @@
          0,  0,  0,  0,  0,  0,  0,  0      /* 120- 127*/
      };
 
-/* End of tokens32.h */
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 //$ TOKENS32.H - End                                                                                                  $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -412,7 +411,6 @@
 char line_in[LINE_MAX], *input_ptr;
 
 /* Global value storage locations (results from lexical scanner) */
-
 char gst[SYMBOL_SIZE+1];    /* Name if SYMBOL */
 U8  namesize;               /* size of SYMBOL name */
 U32 gvalue;
@@ -424,7 +422,6 @@ U32 gvalue;
 */
 
 /* Symbol table and associated variables */
-
 char GPool[GBUFFSIZE];  /* Pool for symbol names (packed) */
 char LPool[LBUFFSIZE];  /* Pool for local symbol names (packed) */
 
@@ -459,7 +456,6 @@ U32 proto_list[MAX_PROTOS], /* list of arg types for functions */
     fptr;                   /* ptr to function symbol we are in */
 
     /* structure definition use and control variables */
-
     S8 fInStruct = 0;   /* true if currently defining struct members */
     U16 CrntStrucDef;   /* iSym for Structure def we are using or working on */
     char structname[12] = "0StructDef";
@@ -468,7 +464,6 @@ U32 proto_list[MAX_PROTOS], /* list of arg types for functions */
     U32 strucsize;      /* used for size of struct in INC and DEC */
 
 /* Literal + Dimension pools and associated variables */
-
 U32 dim_top = 0,
     literal_top = 0,
     dim_pool[DIM_SIZE];     /* each entry has nDims for an array */
@@ -591,7 +586,8 @@ char zero_flag,
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 //$ OPTIMIZE.H - Begin                                                                                                $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-/***********************************************************************
+
+/******************************************************************************
  Peephole Optimizer for the C Minus32 386 compiler.
 
  The strategy behind the peephole optimizer is to keep the peephole
@@ -604,7 +600,7 @@ char zero_flag,
  new code is inserted to ensure all optimization sequences used.
  Derived from code Copyright (c) 1989, Dave Dunfield
  Copyright 1992,1993,1994 R.A. Burgess
-***********************************************************************/
+******************************************************************************/
 
 #include <ctype.h>
 #include <stdio.h>
@@ -616,7 +612,7 @@ char zero_flag,
 #define OSYMBOLS        8       /* maximum # symbols per peep */
 #define OSYMBOL_SIZE    25      /* maximum size of symbol */
 
-/*****************************************************
+/******************************************************************************
  Peephole optimization table:
 
  Each two entries represent the instruction sequences:
@@ -627,14 +623,13 @@ char zero_flag,
  2) The highest priority entries should be entered first in the table.
  3) Tabs (\t) should begin each entry.
  4) Linefeeds (\n) should end each except for the last entry of a line.
-********************************************************************/
+******************************************************************************/
 
 char *peep_table[] = {
 
 /* 80386/80486 Optimizations */
 
 /* data movement & register usage optimizations */
-
 "\tMOV \200,\201\n\tMOV \201,\200",
 "\tMOV \200,\201",
 
@@ -660,7 +655,6 @@ char *peep_table[] = {
 "\tPOP EAX",
 
 /* indexing operations */
-
 "\tMOV ECX,32\n\tMUL ECX",
 "\tSHL EAX,5",
 
@@ -692,7 +686,6 @@ char *peep_table[] = {
 "\tSHL EAX,1",
 
 /* jump optimizations */
-
 "\tJMP \200\n\200:",
 "\200:",
 
@@ -729,7 +722,6 @@ char *peep_table[] = {
 "\tMOVZX EAX,WORD PTR \200",
 
 /* comparisons to ECX, or MOV into EAX for compare (when not needed) */
-
 "\tMOV ECX,\200\n\tCMP EAX,ECX",
 "\tCMP EAX,\200",
 
@@ -740,7 +732,6 @@ char *peep_table[] = {
 "\tCMP AL,BYTE PTR\200",
 
 /* stack/parameters */
-
 "\tMOV EAX,[\200\n\tPUSH EAX",
 "\tPUSH DWORD PTR [\200",
 
@@ -748,7 +739,6 @@ char *peep_table[] = {
 "\tPUSH \200",
 
 /* more simple optimizations */
-
 "\tMOV EAX,0",
 "\tXOR EAX,EAX",
 
@@ -764,7 +754,6 @@ char *peep_table[] = {
 0 };
 
 /* circular peep hole buffer & read/write pointers */
-
     char peep_buffer[OBUF_SIZE][OLINE_SIZE];
 
     unsigned peep_first = 0,        /* first entry in circular buffer */
@@ -774,20 +763,18 @@ char *peep_table[] = {
     /* If next == top then buffer is empty */
 
 /* Symbol table */
-
     char symbols[OSYMBOLS][OSYMBOL_SIZE];
 
-/* End of Optimize.h */
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 //$ OPTIMIZE.H  - End                                                                                                 $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 //#include "Proto32.h"
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-//$ PROTO32.H - Begin                                                                                                    $
+//$ PROTO32.H - Begin                                                                                                 $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-/* CM32 prototype file */
 
+/* CM32 prototype file */
 static S8   is_alpha(S8  chr);
 static S8   is_digit(S8  chr);
 static S8   is_alnum(S8  chr);
@@ -892,16 +879,14 @@ static void statement(U32  token);
 static void compile(void);
 void main(S16 argc, S8  *argv[]);
 
-/* END of PROTOTYPES  */
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-//$ PROTO32.H - End                                                                                                      $
+//$ PROTO32.H - End                                                                                                   $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-/******************************************
+/******************************************************************************
 * Determine if a character is alphabetic
 * or is underscore.
-*******************************************/
-
+******************************************************************************/
 static char is_alpha(char chr)
 {
     return ((chr >= 'a') && (chr <= 'z'))
@@ -909,39 +894,35 @@ static char is_alpha(char chr)
         || (chr == '_');
 }
 
-/*********************************************
+/******************************************************************************
 * Determine if a character is a numeric digit
-**********************************************/
-
+******************************************************************************/
 static char is_digit(char chr)
 {
     return (chr >= '0') && (chr <= '9');
 }
 
 
-/******************************************
+/******************************************************************************
 * Test for valid character in a name.
-*******************************************/
-
+******************************************************************************/
 static char is_alnum(char c)
 {
     return is_alpha(c) || is_digit(c);
 }
 
-/****************
+/******************************************************************************
 * Copy a string
-*****************/
-
+******************************************************************************/
 static void copystring(char *dest, char *source)
 {
     while(*dest++ = *source++);
 }
 
 
-/***************************
+/******************************************************************************
 * Test for string equality
-****************************/
-
+******************************************************************************/
 static char equal_string(char *str1, char *str2)
 {
     do {
@@ -951,11 +932,10 @@ static char equal_string(char *str1, char *str2)
     return -1;
 }
 
-/*********************************************************
+/******************************************************************************
  Skip to next non-blank (space, tab, CR or LF) in buffer
  returning the character we find.
-***********************************************************/
-
+******************************************************************************/
 static char skip_blanks(void)
 {
     while((*buffin_ptr == ' ') || (*buffin_ptr == 9)
@@ -964,10 +944,9 @@ static char skip_blanks(void)
     return *buffin_ptr;
 }
 
-/***************************************
+/******************************************************************************
 * Test for more macro parameters
-****************************************/
-
+******************************************************************************/
 static long more_parms(void)
 {
     register char c;
@@ -979,10 +958,9 @@ static long more_parms(void)
     return c == ',';
 }
 
-/**************************************
+/******************************************************************************
 * Skip ahead through a comment
-***************************************/
-
+******************************************************************************/
 static void skip_comment(void)
 {
     register U16 x;
@@ -1007,10 +985,9 @@ static void skip_comment(void)
     }
 }
 
-/*****************************************************************
+/******************************************************************************
 * Copy a named symbol from the input buffer to the output buffer
-******************************************************************/
-
+******************************************************************************/
 static void copy_name(void)
 {
     do
@@ -1019,11 +996,10 @@ static void copy_name(void)
     *buffout_ptr = 0;
 }
 
-/******************************************************************
+/******************************************************************************
 * Copy a quoted string from the input buffer to the output buffer
 * with regard for "protected" characters.
-*******************************************************************/
-
+******************************************************************************/
 static void copy_string(void)
 {
     register char delim;
@@ -1039,10 +1015,9 @@ static void copy_string(void)
         *buffout_ptr++ = *buffin_ptr++; }
 }
 
-/**************************************************************
+/******************************************************************************
 * Lookup a word from the input stream to see if it is a macro
-***************************************************************/
-
+******************************************************************************/
 static U32 lookup_macro(char eflag)
 {
     register long i;
@@ -1058,10 +1033,9 @@ static U32 lookup_macro(char eflag)
     return -1;
 }
 
-/**************************************************************
+/******************************************************************************
 * Resolve a word into a macro definition (if it is defined)
-***************************************************************/
-
+******************************************************************************/
 static void resolve_macro(void)
 {
     char *mptr, *ptr, *old_ptr;
@@ -1096,10 +1070,9 @@ static void resolve_macro(void)
     }
 }
 
-/****************************************
+/******************************************************************************
 * Test for a string in input stream
-*****************************************/
-
+******************************************************************************/
 static unsigned long match(char *ptr)
 {
     register char *ptr1;
@@ -1115,14 +1088,13 @@ static unsigned long match(char *ptr)
     return(1);
 }
 
-/*******************************************************
+/******************************************************************************
 * Compare all optimization table entries with the
 * instructions in the peephole buffer.
 * Return:   0   = No match
 *           n   = Full match begining at peep_first
 *                 and ending at entry 'n'
-********************************************************/
-
+******************************************************************************/
 static int compareT(char *ptable, int peep)
 {
     int i;
@@ -1170,12 +1142,11 @@ static int compareT(char *ptable, int peep)
 }
 
 
-/********************************************************
+/******************************************************************************
 * Exchange new code for old code in the peephole buffer.
 * pnew points to the first char of the new code.
 * old points to last entry of buffer code to be replaced.
-*********************************************************/
-
+******************************************************************************/
 static void exchange(unsigned old, char *pnew)
 {
     char *ptr1, *ptr2;
@@ -1197,11 +1168,10 @@ static void exchange(unsigned old, char *pnew)
     *ptr2 = 0;
 }
 
-/****************************************
+/******************************************************************************
 * Read a line into the peephole buffer
 * from the input file
-*****************************************/
-
+******************************************************************************/
 static long read_line(void)
 {
 char c, *sptr;
@@ -1224,9 +1194,9 @@ char c, *sptr;
     return 0;
 }
 
-/*********************************************************
+/******************************************************************************
 * Write a line from the peephole buffer to the output file
-**********************************************************/
+******************************************************************************/
 static void write_line(void)
 {
     if (fGen)
@@ -1241,9 +1211,9 @@ static void write_line(void)
 }
 
 
-/*********************************************************
+/******************************************************************************
 * Peephole Optimizer function for code segment
-**********************************************************/
+******************************************************************************/
 static void optimize(void)
 {
     int i, j;
@@ -1282,14 +1252,13 @@ static void optimize(void)
     }
 }
 
-/********************************************
+/******************************************************************************
  Read a line & perform pre-processing. if_flag
  is used to indicate the nesting of ifs.  It
  is incremented for each if found.  The high
  bit is set if we are actually IN an active
  macro.
-*********************************************/
-
+******************************************************************************/
 static long readline(void)
 {
 U32 i;
@@ -1526,15 +1495,12 @@ for(;;) {
 } /*for*/
 }
 
-
-
-/***********************************************************
+/******************************************************************************
 * Test to see if the last statement compiled was an "exit"
 * statement, and if so, generate a jump to the appriopriate
 * label. This prevents generation of a spurious jump when a
 * "return" statement is used at the end of a function.
-************************************************************/
-
+******************************************************************************/
 static U32 test_exit(void)
 {
     if(exit_flag) {
@@ -1545,10 +1511,9 @@ static U32 test_exit(void)
     return -1;
 }
 
-/*********************************************
+/******************************************************************************
 * Output an warning message with quoted text
-**********************************************/
-
+******************************************************************************/
 static void t_warn(char *msg, char *txt)
 {
 int i;
@@ -1571,10 +1536,9 @@ int i;
     fputc('\n', list_fh);
 }
 
-/*********************************************
+/******************************************************************************
 * Output an error message with quoted text
-**********************************************/
-
+******************************************************************************/
 static void t_error(char *msg, char *txt)
 {
     char emsg[50], *ptr;
@@ -1593,49 +1557,43 @@ static void t_error(char *msg, char *txt)
 }
 
 
-/***********************************************************
+/******************************************************************************
 * Report an error involving a freshly parsed symbol name
-************************************************************/
-
+******************************************************************************/
 static void symbol_error(char *msg)
 {
     t_error(msg, gst);
 }
 
 
-/***********************************************************
+/******************************************************************************
 * Report a syntax error
-************************************************************/
-
+******************************************************************************/
 static void syntax_error(void)
 {
     line_error("Syntax error");
 }
 
-/***********************************************************
+/******************************************************************************
 * Report incompatable types
 ************************************************************/
-
 static void type_error(void)
 {
     line_error("Types mismatch");
 }
 
-/***********************************************************
+/******************************************************************************
 * Report an error in indirection
-************************************************************/
-
+******************************************************************************/
 static void index_error(void)
 {
     line_error("Illegal indirection");
 }
 
-
-/****************************************************
+/******************************************************************************
 * Test the next token in the input stream, put it
 * back if its not the one we are looking for.
-****************************************************/
-
+******************************************************************************/
 static char test_token(U32 token)
 {
     U32 token1;
@@ -1647,32 +1605,28 @@ static char test_token(U32 token)
 }
 
 
-/**************************************************************
+/******************************************************************************
 * Check for a certain token occuring next in the input stream.
 * If it is not found, report an error.
-***************************************************************/
-
+******************************************************************************/
 static void expect(U32 token)
 {
     if(!test_token(token))
         t_error("Expected", tokens[token]);
 }
 
-/************************************************
+/******************************************************************************
 * Write a string to device indicated by "fh"
-*************************************************/
-
+******************************************************************************/
 static void put_str(char *ptr, FILE *fh)
 {
     while(*ptr)
         fputc(*ptr++, fh);
 }
 
-
-/***************************************
+/******************************************************************************
  Report a Unterminated Comment error
-****************************************/
-
+******************************************************************************/
 static void UTC_error(void)
 {
     U32 i;
@@ -1692,10 +1646,9 @@ static void UTC_error(void)
         fatal_error("Too many errors");
 }
 
-/***************************************
+/******************************************************************************
 * Report a compile error
-****************************************/
-
+******************************************************************************/
 static void line_error(char *message)
 {
     U32 i;
@@ -1714,10 +1667,9 @@ static void line_error(char *message)
         fatal_error("Too many errors");
 }
 
-/*******************************************
+/******************************************************************************
 * Report a non-recoverable compile error
-********************************************/
-
+******************************************************************************/
 static void fatal_error(char *string)
 {
     line_error(string);
@@ -1740,10 +1692,9 @@ static void fatal_error(char *string)
 
 }
 
-/*****************************************************
+/******************************************************************************
 * Check that a loop is active & setup exit condition
-******************************************************/
-
+******************************************************************************/
 static void check_loop(U32 stack[])
 {
     expect(SEMI);
@@ -1753,10 +1704,9 @@ static void check_loop(U32 stack[])
         line_error("No active loop");
 }
 
-/****************************************************
+/******************************************************************************
 * Check that a switch is active & allocate label
-*****************************************************/
-
+******************************************************************************/
 static U32 check_switch(void)
 {
     if(!sdefault)
@@ -1765,24 +1715,21 @@ static U32 check_switch(void)
     return next_lab;
 }
 
-/*******************************************************************
+/******************************************************************************
 * Compile a jump only if last statement compiled was not an "exit"
 * statement ("return", "break", or "continue"). This prevents the
 * generation of an unaccessable jump following these statements.
-********************************************************************/
-
+******************************************************************************/
 static void test_jump(U32 label)
 {
     if(test_exit())
         jump(label, -1);
 }
 
-
-/********************************************
+/******************************************************************************
 * Compile a conditional jump and
 * set up 'Z' flag if necessary.
-*********************************************/
-
+******************************************************************************/
 static void cond_jump(char cond, U32 label, char ljmp)
 {
     if(zero_flag)
@@ -1796,11 +1743,10 @@ static void cond_jump(char cond, U32 label, char ljmp)
 }
 
 
-/**********************************************************
+/******************************************************************************
 * Get a number in a number base for a maximum # of digits
 * (digits = 0 means no limit)
-***********************************************************/
-
+******************************************************************************/
 static U32 get_number(U32 base, U32 digits)
 {
     U32 value;
@@ -1824,15 +1770,11 @@ static U32 get_number(U32 base, U32 digits)
     return value;
 }
 
-
-
-
-/*****************************************************************
+/******************************************************************************
 * End of file has been encountered, dump the literal pool, and
 * generate definitions for any external or uninitialized global
 * variables.
-******************************************************************/
-
+******************************************************************************/
 static void clean_up(void)
 {
     U32 type, size, i, j;
@@ -1850,11 +1792,9 @@ static void clean_up(void)
     }
 
 /* dump literal pool */
-
     gen_literal(literal_pool, literal_top);
 
 /* Generate all global variables that are not initialized */
-
     for(sptr = 0; sptr < global_top; ++sptr) {
         type = symtab[sptr].type;
         if(!(type & (FUNCTION | INITED | EXTERNAL | TYPDEF))) {
@@ -1917,10 +1857,9 @@ static void clean_up(void)
 }
 
 
-/*****************************************
+/******************************************************************************
 * Read a character from the input file
-******************************************/
-
+******************************************************************************/
 static char read_char(void)
 {
     char c;
@@ -1934,20 +1873,18 @@ static char read_char(void)
     return c;
 }
 
-/***********************************************************
+/******************************************************************************
 * Allow a single token to be returned to the input stream
-************************************************************/
-
+******************************************************************************/
 static void unget_token(U32 token)
 {
     ungot_token = token;
 }
 
 
-/************************************************
+/******************************************************************************
 * Read special character (with translations)
-*************************************************/
-
+******************************************************************************/
 static U32 read_special(char delim)
 {
     S32 c;
@@ -1986,12 +1923,11 @@ static U32 read_special(char delim)
     return c & 0xff;
 }
 
-/*************************************************************************
+/******************************************************************************
 * Get a token from the input stream, and return it as a simple value
 * (indicating type). If it a special token type (NUMBER, STRING, SYMBOL),
 * global variables "gvalue" and "gst" are set to appriopriate values.
-**************************************************************************/
-
+******************************************************************************/
 static U32 get_token(void)
 {
     U32 i;
@@ -2101,11 +2037,9 @@ static U32 get_token(void)
     return -1;              /* report "unknown" token type */
 }
 
-
-/*****************************************************
+/******************************************************************************
 * Locate a symbol in the local symbol table
-******************************************************/
-
+******************************************************************************/
 static U32 lookup_local(void)
 {
     U16 i,j;
@@ -2121,10 +2055,9 @@ static U32 lookup_local(void)
 }
 
 
-/*************************************************
+/******************************************************************************
   Locate a symbol in the global symbol table.
-**************************************************/
-
+******************************************************************************/
 static U32 lookup_global(void)
 {
     U16 i, j;
@@ -2137,10 +2070,9 @@ static U32 lookup_global(void)
     return 0;
 }
 
-/**************************************************
+/******************************************************************************
   Locate a structure member in either symbol table
-***************************************************/
-
+******************************************************************************/
 static U32 lookup_member(U16 CrntStruc)
 {
     U16 i, j, CrntStrucDef;
@@ -2182,11 +2114,10 @@ static U32 lookup_member(U16 CrntStruc)
     return 0;       /* didn't find it! */
 }
 
-/***************************************************************
+/******************************************************************************
   Enter a symbol in the symbol table with specified name & type.
   Leaves global sptr with the index of the symbol just added.
-****************************************************************/
-
+******************************************************************************/
 static void define_symbol(U32 type, U32 dim_index)
 {
     U32 index = 0;
@@ -2274,11 +2205,9 @@ static void define_symbol(U32 type, U32 dim_index)
     }
 }
 
-
-/******************************************
+/******************************************************************************
 * Push a value on the expression stack
-*******************************************/
-
+******************************************************************************/
 static void push(U32 token, U32 value, U32 type, U32 offset)
 {
     if(expr_ptr >= EXPR_DEPTH)
@@ -2291,10 +2220,9 @@ static void push(U32 token, U32 value, U32 type, U32 offset)
     expr_ptr++;
 }
 
-/*********************************************
+/******************************************************************************
 * Pop a value from the expression stack
-**********************************************/
-
+******************************************************************************/
 static void pop(U32 *token, U32 *value, U32 *type, U32 *offset)
 {
     if(!expr_ptr)
@@ -2308,11 +2236,10 @@ static void pop(U32 *token, U32 *value, U32 *type, U32 *offset)
 }
 
 
-/********************************************
+/******************************************************************************
 * Get a constant value (NUMBER or STRING)
 * which can be evaluated at compile time.
-*********************************************/
-
+******************************************************************************/
 static void get_constant(U32 *token, U32 *value)
 {
     U32 type, offset;
@@ -2326,10 +2253,9 @@ static void get_constant(U32 *token, U32 *value)
         line_error("Constant expression required");
 }
 
-/********************************
+/******************************************************************************
 * Define a variable
-*********************************/
-
+******************************************************************************/
 static void define_var(U32 type)
 {
     U32 token, stype, lasttoken, value, index, size, i, j, ocbcnt;
@@ -2550,10 +2476,9 @@ static void define_var(U32 type)
 
 }
 
-/*****************************************************
+/******************************************************************************
 * Check that we are within a function definition
-******************************************************/
-
+******************************************************************************/
 static void check_func(void)
 {
     if(in_function) {
@@ -2564,24 +2489,23 @@ static void check_func(void)
         line_error("Incorrect declaration");
 }
 
-/**********************************************************
+/******************************************************************************
 * Declare a symbol (function or variable) with modifiers.
-  If we get here we have found a legal type specifier.
-  Definitions other than structures are quite simple. We
-  loop through eating the variables behind it adding them
-  to the symbol table.
-  Structures are handled differently because you can define
-  a structure with a TAG without actually allocating space.
-  This is actually a type definition.
-  In fact, you can define the structure with an optional
-  tag, then place the variable names right behind it.
-  This checks to see if we have a tag name first. If the tag
-  name is present, we then check to see if it's a defined
-  structure already, in which case we expect a new symbol
-  name will follow. If the tag is not already defined than
-  we expect {} with a structure definition in between!
-***********************************************************/
-
+* If we get here we have found a legal type specifier.
+* Definitions other than structures are quite simple. We
+* loop through eating the variables behind it adding them
+* to the symbol table.
+* Structures are handled differently because you can define
+* a structure with a TAG without actually allocating space.
+* This is actually a type definition.
+* In fact, you can define the structure with an optional
+* tag, then place the variable names right behind it.
+* This checks to see if we have a tag name first. If the tag
+* name is present, we then check to see if it's a defined
+* structure already, in which case we expect a new symbol
+* name will follow. If the tag is not already defined than
+* we expect {} with a structure definition in between!
+******************************************************************************/
 static void declare(U32 token, U32 type)
 {
     fInStruct = 0;
@@ -2747,7 +2671,7 @@ static void declare(U32 token, U32 type)
     }
 }
 
-/**************************************************************
+/******************************************************************************
 Define a function
 
 Notes on prototype handling:
@@ -2783,9 +2707,7 @@ args leave off.  We access the fixed args with [EBP+EDI+offset]
 to access the args.  This is because the fucntion "va_arg" will set
 EDI up with the proper context to access the variable required. See
 stdarg.c for more information.
-
-****************************************************************/
-
+******************************************************************************/
 static void define_func(U32 type)
 {
     U32 token, dim_save, t, flastarg, i, stackpop;
@@ -2932,11 +2854,10 @@ static void define_func(U32 type)
     }
 }
 
-
-/***********************************************************************
+/******************************************************************************
   Write an assembler string to access an operand value.
   Certain types of operands may require type inducers suxh as "BYTE PTR."
-************************************************************************/
+******************************************************************************/
 static void write_oper(U32 token, U32 value, U32 type, U32 offset)
 {
 
@@ -3049,12 +2970,10 @@ static void write_oper(U32 token, U32 value, U32 type, U32 offset)
     }
 }
 
-
-/**************************************************
+/******************************************************************************
   Places operand in code string and sends instruction
   out to code segment.
-**************************************************/
-
+******************************************************************************/
 static void GenCodeOper(char *ptr, U32 token, U32 value, U32 type, U32 offset)
 {
     /* interpret the output string & insert the operand */
@@ -3070,15 +2989,14 @@ static void GenCodeOper(char *ptr, U32 token, U32 value, U32 type, U32 offset)
     code_chr('\n');
 }
 
-/*************************************************************
+/******************************************************************************
   Examine the expression stack and see if any active token
   is in EAX. If so, place it on the stack.
   The stack top is really the EBX register. If we find
   an active item in the EBX register, we must place
   it on the real processor stack first and change it's
   token to show where it is.
-**************************************************************/
-
+******************************************************************************/
 static void StackEAX(void)
 {
     S32 i, j;
@@ -3106,12 +3024,12 @@ static void StackEAX(void)
     }
 }
 
-/**********************************************************
+/******************************************************************************
  If the token we need is actually on the processor stack,
  we must must pop it out so we can use it. To do this,
  we pop it into EDX. EDX is only used for multiply and
  divide operations otherwise.
-***********************************************************/
+******************************************************************************/
 static U32 CheckStack(U32 token)
 {
     if (token==ION_STACK)
@@ -3127,11 +3045,10 @@ static U32 CheckStack(U32 token)
     return(token);
 }
 
-/**************************************************************
+/******************************************************************************
  Get a parameter into the EAX register.
  The value/register is always sign or zero extended to 32 bits!
-***************************************************************/
-
+******************************************************************************/
 static void LoadEAX(U32 token, U32 value, U32 type, U32 offset)
 {
     if(type & FUNCTION)
@@ -3181,11 +3098,10 @@ static void LoadEAX(U32 token, U32 value, U32 type, U32 offset)
     zero_flag = -1;
 }
 
-/**************************************************************
+/******************************************************************************
  Get a parameter into the ECX register.
  The value/register is always sign or zero extended to 32 bits!
-***************************************************************/
-
+******************************************************************************/
 static void LoadECX(U32 token, U32 value, U32 type, U32 offset)
 {
     if(type & FUNCTION)
@@ -3229,14 +3145,12 @@ static void LoadECX(U32 token, U32 value, U32 type, U32 offset)
     }
 }
 
-
-/****************************************************************
+/******************************************************************************
 * Evaluate a sub expression & handle COMMA operator. This must
 * be done as a special case, because the function performed by
 * COMMA differs with the context of the expression, and can not
 * therefore be handled as a general operator.
-*****************************************************************/
-
+******************************************************************************/
 static void sub_eval(U32 term)
 {
 U32 token;
@@ -3251,12 +3165,10 @@ U32 token;
     }
 }
 
-
-/********************************************************
+/******************************************************************************
 * Evaluate a full expression at the highest level, and
 * load the result into the accumulator if necessary.
-*********************************************************/
-
+******************************************************************************/
 static void eval(U32 term, char flag)
 {
 U32 token, value, type, offset;
@@ -3270,11 +3182,10 @@ U32 token, value, type, offset;
         LoadEAX(token, value, type, offset);
 }
 
-/************************************************
+/******************************************************************************
 * Write an instruction with text formatting
   to the code tmp file
-*************************************************/
-
+******************************************************************************/
 static void out_inst(char *ptr)
 {
     code_chr('\t');
@@ -3282,14 +3193,12 @@ static void out_inst(char *ptr)
     code_chr('\n');
 }
 
-
-/*************************************************************
+/******************************************************************************
   Examine the expression stack and see if any active token
   is in the EBX register which acts as the stack top for
   fast access. If so, put it on the real stack because
   we must preserve it through a call.
-**************************************************************/
-
+******************************************************************************/
 static void StackTop(void)
 {
     S32 i, j;
@@ -3309,16 +3218,14 @@ static void StackTop(void)
     }
 }
 
-
-/*************************************************************
+/******************************************************************************
   Examine the expression stack and see if any active token
   is in the Index Reg. If so, place it on the stack.
   The stack top is really the EBX register. If we find
   an active item in the EBX register, we must place
   it on the real processor stack first and change it's
   token to show where it is.
-**************************************************************/
-
+******************************************************************************/
 static void StackESI(void)
 {
     S32 i, j;
@@ -3345,11 +3252,9 @@ static void StackESI(void)
     }
 }
 
-
-/*****************************************
+/******************************************************************************
 * Load index address for an array
-******************************************/
-
+******************************************************************************/
 static void load_index(U32 t, U32 v, U32 tt, U32 o)
 {
         StackESI();
@@ -3359,12 +3264,10 @@ static void load_index(U32 t, U32 v, U32 tt, U32 o)
             index_adr(t, v, tt, o);
 }
 
-
-/*************************************************************************
+/******************************************************************************
 * Evaluate a unary operation, if possible, evaluate constant expressions
 * into another constant. Produce code to perform operation if necessary.
-**************************************************************************/
-
+******************************************************************************/
 static void do_unary(U32 oper)
 {
     U32 token, value, type, offset;
@@ -3435,11 +3338,9 @@ static void do_unary(U32 oper)
     push(token, value, type, offset);
 }
 
-
-/******************************************************
+/******************************************************************************
  This evaluates array indeces for get_value.
-*******************************************************/
-
+******************************************************************************/
 static S8 eval_index(U32 t, U32 v, U32 tp, U32 ofs, U32 *tpRet)
 {
     S32 ndim, vcnt;
@@ -3517,12 +3418,11 @@ static S8 eval_index(U32 t, U32 v, U32 tp, U32 ofs, U32 *tpRet)
     return fMultiDim;
 }
 
-/******************************************************
+/******************************************************************************
  Gets the next token and perform any processing
  required to evaluate it.  This includes structure
  members.
-*******************************************************/
-
+******************************************************************************/
 static void get_value(void)
 {
     S32 ndim, vcnt;
@@ -3694,16 +3594,12 @@ static void get_value(void)
         tp &= ~FUNCTION;
     }
 
-
-
 /* Indexing operations - Open Square Brackett (OSB) */
-
     fMultiDim = 0;
     if(test_token(OSB)) {
         fMultiDim = eval_index(t, v, tp, ofs, &tp);
 
         /* get index value token pushed by eval_index */
-
         pop(&token, &v, &t, &ofs);
         if ((token==NUMBER) & (!v))
         {  /* index is 0 */
@@ -3725,7 +3621,6 @@ static void get_value(void)
 /* Convert any [UNINDEXED] array references to address values.
    This is done later to structures and struct members.
 */
-
     if((tp & ARRAY) && (!(tp & (STRUCT|STRUCMEM)))) {
         tp = (tp + 1) & ~ARRAY;         /* tp+1 ups the ptr ref count */
         if(!(tp & ARGUMENT))
@@ -3745,8 +3640,6 @@ static void get_value(void)
 
 /* handle the dereference operators . and -> for
    structures and pointers to structures if present */
-
-
     if(test_token(DEREF)) {
         if ((tp & STRUCT) && ((tp & POINTER) || (t==PESI)) ) {
             if (t == SYMBOL) {              /* may already be PESI */
@@ -3805,7 +3698,6 @@ static void get_value(void)
     }
 
 /* Indexing operations for STRUCTMEMS- Open Square Brackett (OSB) */
-
     fMultiDim = 0;
     if(test_token(OSB)) {
         fMultiDim = eval_index(t, v, tp, ofs, &tp);
@@ -3839,7 +3731,6 @@ static void get_value(void)
 /* Convert any [UNINDEXED] array references to address values
    for struct members that are arrays.
 */
-
     if((tp & ARRAY) && (tp & (STRUCMEM))) {
         tp = (tp + 1) & ~ARRAY;         /* tp+1 ups the ptr ref count */
         if(!(tp & ARGUMENT))
@@ -3858,7 +3749,6 @@ static void get_value(void)
     }
 
 /* handle any post operators (++ and --) if present */
-
     if(test_token(INC)) {           /* post '++' */
         if (tp & POINTER)
         {
@@ -3908,27 +3798,24 @@ static void get_value(void)
     push(t, v, tp, ofs);    /* FINALLY PUSH THE "Value" ON THE EXP STACK */
 }
 
-/****************************************************
- Combine two types (For binary operations)
- This raises the type to the lowest common type, or
- in the case of a strucr-member operation, the type
- is the type become the member's type.
-*****************************************************/
-
+/******************************************************************************
+* Combine two types (For binary operations)
+* This raises the type to the lowest common type, or
+* in the case of a strucr-member operation, the type
+* is the type become the member's type.
+******************************************************************************/
 static U32 combine(U32 type1, U32 type2)
 {
     U32 new_type;
 
 /* preserve width and indirection if pointer operation is involved */
 /* if neither is pointer no harm is done with this code */
-
     if ((type1 & POINTER) >= (type2 & POINTER))
         new_type = type1 & POINTER;
     else
         new_type = type2 & POINTER;
 
 /* raise to lowest common type */
-
     if ((type1 & DWORD) || (type2 & DWORD)) new_type |= DWORD;
     else if ((type1 & WORD) || (type2 & WORD)) new_type |= WORD;
     else new_type |= BYTE;
@@ -3937,7 +3824,6 @@ static U32 combine(U32 type1, U32 type2)
    is large enough to hold all values of unsigned then combined type
    remains SIGNED, else the type becomes UNSIGNED!
 */
-
     if (!((type1 & type2) & UNSIGNED))  /* both signed */
         return new_type;
 
@@ -3947,7 +3833,6 @@ static U32 combine(U32 type1, U32 type2)
     }
 
     /* ONLY one is signed... */
-
     if (((type1 & SIZEMASK) >= (type2 & SIZEMASK)) && (type2 & UNSIGNED))
         new_type |= UNSIGNED;
 
@@ -3956,13 +3841,11 @@ static U32 combine(U32 type1, U32 type2)
         new_type |= UNSIGNED;
 
     return new_type;
-
 }
 
-/**********************************************************
+/******************************************************************************
 * Perform an operation & all higher priority operations.
-***********************************************************/
-
+******************************************************************************/
 static U32 do_oper(U32 token)
 {
     U32 token1, t, v, tp, tp1, ofs, ofs1, exit_lab;
@@ -4005,7 +3888,6 @@ static U32 do_oper(U32 token)
 
 /* Handle operator precedence and grouping. optype is 2 if operator
    separates two operands and grouping is L-R. It's 3 if R-L */
-
     token1 = get_token();   /* Look at next operator */
         while((optype[token1] > 1) &&
               (priority[token1] >= priority[token]))
@@ -4029,8 +3911,7 @@ static U32 do_oper(U32 token)
     return token1;
 }
 
-
-/*************************************************************************
+/******************************************************************************
  Evaluates two operands for operators with L to R grouping.
  if possible, evaluate constant expressions into another constant.
  Produce code to perform operation if necessary.
@@ -4038,8 +3919,7 @@ static U32 do_oper(U32 token)
  loaded into token and token1. The item at the top of the stack is the
  second operand.  This means that if it were "A minus B", A would go into 
  token and B would go into token1.
-**************************************************************************/
-
+******************************************************************************/
 static void do_lr2op(U32 oper)
 {
     U32 token, value, type, token1, value1, type1, offset, offset1;
@@ -4066,7 +3946,6 @@ static void do_lr2op(U32 oper)
     ctype = combine(type, type1);
 
     /* Do any operations that can be performed at compile time */
-
     if((token == NUMBER) && (token1 == NUMBER) &&
         (oper != DAND) && (oper != DOR)) {
         switch(oper) {
@@ -4140,7 +4019,6 @@ static void do_lr2op(U32 oper)
            changes the operand to the real operation to be
            performed
         */
-
         switch(oper)
         {
             case DAND:  /* logical AND and OR are done elsewhere */
@@ -4249,7 +4127,6 @@ static void do_lr2op(U32 oper)
            indicated so long as ordering was not important (order flag).
            Some operations require the use of EAX.
         */
-
         if((token1 == INEAX) && order)
         {   /* out of order - use ECX */
             test_not();
@@ -4277,7 +4154,6 @@ static void do_lr2op(U32 oper)
         token1 = CheckStack(token1);
 
         /* Now we perform the operation */
-
         switch(oper)
         {
             case ASSIGN:
@@ -4438,13 +4314,10 @@ static void do_lr2op(U32 oper)
     push(token, value, ctype, offset);
 }
 
-
-
-/***************************************************
+/******************************************************************************
 * Test for a logically negated value, and update
 * the accumulator if one is being used.
-****************************************************/
-
+******************************************************************************/
 static void test_not(void)
 {
     if(not_flag)
@@ -4457,11 +4330,9 @@ static void test_not(void)
     }
 }
 
-
-/********************************************
+/******************************************************************************
 * Store accumulator value
-*********************************************/
-
+******************************************************************************/
 static void store(U32 token, U32 value, U32 type, U32 offset)
 {
 char *ptr;
@@ -4488,11 +4359,9 @@ char *ptr;
     }
 }
 
-
-/*********************************************
+/******************************************************************************
  Determine if a type is a pointer to struct
-**********************************************/
-
+******************************************************************************/
 static U32 ispStruct(U32 type, U32 value)
 {
     if((type & POINTER) > 1)    /* pointer to pointer */
@@ -4504,10 +4373,9 @@ static U32 ispStruct(U32 type, U32 value)
     return 0;                   /* not our pointer */
 }
 
-/*********************************************
+/******************************************************************************
  Determine if a type is a pointer to 32 bits
-**********************************************/
-
+******************************************************************************/
 static U32 isp32(U32 type)
 {
     if(type & (POINTER-1))      /* pointer to pointer */
@@ -4517,9 +4385,9 @@ static U32 isp32(U32 type)
     return 0;                   /* not a pointer */
 }
 
-/***********************************************
+/******************************************************************************
  Determine if a type is a pointer to 16 bits
-************************************************/
+******************************************************************************/
 static U32 isp16(U32 type)
 {
     if(type & POINTER)          /* first level pointer */
@@ -4527,18 +4395,17 @@ static U32 isp16(U32 type)
     return 0;                   /* not a pointer */
 }
 
-/*
- * Output a string to the assembler followed by newline.
- */
+/******************************************************************************
+ Output a string to the assembler followed by newline.
+******************************************************************************/
 static void do_asm(char *ptr)
 {
     code_str(ptr);
 }
 
-/***************************
+/******************************************************************************
  Initialize static storage
-****************************/
-
+******************************************************************************/
 static void init_static(U32 token, U32 value, char word)
 {
     char *ptr, *ptr1, *nptr;
@@ -4586,9 +4453,9 @@ static void init_static(U32 token, U32 value, char word)
         }
 }
 
-/********************************
+/******************************************************************************
 * End static storage definition
-*********************************/
+******************************************************************************/
 static void end_static(void)
 {
     if(global_width) {
@@ -4597,10 +4464,9 @@ static void end_static(void)
     }
 }
 
-/*******************************************************************
+/******************************************************************************
 * Define a global non-static variable
-********************************************************************/
-
+******************************************************************************/
 static void gen_global(U32 symbol, U32 size)
 {
     data_global(symbol);
@@ -4635,12 +4501,11 @@ static void gen_global(U32 symbol, U32 size)
         }
 }
 
-/****************************************************
+/******************************************************************************
   Define an external label for DASM near or FAR call
   Print EXTRN _Symname: NEAR in CSeg if NEAR function.
   Print EXTRN _Symname  FWORD in DSeg if FAR function.
-*****************************************************/
-
+******************************************************************************/
 static void gen_extern_DASM (U32 symbol)
 {
     U32 type;
@@ -4666,11 +4531,10 @@ static void gen_extern_DASM (U32 symbol)
 
 }
 
-/****************************************************
+/******************************************************************************
   Define an external label for DASM data references.
   Print EXTRN _Symname DB (DW or DD) if NOT function.
-*****************************************************/
-
+******************************************************************************/
 static void gen_ext_data_DASM (U32 symbol)
 {
     U32 type;
@@ -4692,10 +4556,9 @@ static void gen_ext_data_DASM (U32 symbol)
     }
 }
 
-/*******************************************************
+/******************************************************************************
 * Enter function & allocate local variable stack space
-********************************************************/
-
+******************************************************************************/
 static void enter_func(U32 symbol, U32 size)
 {
     code_global(symbol);
@@ -4714,10 +4577,9 @@ static void enter_func(U32 symbol, U32 size)
     }
 }
 
-/************************************************
+/******************************************************************************
 * Clean up the stack & end function definition
-*************************************************/
-
+******************************************************************************/
 static void end_func(U32 stackpop)
 {
     if (symtab[fptr].type & ISR)
@@ -4740,10 +4602,9 @@ static void end_func(U32 stackpop)
     }
 }
 
-/**********************************
+/******************************************************************************
  Define a compiler generated label
-***********************************/
-
+******************************************************************************/
 static void gen_label(U32 label)
 {
     code_chr(prefix);
@@ -4752,9 +4613,9 @@ static void gen_label(U32 label)
     code_str(":\n");
 }
 
-/***********************
+/******************************************************************************
  Define literal pool
-************************/
+******************************************************************************/
 static void gen_literal(unsigned char *ptr, U32 size)
 {
     U32 i;
@@ -4772,9 +4633,9 @@ static void gen_literal(unsigned char *ptr, U32 size)
             data_chr('\n'); }
 }
 
-/***********************************
+/******************************************************************************
 * Call a function by name
-************************************/
+******************************************************************************/
 static void call(U32 token, U32 value, U32 type, U32 offset, U32 clean)
 {
 
@@ -4799,13 +4660,11 @@ static void call(U32 token, U32 value, U32 type, U32 offset, U32 clean)
     }
 
     zero_flag = -1;
-
 }
 
-/**********************************
+/******************************************************************************
 * Unconditional jump to label
-***********************************/
-
+******************************************************************************/
 static void jump(U32 label, char ljmp)
 {
     code_str(ljmp ? "\tJMP " : "\tJMP SHORT ");
@@ -4815,9 +4674,9 @@ static void jump(U32 label, char ljmp)
     code_chr('\n');
 }
 
-/****************************************
+/******************************************************************************
 * Conditional jump to label
-*****************************************/
+******************************************************************************/
 static void jump_if(char cond, U32 label, char ljmp)
             /* condition TRUE or FALSE, destination, long jump required */
 {
@@ -4829,9 +4688,9 @@ static void jump_if(char cond, U32 label, char ljmp)
     code_chr('\n');
 }
 
-/***********************************************
+/******************************************************************************
  JUMP to the begining of the switch jump table
-************************************************/
+******************************************************************************/
 static void do_switch(U32 label)
 {
     code_str("\tJMP ");
@@ -4841,11 +4700,10 @@ static void do_switch(U32 label)
     code_chr('\n');
 }
 
-/*************************************************
+/******************************************************************************
 * Build switch compare/jump table.
 * d is the count of switch jump table entries.
-**************************************************/
-
+******************************************************************************/
 static void build_switch(U32 d)
 {
     while(switch_ptr > d) {
@@ -4860,11 +4718,9 @@ static void build_switch(U32 d)
     }
 }
 
-
-/********************************************
+/******************************************************************************
  Load index register with a pointer value
-*********************************************/
-
+******************************************************************************/
 static void index_ptr(U32 token, U32 value, U32 type, U32 offset)
 {
     if(token == INEAX)
@@ -4882,10 +4738,9 @@ static void index_ptr(U32 token, U32 value, U32 type, U32 offset)
     }
 }
 
-/************************************************
+/******************************************************************************
  Load index register with the address of a symbol
-*************************************************/
-
+******************************************************************************/
 static void index_adr(U32 token, U32 value, U32 type, U32 offset)
 {
     if (token != PESI)
@@ -4896,10 +4751,9 @@ static void index_adr(U32 token, U32 value, U32 type, U32 offset)
     }
 }
 
-/**********************************
+/******************************************************************************
 * Output a global code symbol name
-***********************************/
-
+******************************************************************************/
 static void code_global(U32 symbol)
 {
 char *ptr;
@@ -4912,10 +4766,9 @@ char *ptr;
     code_str(ptr);
 }
 
-/**********************************
+/******************************************************************************
 * Output a global data symbol name
-***********************************/
-
+******************************************************************************/
 static void data_global(U32 symbol)
 {
 char *ptr;
@@ -4928,83 +4781,77 @@ char *ptr;
     data_str(ptr);
 }
 
-
-/**********************************************
+/******************************************************************************
  CODE FILE OUTPUT ROUTINES
-***********************************************/
-
+******************************************************************************/
 /* Write a string to the code tmp file */
-
 static void code_str(char *ptr)
 {
-    while(*ptr)
-        fputc(*ptr++, temp_fh);
+  while(*ptr)
+    fputc(*ptr++, temp_fh);
 }
 
-/***************************************
+/******************************************************************************
  Write a char to the code tmp file
-***************************************/
-
+******************************************************************************/
 static void code_chr(char chr)
 {
-    fputc(chr, temp_fh);
+  fputc(chr, temp_fh);
 }
 
-/***************************************
+/******************************************************************************
  Write a number to the code tmp file
-***************************************/
-
+******************************************************************************/
 static void code_num(U32 value)
 {
-    put_num(value, temp_fh);
+  put_num(value, temp_fh);
 }
 
-/***************************************
+/******************************************************************************
  Write a HEX number to the code tmp file
-***************************************/
-
+******************************************************************************/
 static void code_hex(U32 value)
 {
-    put_num(value, temp_fh);
+  put_num(value, temp_fh);
 }
 
-/**********************************************
+/******************************************************************************
  ASM FILE OUTPUT ROUTINES (INITIAL DATA SEG)
-***********************************************/
-
+******************************************************************************/
 /* Write a string to the asm file (all data) */
-
 static void data_str(char *ptr)
 {
-    while(*ptr)
-        fputc(*ptr++, asm_fh);
+  while(*ptr)
+    fputc(*ptr++, asm_fh);
 }
-/* Write a char to the asm file (all data) */
 
+/******************************************************************************
+* Write a char to the asm file (all data)
+******************************************************************************/
 static void data_chr(char chr)
 {
-    fputc(chr, asm_fh);
+  fputc(chr, asm_fh);
 }
 
-/* Write a number to the asm file (data seg) */
-
+/******************************************************************************
+* Write a number to the asm file (data seg)
+******************************************************************************/
 static void data_num(U32 value)
 {
-        put_num(value, asm_fh);
+  put_num(value, asm_fh);
 }
 
-/* Write a HEX BYTE to the asm file (data seg) */
-
+/******************************************************************************
+* Write a HEX BYTE to the asm file (data seg)
+******************************************************************************/
 static void data_byte(U8 value)
 {
-        put_hex(value, asm_fh);
+  put_hex(value, asm_fh);
 }
 
-
-/********************************
+/******************************************************************************
 * Write a number to file
-*********************************/
-
+******************************************************************************/
 static void put_num(U32 value, FILE *outfile)
 {
     char stack[10];
@@ -5023,10 +4870,9 @@ static void put_num(U32 value, FILE *outfile)
         fputc(stack[--i], outfile);
 }
 
-/********************************
+/******************************************************************************
 * Write a hex number to file.
-*********************************/
-
+******************************************************************************/
 static void put_hex(U8 num, FILE *outfile)
 {
     U8 c;
@@ -5043,11 +4889,9 @@ static void put_hex(U8 num, FILE *outfile)
     fputc('h', outfile);
 }
 
-
-/***************************************
+/******************************************************************************
 * Process a language statement
-****************************************/
-
+******************************************************************************/
 static void statement(U32 token)
 {
     U32 a, b, c, d;
@@ -5217,10 +5061,9 @@ static void statement(U32 token)
     }
 }
 
-/*********************************************************
+/******************************************************************************
 * Main compile loop, process statements until end of file
-**********************************************************/
-
+******************************************************************************/
 static void compile(void)
 {
     define_ptr = define_pool;
@@ -5234,17 +5077,15 @@ static void compile(void)
         statement(get_token());
 }
 
-/****************************************************
+/******************************************************************************
 * Initialize I/O & execute compiler  MAIN MAIN MAIN
-*****************************************************/
-
+******************************************************************************/
 void main(S16 argc, char *argv[])
 {
     S16 i;
     char *ptr, *pname;
 
-/* first process any filenames and command line options */
-
+    /* first process any filenames and command line options */
     list_fh = stdout;   /* default the list file */
 
     for(i=1; i < argc; ++i) {   /* start at arg 1 */
@@ -5309,7 +5150,7 @@ void main(S16 argc, char *argv[])
        }
     }
 
-/* Input file not explicitly named errors out */
+    /* Input file not explicitly named errors out */
     if(!source_fh) {                /* default to standard input */
         put_str("C Minus 32 Compiler, Version 2.2\r\n", stdout);
         put_str("Usage: SourceFile [AsmFile] /S /E /G /L /W /Px\r\n", stdout);
@@ -5325,8 +5166,7 @@ void main(S16 argc, char *argv[])
         exit(-1);
         }
 
-/* Output file not explicitly named defaults to Source.asm */
-
+    /* Output file not explicitly named defaults to Source.asm */
     if(!asm_fh) {           /* default asm name to SourceName.asm */
         copystring(asmname, srcname);
         pname=asmname;
@@ -5352,8 +5192,7 @@ void main(S16 argc, char *argv[])
         }
     fASMOpen = TRUE;
 
-/* If -L then List file named Source.LST is generated. */
-
+    /* If -L then List file named Source.LST is generated. */
     if (fList) {
         copystring(lstname, srcname);
         pname=lstname;
@@ -5369,7 +5208,6 @@ void main(S16 argc, char *argv[])
         }
 
     /* open code segment tmp file  or Gen file */
-
     if (fGen) {
         copystring(codename, srcname);
         pname=codename;
