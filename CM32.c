@@ -908,7 +908,6 @@ static char is_digit(char chr)
   return (chr >= '0') && (chr <= '9');
 }
 
-
 /******************************************************************************
 * Test for valid character in a name.
 ******************************************************************************/
@@ -925,15 +924,16 @@ static void copystring(char *dest, char *source)
   while(*dest++ = *source++);
 }
 
-
 /******************************************************************************
 * Test for string equality
 ******************************************************************************/
 static char equal_string(char *str1, char *str2)
 {
-  do {
-      if(*str1 != *str2++)
-      return 0; }
+  do 
+  {
+    if(*str1 != *str2++)
+      return 0; 
+  }
   while(*str1++);
   return -1;
 }
@@ -944,9 +944,13 @@ static char equal_string(char *str1, char *str2)
 ******************************************************************************/
 static char skip_blanks(void)
 {
-  while((*buffin_ptr == ' ') || (*buffin_ptr == 9)
-      || (*buffin_ptr == '\n') || (*buffin_ptr == '\r'))
-      ++buffin_ptr;
+  while (
+         (*buffin_ptr == ' ')  || 
+         (*buffin_ptr == 9)    || 
+         (*buffin_ptr == '\n') || 
+         (*buffin_ptr == '\r')
+        )
+    ++buffin_ptr;
   return *buffin_ptr;
 }
 
@@ -957,10 +961,10 @@ static long more_parms(void)
 {
   register char c;
 
-  if(((c = skip_blanks()) == ',') || (c == ')'))
-      ++buffin_ptr;
+  if (((c = skip_blanks()) == ',') || (c == ')'))
+    ++buffin_ptr;
   else
-      line_error("Invalid macro parameter");
+    line_error("Invalid macro parameter");
   return c == ',';
 }
 
@@ -972,23 +976,27 @@ static void skip_comment(void)
   register U16  x;
   register char c;
 
-    x = 0;
-    for (;;) {
-        if (!(c = *buffin_ptr++)) {                 /* end of line_in */
-            if (!fgets(buffin_ptr = buffer, LINE_MAX, source_fh)) {
-                *buffin_ptr = 0;
-                UTC_error();
-                return;
-            }
-            ++line_number;
-        }
-        else {
-            if ((x = (x << 8) + c) == (('*' << 8) + '/'))   /* close */
-                return;
-            if (x == (('/' << 8) + '*'))                /* imbedded comment */
-                skip_comment();
-        }
+  x = 0;
+  for (;;) 
+  {
+    if (!(c = *buffin_ptr++)) /* end of line_in */ 
+    {
+      if (!fgets(buffin_ptr = buffer, LINE_MAX, source_fh))
+      {
+        *buffin_ptr = 0;
+        UTC_error();
+        return;
+      }
+      ++line_number;
     }
+    else
+    {
+      if ((x = (x << 8) + c) == (('*' << 8) + '/'))   /* close */
+        return;
+      if (x == (('/' << 8) + '*'))                /* imbedded comment */
+        skip_comment();
+    }
+  }
 }
 
 /******************************************************************************
@@ -997,7 +1005,7 @@ static void skip_comment(void)
 static void copy_name(void)
 {
   do
-      *buffout_ptr++ = *buffin_ptr++;
+    *buffout_ptr++ = *buffin_ptr++;
   while(is_alnum(*buffin_ptr));
   *buffout_ptr = 0;
 }
@@ -1010,15 +1018,21 @@ static void copy_string(void)
 {
   register char delim;
 
-  if(((delim = *buffin_ptr) == '"') || (delim == 0x27)) {
-      do {
-          if(!(*buffout_ptr++ = *buffin_ptr)) {       /* premature end */
-              line_error("Unterminated string");
-              return; }
-          if(*buffin_ptr++ == '\\')               /* protected char */
-              *buffout_ptr++ = *buffin_ptr++; }
-      while(*buffin_ptr != delim);
-      *buffout_ptr++ = *buffin_ptr++; }
+  if (((delim = *buffin_ptr) == '"') || (delim == 0x27)) 
+  {
+    do 
+    {
+      if(!(*buffout_ptr++ = *buffin_ptr)) /* premature end */
+      {       
+        line_error("Unterminated string");
+        return;
+      }
+      if(*buffin_ptr++ == '\\')               /* protected char */
+        *buffout_ptr++ = *buffin_ptr++; 
+    }
+    while(*buffin_ptr != delim);
+      *buffout_ptr++ = *buffin_ptr++; 
+  }
 }
 
 /******************************************************************************
@@ -1032,10 +1046,10 @@ static U32 lookup_macro(char eflag)
   name = buffout_ptr;
   copy_name();
   for(i = macro - 1; i >= 0; --i)         /* look it up */
-      if(!strcmp(name, define_index[i]))
-          return i;
+    if(!strcmp(name, define_index[i]))
+      return i;
   if(eflag)                               /* not found */
-      line_error("Undefined macro");
+    line_error("Undefined macro");
   return -1;
 }
 
@@ -1049,30 +1063,42 @@ static void resolve_macro(void)
   register char c;
 
   old_ptr = buffout_ptr;
-  if((i = lookup_macro(0)) != -1) {   /* Substitution required */
-      mptr = define_index[i];
-      while(*mptr++);
-      parm = 0;
-      parm_ptr = parm_pool;
-      if(*mptr++) {                   /* parameterized macro */
-          if(skip_blanks() == '(') {
-              ++buffin_ptr;
-              do {
-                  parm_index[parm++] = parm_ptr;
-                  while(*buffin_ptr && (*buffin_ptr != ',') && (*buffin_ptr != ')'))
-                      *parm_ptr++ = *buffin_ptr++;
-                  *parm_ptr++ = 0; }
-              while(more_parms()); } }
-      while(c = *mptr) {              /* copy over definition */
-          if(c & 0x80) {              /* parameter substitution */
-              if((i = c & 0x7f) < parm) {
-                  for(ptr = parm_index[i]; *ptr; ++ptr)
-                      *old_ptr++ = *ptr; } }
-          else
-              *old_ptr++ = *mptr;
-          ++mptr;
+  if((i = lookup_macro(0)) != -1) /* Substitution required */
+  {   
+    mptr = define_index[i];
+    while(*mptr++);
+    parm = 0;
+    parm_ptr = parm_pool;
+    if(*mptr++) /* parameterized macro */
+    {                   
+      if(skip_blanks() == '(') 
+      {
+        ++buffin_ptr;
+        do
+        {
+          parm_index[parm++] = parm_ptr;
+          while(*buffin_ptr && (*buffin_ptr != ',') && (*buffin_ptr != ')'))
+            *parm_ptr++ = *buffin_ptr++;
+          *parm_ptr++ = 0;
+        }
+        while(more_parms()); 
+      } 
+    }
+    while(c = *mptr) /* copy over definition */ 
+    {
+      if(c & 0x80) /* parameter substitution */ 
+      {              
+        if ((i = c & 0x7f) < parm)
+        {
+          for (ptr = parm_index[i]; *ptr; ++ptr)
+            *old_ptr++ = *ptr; 
+        } 
       }
-      *(buffout_ptr = old_ptr) = 0;
+      else
+        *old_ptr++ = *mptr;
+        ++mptr;
+    }
+    *(buffout_ptr = old_ptr) = 0;
   }
 }
 
@@ -1085,10 +1111,10 @@ static unsigned long match(char *ptr)
 
   ptr1 = buffin_ptr;
   while(*ptr)
-      if(*ptr++ != *ptr1++)       /* symbols do not match */
-          return 0;
-  if(is_alnum(*ptr1))         /* symbol continues */
+    if(*ptr++ != *ptr1++)     /* symbols do not match */
       return 0;
+  if(is_alnum(*ptr1))         /* symbol continues */
+    return 0;
   buffin_ptr = ptr1;
   skip_blanks();
   return(1);
@@ -1106,47 +1132,53 @@ static int compareT(char *ptable, int peep)
   int i;
   char *ptr1, *ptr2, c;
 
-  for(i=0; i < OSYMBOLS; ++i)
-      symbols[i][0] = 0;
+  for (i=0; i < OSYMBOLS; ++i)
+    symbols[i][0] = 0;
 
   ptr1 = peep_buffer[peep];
-  while(c = *ptable) {            /* any chars left in entry? */
-      if(c == '\n') {             /* end of line in table entry */
-          if(*ptr1)               /* and no match... */
-              return 0;
-          peep = (peep+1) % OBUF_SIZE;
-          if(peep == peep_next)
-              return 0;
-          ptr1 = peep_buffer[peep];   /* next buffer entry */
+  while (c = *ptable) /* any chars left in entry? */ 
+  {
+    if (c == '\n')   /* end of line in table entry */ 
+    {
+      if (*ptr1)     /* and no match... */
+        return 0;
+      peep = (peep+1) % OBUF_SIZE;
+      if(peep == peep_next)
+        return 0;
+      ptr1 = peep_buffer[peep];   /* next buffer entry */
+    }
+    else if (c == ' ') /* space */ 
+    {       
+      if (!isspace(*ptr1))
+        return 0;
+      while(isspace(*ptr1))
+              ++ptr1;
+    }
+    else if(c & 0x80) /* symbol name */ 
+    {
+      c = *(ptable + 1);
+      ptr2 = symbols[*ptable & 0x7f];
+      if (*ptr2)
+      {
+        while (*ptr1 && (*ptr1 != c))
+          if(*ptr1++ != *ptr2++)
+            return 0;
+        if(*ptr2)
+          return 0; 
       }
-      else if (c == ' ')  {       /* space */
-          if(!isspace(*ptr1))
-              return 0;
-          while(isspace(*ptr1))
-              ++ptr1; }
-      else if(c & 0x80) {         /* symbol name */
-
-          c = *(ptable + 1);
-
-          ptr2 = symbols[*ptable & 0x7f];
-          if(*ptr2) {
-              while(*ptr1 && (*ptr1 != c))
-                  if(*ptr1++ != *ptr2++)
-                      return 0;
-              if(*ptr2)
-                  return 0; }
-          else {                          /* new symbol */
-              while(*ptr1 && (*ptr1 != c))
-                  *ptr2++ = *ptr1++;
-              *ptr2 = 0; } }
-
-      else if(c != *ptr1++) return 0;     /* normal character */
-
-      ++ptable;
+      else
+      { /* new symbol */
+        while (*ptr1 && (*ptr1 != c))
+          *ptr2++ = *ptr1++;
+        *ptr2 = 0; 
+      }
+    }
+    else if (c != *ptr1++) 
+      return 0;     /* normal character */
+    ++ptable;
   }
   return (*ptr1) ? 0 : peep + 1;
 }
-
 
 /******************************************************************************
 * Exchange new code for old code in the peephole buffer.
@@ -1159,18 +1191,24 @@ static void exchange(unsigned old, char *pnew)
 
   peep_first = (old+(OBUF_SIZE-1)) % OBUF_SIZE;  /* last entry of replacement */
   ptr2 = peep_buffer[peep_first];
-  while(*pnew) {                      /* while still some new stuff left */
-      if(*pnew & 0x80) {              /* output a symbol */
-          ptr1 = symbols[*pnew & 0x7f];   /* ptr1 points to a symbol */
-          while(*ptr1)
-              *ptr2++ = *ptr1++; }
-      else if(*pnew == '\n') {        /* end of a new entry */
-          *ptr2 = 0;                  /* put null at end of line */
-          peep_first = (peep_first+(OBUF_SIZE-1)) % OBUF_SIZE;
-          ptr2 = peep_buffer[peep_first]; }
-      else
-          *ptr2++ = *pnew;
-      ++pnew; }
+  while(*pnew)  /* while still some new stuff left */ 
+  {
+    if(*pnew & 0x80) /* output a symbol */ 
+    {              
+      ptr1 = symbols[*pnew & 0x7f];   /* ptr1 points to a symbol */
+      while(*ptr1)
+        *ptr2++ = *ptr1++; 
+    }
+    else if(*pnew == '\n') /* end of a new entry */ 
+    {
+      *ptr2 = 0;                  /* put null at end of line */
+      peep_first = (peep_first+(OBUF_SIZE-1)) % OBUF_SIZE;
+      ptr2 = peep_buffer[peep_first];
+    }
+    else
+      *ptr2++ = *pnew;
+    ++pnew; 
+  }
   *ptr2 = 0;
 }
 
@@ -1180,22 +1218,22 @@ static void exchange(unsigned old, char *pnew)
 ******************************************************************************/
 static long read_line(void)
 {
-char c, *sptr;
+  char c, *sptr;
 
-  if(fgets(peep_buffer[peep_next], OLINE_SIZE, temp_fh)) {
-
-      /*strip CR/LF from line */
-      sptr = &(peep_buffer[peep_next]);
-
-      while (c = *sptr) {
-          if (c == '\r') *sptr = '\0';
-          if (c == '\n') *sptr = '\0';
+  if(fgets(peep_buffer[peep_next], OLINE_SIZE, temp_fh))
+  {
+    /* strip CR/LF from line */
+    sptr = &(peep_buffer[peep_next]);
+    while (c = *sptr)
+    {
+      if (c == '\r') *sptr = '\0';
+        if (c == '\n') *sptr = '\0';
           sptr++;
-      }
+    }
 
-      /* next peep_buf entry please... */
-      peep_next = (peep_next+1) % OBUF_SIZE;
-      return 1;
+    /* next peep_buf entry please... */
+    peep_next = (peep_next+1) % OBUF_SIZE;
+    return 1;
   }
   return 0;
 }
@@ -1206,14 +1244,14 @@ char c, *sptr;
 static void write_line(void)
 {
   if (fGen)
-      fputs(peep_buffer[peep_first], code_fh);
+    fputs(peep_buffer[peep_first], code_fh);
   else
-      fputs(peep_buffer[peep_first], asm_fh);
+    fputs(peep_buffer[peep_first], asm_fh);
   peep_first = (peep_first + 1) % OBUF_SIZE;
   if (fGen)
-      fputs("\n", code_fh);
+    fputs("\n", code_fh);
   else
-      fputs("\n", asm_fh);
+    fputs("\n", asm_fh);
 }
 
 
@@ -1226,35 +1264,34 @@ static void optimize(void)
   char *ptr;
 
   if (!fQuiet)
-      fputs("CM32 V2.2 optimizer phase\r\n", stdout);
-
+    fputs("CM32 V2.2 optimizer phase\r\n", stdout);
   /* initially fill every line in peephole buffer */
-
   j = 0;
-
-  for(;;) {
-          /* keep buffer full! */
-      while ( ((peep_next+1) % OBUF_SIZE) != peep_first ) {
-          if (!read_line()) {
-              break;
-          }
+  for(;;) 
+  {
+    /* keep buffer full! */
+    while (((peep_next+1) % OBUF_SIZE) != peep_first)
+    {
+      if (!read_line())
+      {
+        break;
       }
-      /* walk thru the whole peep_table and see if we have
-          matches in the peep_buffer  */
-
-      for(i=0; ptr = peep_table[i]; i += 2) {
-
-          j = compareT(ptr, peep_first);
-
-          if(j) {                         /* we have a match, exchange it */
-              exchange(j, peep_table[i+1]);
-              break;                      /* break to fill buffer again */
-          }
+    }
+    /* walk thru the whole peep_table and see if we have
+       matches in the peep_buffer  */
+    for(i = 0; ptr = peep_table[i]; i += 2) 
+    {
+      j = compareT(ptr, peep_first);
+      if(j) /* we have a match, exchange it */ 
+      {                         
+        exchange(j, peep_table[i+1]);
+        break;                      /* break to fill buffer again */
       }
-      if(!j) write_line();        /* no matches, flush this line */
-
-      if (peep_first == peep_next)
-          return;                 /* We are done! */
+    }
+    if(!j) /* no matches, flush this line */
+      write_line();           
+    if (peep_first == peep_next)
+      return;                   /* We are done! */
   }
 }
 
