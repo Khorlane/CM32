@@ -174,7 +174,7 @@
     This cuts searching and comparison down to less than 4 compares
     worst case, 2 on the average!
 */
-static unsigned char itoken[128] = 
+static unsigned char itoken[128] =
 {
         0,   0,   0,   0,   0,   0,   0,   0,    /* 00 - 07  */
         0,   0,   0,   0,   0,   0,   0,   0,    /* 08 - 15  */
@@ -194,7 +194,7 @@ static unsigned char itoken[128] =
         0,   0,   0,  70,  71,  74,  75,   0     /* 120- 127 */
 };
 
-static char *tokens[] = 
+static char *tokens[] =
 {
 /* token         number  priority  optype  ASCII */
     "",          /* 00       0       0        0  */
@@ -360,7 +360,7 @@ static char *tokens[] =
    Position in array is token number, while value
    in that position is priority. (15 is highest)
 */
-static char priority[] = 
+static char priority[] =
 {
   0,   9,  0,  2, 13,  5,  2,  8,    /* 00 - 07 */
   0,   0,  2, 13, 15,  2, 12,  0,    /* 08 - 15 */
@@ -387,7 +387,7 @@ static char priority[] =
    Logical operators are not included. They are handled
    separately in the code (numbered as 4).
 */
-static char optype[] = 
+static char optype[] =
 {
   0,  2,  1,  3,  2,  4,  3,  2,     /* 00 - 07 */
   0,  0,  3,  2,  0,  3,  2,  0,     /* 08 - 15 */
@@ -429,7 +429,7 @@ U32  gvalue;
 char GPool[GBUFFSIZE];  /* Pool for symbol names (packed) */
 char LPool[LBUFFSIZE];  /* Pool for local symbol names (packed) */
 
-struct sym 
+struct sym
 {
     U32 type;       /* 32 symbol type bits  */
     U16 itypedef;   /* index in symtab for type definition, or zero */
@@ -486,7 +486,7 @@ char literal_pool[LITER_BUFF];
    When accessing the data pointed to, if this is NON-zero,
    we use the [ESI+NUM] addressing mode (Base+Offset). */
 
-struct expr 
+struct expr
 {
   U32 token;      /* Number, Symbol, String, In-Accumulator, etc. */
   U32 value;      /* varies depending on token */
@@ -631,7 +631,7 @@ char zero_flag,
  4) Linefeeds (\n) should end each except for the last entry of a line.
 ******************************************************************************/
 
-char *peep_table[] = 
+char *peep_table[] =
 {
   /* 80386/80486 Optimizations */
 
@@ -921,7 +921,7 @@ static char is_alnum(char c)
 ******************************************************************************/
 static void copystring(char *dest, char *source)
 {
-  while(*dest++ = *source++);
+  while (*dest++ = *source++);
 }
 
 /******************************************************************************
@@ -929,12 +929,12 @@ static void copystring(char *dest, char *source)
 ******************************************************************************/
 static char equal_string(char *str1, char *str2)
 {
-  do 
+  do
   {
-    if(*str1 != *str2++)
-      return 0; 
+    if (*str1 != *str2++)
+      return 0;
   }
-  while(*str1++);
+  while (*str1++);
   return -1;
 }
 
@@ -945,9 +945,9 @@ static char equal_string(char *str1, char *str2)
 static char skip_blanks(void)
 {
   while (
-         (*buffin_ptr == ' ')  || 
-         (*buffin_ptr == 9)    || 
-         (*buffin_ptr == '\n') || 
+         (*buffin_ptr == ' ')  ||
+         (*buffin_ptr == 9)    ||
+         (*buffin_ptr == '\n') ||
          (*buffin_ptr == '\r')
         )
     ++buffin_ptr;
@@ -977,9 +977,9 @@ static void skip_comment(void)
   register char c;
 
   x = 0;
-  for (;;) 
+  for (;;)
   {
-    if (!(c = *buffin_ptr++)) /* end of line_in */ 
+    if (!(c = *buffin_ptr++)) /* end of line_in */
     {
       if (!fgets(buffin_ptr = buffer, LINE_MAX, source_fh))
       {
@@ -1006,7 +1006,7 @@ static void copy_name(void)
 {
   do
     *buffout_ptr++ = *buffin_ptr++;
-  while(is_alnum(*buffin_ptr));
+  while (is_alnum(*buffin_ptr));
   *buffout_ptr = 0;
 }
 
@@ -1018,20 +1018,20 @@ static void copy_string(void)
 {
   register char delim;
 
-  if (((delim = *buffin_ptr) == '"') || (delim == 0x27)) 
+  if (((delim = *buffin_ptr) == '"') || (delim == 0x27))
   {
-    do 
+    do
     {
-      if(!(*buffout_ptr++ = *buffin_ptr)) /* premature end */
-      {       
+      if (!(*buffout_ptr++ = *buffin_ptr))       /* premature end */
+      {
         line_error("Unterminated string");
         return;
       }
-      if(*buffin_ptr++ == '\\')               /* protected char */
-        *buffout_ptr++ = *buffin_ptr++; 
+      if (*buffin_ptr++ == '\\')                 /* protected char */
+        *buffout_ptr++ = *buffin_ptr++;
     }
-    while(*buffin_ptr != delim);
-      *buffout_ptr++ = *buffin_ptr++; 
+    while (*buffin_ptr != delim);
+      *buffout_ptr++ = *buffin_ptr++;
   }
 }
 
@@ -1045,10 +1045,10 @@ static U32 lookup_macro(char eflag)
 
   name = buffout_ptr;
   copy_name();
-  for(i = macro - 1; i >= 0; --i)         /* look it up */
-    if(!strcmp(name, define_index[i]))
+  for (i = macro - 1; i >= 0; --i)               /* look it up */
+    if (!strcmp(name, define_index[i]))
       return i;
-  if(eflag)                               /* not found */
+  if (eflag)                                     /* not found */
     line_error("Undefined macro");
   return -1;
 }
@@ -1063,40 +1063,40 @@ static void resolve_macro(void)
   register char c;
 
   old_ptr = buffout_ptr;
-  if((i = lookup_macro(0)) != -1) /* Substitution required */
-  {   
+  if ((i = lookup_macro(0)) != -1)               /* Substitution required */
+  {
     mptr = define_index[i];
-    while(*mptr++);
+    while (*mptr++);
     parm = 0;
     parm_ptr = parm_pool;
-    if(*mptr++) /* parameterized macro */
-    {                   
-      if(skip_blanks() == '(') 
+    if (*mptr++)                                 /* parameterized macro */
+    {
+      if (skip_blanks() == '(')
       {
         ++buffin_ptr;
         do
         {
           parm_index[parm++] = parm_ptr;
-          while(*buffin_ptr && (*buffin_ptr != ',') && (*buffin_ptr != ')'))
+          while (*buffin_ptr && (*buffin_ptr != ',') && (*buffin_ptr != ')'))
             *parm_ptr++ = *buffin_ptr++;
           *parm_ptr++ = 0;
         }
-        while(more_parms()); 
-      } 
+        while (more_parms());
+      }
     }
-    while(c = *mptr) /* copy over definition */ 
+    while (c = *mptr)                            /* copy over definition */
     {
-      if(c & 0x80) /* parameter substitution */ 
-      {              
+      if (c & 0x80)                              /* parameter substitution */
+      {
         if ((i = c & 0x7f) < parm)
         {
           for (ptr = parm_index[i]; *ptr; ++ptr)
-            *old_ptr++ = *ptr; 
-        } 
+            *old_ptr++ = *ptr;
+        }
       }
       else
         *old_ptr++ = *mptr;
-        ++mptr;
+      ++mptr;
     }
     *(buffout_ptr = old_ptr) = 0;
   }
@@ -1110,10 +1110,10 @@ static unsigned long match(char *ptr)
   register char *ptr1;
 
   ptr1 = buffin_ptr;
-  while(*ptr)
-    if(*ptr++ != *ptr1++)     /* symbols do not match */
+  while (*ptr)
+    if (*ptr++ != *ptr1++)                       /* symbols do not match */
       return 0;
-  if(is_alnum(*ptr1))         /* symbol continues */
+  if (is_alnum(*ptr1))                           /* symbol continues */
     return 0;
   buffin_ptr = ptr1;
   skip_blanks();
@@ -1132,49 +1132,48 @@ static int compareT(char *ptable, int peep)
   int i;
   char *ptr1, *ptr2, c;
 
-  for (i=0; i < OSYMBOLS; ++i)
+  for (i = 0; i < OSYMBOLS; ++i)
     symbols[i][0] = 0;
-
   ptr1 = peep_buffer[peep];
-  while (c = *ptable) /* any chars left in entry? */ 
+  while (c = *ptable)                            /* any chars left in entry? */
   {
-    if (c == '\n')   /* end of line in table entry */ 
+    if (c == '\n')                               /* end of line in table entry */
     {
-      if (*ptr1)     /* and no match... */
+      if (*ptr1)                                 /* and no match... */
         return 0;
       peep = (peep+1) % OBUF_SIZE;
-      if(peep == peep_next)
+      if (peep == peep_next)
         return 0;
-      ptr1 = peep_buffer[peep];   /* next buffer entry */
+      ptr1 = peep_buffer[peep];                  /* next buffer entry */
     }
-    else if (c == ' ') /* space */ 
-    {       
+    else if (c == ' ')                           /* space */
+    {
       if (!isspace(*ptr1))
         return 0;
-      while(isspace(*ptr1))
-              ++ptr1;
+      while (isspace(*ptr1))
+        ++ptr1;
     }
-    else if(c & 0x80) /* symbol name */ 
+    else if (c & 0x80)                           /* symbol name */
     {
       c = *(ptable + 1);
       ptr2 = symbols[*ptable & 0x7f];
       if (*ptr2)
       {
         while (*ptr1 && (*ptr1 != c))
-          if(*ptr1++ != *ptr2++)
+          if (*ptr1++ != *ptr2++)
             return 0;
-        if(*ptr2)
-          return 0; 
+        if (*ptr2)
+          return 0;
       }
-      else
-      { /* new symbol */
+      else                                       /* new symbol */
+      {                                       
         while (*ptr1 && (*ptr1 != c))
           *ptr2++ = *ptr1++;
-        *ptr2 = 0; 
+        *ptr2 = 0;
       }
     }
-    else if (c != *ptr1++) 
-      return 0;     /* normal character */
+    else if (c != *ptr1++)
+      return 0;                                  /* normal character */
     ++ptable;
   }
   return (*ptr1) ? 0 : peep + 1;
@@ -1191,23 +1190,23 @@ static void exchange(unsigned old, char *pnew)
 
   peep_first = (old+(OBUF_SIZE-1)) % OBUF_SIZE;  /* last entry of replacement */
   ptr2 = peep_buffer[peep_first];
-  while(*pnew)  /* while still some new stuff left */ 
+  while (*pnew)                                  /* while still some new stuff left */
   {
-    if(*pnew & 0x80) /* output a symbol */ 
-    {              
-      ptr1 = symbols[*pnew & 0x7f];   /* ptr1 points to a symbol */
-      while(*ptr1)
-        *ptr2++ = *ptr1++; 
-    }
-    else if(*pnew == '\n') /* end of a new entry */ 
+    if (*pnew & 0x80)                            /* output a symbol */
     {
-      *ptr2 = 0;                  /* put null at end of line */
+      ptr1 = symbols[*pnew & 0x7f];              /* ptr1 points to a symbol */
+      while (*ptr1)
+        *ptr2++ = *ptr1++;
+    }
+    else if (*pnew == '\n')                      /* end of a new entry */
+    {
+      *ptr2 = 0;                                 /* put null at end of line */
       peep_first = (peep_first+(OBUF_SIZE-1)) % OBUF_SIZE;
       ptr2 = peep_buffer[peep_first];
     }
     else
       *ptr2++ = *pnew;
-    ++pnew; 
+    ++pnew;
   }
   *ptr2 = 0;
 }
@@ -1220,7 +1219,7 @@ static long read_line(void)
 {
   char c, *sptr;
 
-  if(fgets(peep_buffer[peep_next], OLINE_SIZE, temp_fh))
+  if (fgets(peep_buffer[peep_next], OLINE_SIZE, temp_fh))
   {
     /* strip CR/LF from line */
     sptr = &(peep_buffer[peep_next]);
@@ -1230,7 +1229,6 @@ static long read_line(void)
         if (c == '\n') *sptr = '\0';
           sptr++;
     }
-
     /* next peep_buf entry please... */
     peep_next = (peep_next+1) % OBUF_SIZE;
     return 1;
@@ -1267,7 +1265,7 @@ static void optimize(void)
     fputs("CM32 V2.2 optimizer phase\r\n", stdout);
   /* initially fill every line in peephole buffer */
   j = 0;
-  for(;;) 
+  for (;;)
   {
     /* keep buffer full! */
     while (((peep_next+1) % OBUF_SIZE) != peep_first)
@@ -1279,17 +1277,17 @@ static void optimize(void)
     }
     /* walk thru the whole peep_table and see if we have
        matches in the peep_buffer  */
-    for(i = 0; ptr = peep_table[i]; i += 2) 
+    for (i = 0; ptr = peep_table[i]; i += 2)
     {
       j = compareT(ptr, peep_first);
-      if(j) /* we have a match, exchange it */ 
-      {                         
+      if (j) /* we have a match, exchange it */
+      {
         exchange(j, peep_table[i+1]);
         break;                      /* break to fill buffer again */
       }
     }
-    if(!j) /* no matches, flush this line */
-      write_line();           
+    if (!j) /* no matches, flush this line */
+      write_line();
     if (peep_first == peep_next)
       return;                   /* We are done! */
   }
@@ -1307,235 +1305,245 @@ static long readline(void)
   U32 i;
   char c, ch, fgotone;
 
-  for(;;) {
-    if(!fgets(buffin_ptr = buffer, LINE_MAX, source_fh))
+  for (;;)
+  {
+    if (!fgets(buffin_ptr = buffer, LINE_MAX, source_fh))
     {
-        if(include)
-        {
-            fclose(source_fh);
-            line_number = incl_line[--include];
-            source_fh = incl_fh[include];
-            continue;
-        }
-        return 0;
+      if (include)
+      {
+        fclose(source_fh);
+        line_number = incl_line[--include];
+        source_fh = incl_fh[include];
+        continue;
+      }
+      return 0;
     }       /* no more lines... */
-
     ++line_number;
     buffout_ptr = line_in;
-
     fgotone = 0;
-
-    if ((ch = skip_blanks()) == '#') 
+    if ((ch = skip_blanks()) == '#')
     {
-
-        if(match("#asm"))
-        {                               /* if inline assembly */
-            asm_flag = -1;
-            fgotone = -1;
+      if (match("#asm"))
+      {                                          /* if inline assembly */
+        asm_flag = -1;
+        fgotone = -1;
+      }
+      else if (match("#endasm"))
+      {                                          /* end of assembly */
+        asm_flag = 0;
+        fgotone = -1;
+      }
+      else if (match("#ifdef"))
+      {                                          /* if macro defined */
+        fgotone = -1;
+        if (if_flag)
+          ++if_flag;                             /* one deeper */
+        else if (lookup_macro(0) == -1)
+        {
+          if_flag = 0x80;
         }
-
-        else if(match("#endasm")) 
-        {                               /* end of assembly */
-            asm_flag = 0;
-            fgotone = -1;
+      }
+      else if (match("#ifndef"))
+      {                                          /* if macro not defined */
+        fgotone = -1;
+        if (if_flag)
+          ++if_flag;
+        else if (lookup_macro(0) != -1)
+        {
+          if_flag = 0x80;
         }
+      }
+      else if (match("#else"))
+      {                                          /* reverse condition */
+        fgotone = -1;
+        if (!(if_flag & 0x7f))                   /* not nested? */
+          if_flag ^= 0x80;
+        }                                        /* XOR high bit */
 
-        else if(match("#ifdef"))
-        {                               /* if macro defined */
-            fgotone = -1;
-            if(if_flag)
-                ++if_flag;                  /* one deeper */
-            else if(lookup_macro(0) == -1)
-            {
-                if_flag = 0x80;
-            }
-        }
-
-        else if(match("#ifndef"))
-        {           /* if macro not defined */
-            fgotone = -1;
-            if(if_flag)
-                ++if_flag;
-            else if(lookup_macro(0) != -1)
-            {
-                    if_flag = 0x80;
-            }
-        }
-
-        else if(match("#else"))
-        {           /* reverse condition */
-            fgotone = -1;
-            if(!(if_flag & 0x7f))           /* not nested? */
-                if_flag ^= 0x80;
-        }                                   /* XOR high bit */
-
-        else if(match("#endif"))
-        {                                   /* end conditional */
-            fgotone = -1;
-            if(if_flag & 0x7f)              /* if nested, reduce one */
-                --if_flag;
-            else
-                if_flag = 0;
-        }               /* else it's over */
-
-        else if(match("#pragma"))
+        else if (match("#endif"))
+        {                                        /* end conditional */
+          fgotone = -1;
+          if (if_flag & 0x7f)                    /* if nested, reduce one */
+            --if_flag;
+          else
+            if_flag = 0;
+        }                                        /* else it's over */
+        else if (match("#pragma"))
         {       /* later... */
                 fgotone = -1;
         }
     }
-
-        /* If we got here, we have found # and it's not
-           a conditional, so it must be a new macro.
-        */
-
+    /* If we got here, we have found # and it's not
+        a conditional, so it must be a new macro.
+    */
     if ((!fgotone) && (!if_flag))
     {
-        if (ch == '#')
+      if (ch == '#')
+      {
+        if (match("#define"))                    /* define a new macro */ 
         {
-            if(match("#define")) {          /* define a new macro */
-                if(macro >= MACROS) {
-                    fatal_error("Too many macro definitions");
-                    exit(-1); }
-                buffout_ptr = define_index[macro++] = define_ptr;
-                if(!is_alpha(*buffin_ptr)) {
-                    line_error("Invalid macro name");
-                    continue; }
-                copy_name();                /* get macro name */
-                define_ptr = buffout_ptr;
-                *define_ptr++ = 0;
-                parm = 0;
-                parm_ptr = parm_pool;
-                if(*buffin_ptr == '(') {    /* parameterized macro */
-                    *define_ptr++ = 1;
-                    ++buffin_ptr;
-                    do {
-                        if(parm >= PARAMETERS) {
-                            line_error("Too many macro parameters");
-                            break; }
-                        parm_index[parm++] = buffout_ptr = parm_ptr;
-                        skip_blanks();
-                        copy_name();
-                        parm_ptr = buffout_ptr+1; }
-                    while(more_parms()); }
-                else
-                    *define_ptr++ = 0;
-                skip_blanks();
-                while(c = *buffin_ptr) {
-                    buffout_ptr = define_ptr;
-                    if(is_alpha(c)) {
-                        resolve_macro();
-                        for(i=0; i < parm; ++i) {
-                            if(!strcmp(define_ptr, parm_index[i])) {
-                                *define_ptr++ =  i + 0x80;
-                                buffout_ptr = define_ptr;
-                                break; } }
-                        define_ptr = buffout_ptr; }
-                    else if((c == '"') || (c == 0x27)) {
-                        copy_string();
-                        define_ptr = buffout_ptr; }
-                    else {
-                        if((*++buffin_ptr == '*') && (c == '/')) {
-                            ++buffin_ptr;
-                            begin_comment = line_number;
-                            skip_comment(); }
-                        else
-                            *define_ptr++ = c; }
-                    /* skip_blanks(); */
-                }
-                *define_ptr++ = 0; }
-
-            else if(match("#undef"))
-            {           /* undefine a macro */
-                if((i = lookup_macro(-1)) != -1)
-                {
-                    if(i == (macro - 1))        /* last one, simple delete */
-                        define_ptr = define_index[i];
-                    else
-                    {                       /* not last, reclaim space */
-                        define_ptr -= (parm = (buffin_ptr = define_index[i+1]) -
-                            (parm_ptr = define_index[i]));
-                        while(parm_ptr < define_ptr)
-                            *parm_ptr++ = *buffin_ptr++;
-                        while(i < macro)
-                        {       /* adjust index list */
-                            define_index[i] = define_index[i+1] - parm;
-                            ++i;
-                        }
-                    }
-                    --macro;
-                }
+          if (macro >= MACROS) 
+          {
+            fatal_error("Too many macro definitions");
+            exit(-1); 
+          }
+          buffout_ptr = define_index[macro++] = define_ptr;
+          if (!is_alpha(*buffin_ptr))
+          {
+            line_error("Invalid macro name");
+            continue;
+          }
+          copy_name();                           /* get macro name */
+          define_ptr = buffout_ptr;
+          *define_ptr++ = 0;
+          parm = 0;
+          parm_ptr = parm_pool;
+          if (*buffin_ptr == '(')                /* parameterized macro */ 
+          {
+            *define_ptr++ = 1;
+            ++buffin_ptr;
+            do
+            {
+              if (parm >= PARAMETERS)
+              {
+                line_error("Too many macro parameters");
+                break;
+              }
+              parm_index[parm++] = buffout_ptr = parm_ptr;
+              skip_blanks();
+              copy_name();
+              parm_ptr = buffout_ptr+1; 
             }
-            else if(match("#include"))
-            {       /* include a file */
-                if(include >= INCL_DEPTH)
-                    fatal_error("Too many include files");
-                if((c = skip_blanks()) == '<')
-                {   /* incdir definition */
-                    for(parm_ptr = incdir; *parm_ptr; ++parm_ptr)
-                        *buffout_ptr++ = *parm_ptr;
-                    *buffout_ptr++ = '\\';          /*** OS dependent!!! ***/
-                    c = '>';
-                }
-                else if(c != '"')
-                {                   /* current directory */
-                    line_error("Invalid include file name");
-                    continue;
-                }
-                while(*++buffin_ptr && (*buffin_ptr != c))
-                    *buffout_ptr++ = *buffin_ptr;
-                *buffout_ptr = 0;
-                incl_fh[include] = source_fh;
-                incl_line[include] = line_number;
-                if(source_fh = fopen(line_in, "r"))
-                {
-                    line_number = 0;
-                    ++include;
-                }
-                else
-                {
-                    line_error("Cannot open include file");
-                    source_fh = incl_fh[include];
-                }
+            while (more_parms());
+          }
+          else
+            *define_ptr++ = 0;
+        skip_blanks();
+        while (c = *buffin_ptr)
+        {
+          buffout_ptr = define_ptr;
+          if (is_alpha(c))
+          {
+            resolve_macro();
+            for (i = 0; i < parm; ++i)
+            {
+              if (!strcmp(define_ptr, parm_index[i]))
+              {
+                *define_ptr++ =  i + 0x80;
+                buffout_ptr = define_ptr;
+                break; 
+              }
+            }
+            define_ptr = buffout_ptr;
+          }
+          else if ((c == '"') || (c == 0x27))
+          {
+            copy_string();
+            define_ptr = buffout_ptr; 
+          }
+          else
+          {
+            if ((*++buffin_ptr == '*') && (c == '/'))
+            {
+              ++buffin_ptr;
+              begin_comment = line_number;
+              skip_comment(); 
             }
             else
-                line_error("Unknown preprocessor directive");
-
+              *define_ptr++ = c; 
+          }                                      /* skip_blanks(); */
+        }
+        *define_ptr++ = 0; }
+        else if (match("#undef"))
+        {                                        /* undefine a macro */
+          if ((i = lookup_macro(-1)) != -1)
+          {
+            if (i == (macro - 1))                /* last one, simple delete */
+              define_ptr = define_index[i];
+            else
+            {                                    /* not last, reclaim space */
+              define_ptr -= (parm = (buffin_ptr = define_index[i+1]) -
+                            (parm_ptr = define_index[i]));
+              while (parm_ptr < define_ptr)
+                *parm_ptr++ = *buffin_ptr++;
+              while (i < macro)
+              {                                  /* adjust index list */
+                define_index[i] = define_index[i+1] - parm;
+                ++i;
+              }
+            }
+            --macro;
+          }
+        }
+        else if (match("#include"))
+        {                                        /* include a file */
+          if (include >= INCL_DEPTH)
+            fatal_error("Too many include files");
+          if ((c = skip_blanks()) == '<')
+          {                                      /* incdir definition */
+            for (parm_ptr = incdir; *parm_ptr; ++parm_ptr)
+              *buffout_ptr++ = *parm_ptr;
+            *buffout_ptr++ = '\\';               /*** OS dependent!!! ***/
+            c = '>';
+          }
+          else if (c != '"')
+          {                                      /* current directory */
+            line_error("Invalid include file name");
+            continue;
+          }
+          while (*++buffin_ptr && (*buffin_ptr != c))
+            *buffout_ptr++ = *buffin_ptr;
+          *buffout_ptr = 0;
+          incl_fh[include] = source_fh;
+          incl_line[include] = line_number;
+          if (source_fh = fopen(line_in, "r"))
+          {
+            line_number = 0;
+            ++include;
+          }
+          else
+          {
+            line_error("Cannot open include file");
+            source_fh = incl_fh[include];
+          }
         }
         else
-        {               /* default, perform pre-processing */
-
-            if(asm_flag)        /* inline assembly */
-                do_asm(buffer);
+          line_error("Unknown preprocessor directive");
+      }
+      else
+      {                                          /* default, perform pre-processing */
+        if (asm_flag)                            /* inline assembly */
+          do_asm(buffer);
+        else
+          while (c = *buffin_ptr)
+          {
+            if (is_alpha(c))                     /* symbol, could be macro */
+              resolve_macro();
+            else if ((c == '"') || (c == 0x27))  /* quoted string */
+              copy_string();
             else
-            while(c = *buffin_ptr)
             {
-                if(is_alpha(c))             /* symbol, could be macro */
-                    resolve_macro();
-                else if((c == '"') || (c == 0x27))      /* quoted string */
-                    copy_string();
-                else
-                {
-                    if((*++buffin_ptr == '*') && (c == '/') && comment_flag)
-                    { /* comment */
-                        ++buffin_ptr;
-                        begin_comment = line_number; /* save begin line*/
-                        skip_comment();
-                    }
-                    else                /* nothing special, copy it */
-                        *buffout_ptr++ = c;
-                }
+              if ((*++buffin_ptr == '*') && (c == '/') && comment_flag)
+              {                                  /* comment */
+                ++buffin_ptr;
+                begin_comment = line_number;     /* save begin line*/
+                skip_comment();
+              }
+              else                               /* nothing special, copy it */
+                *buffout_ptr++ = c;
             }
-            if (fSource)
-            {
-                code_chr(';');
-                code_str(buffer);
-            }
-            input_ptr=line_in;  /* point to start of new line */
-            *buffout_ptr = 0;       /* null at end of line */
-            return -1;
+          }
+        if (fSource)
+        {
+          code_chr(';');
+          code_str(buffer);
         }
+        input_ptr=line_in;  /* point to start of new line */
+        *buffout_ptr = 0;       /* null at end of line */
+        return -1;
+      }
     }  /* !fgotone && !if_flag */
-} /*for*/
+  } /*for*/
 }
 
 /******************************************************************************
@@ -1546,11 +1554,12 @@ static long readline(void)
 ******************************************************************************/
 static U32 test_exit(void)
 {
-  if(exit_flag) {
-      jump(exit_flag, -1);
-      exit_used = -1;
-      return(exit_flag = 0);
-      }
+  if (exit_flag) 
+  {
+    jump(exit_flag, -1);
+    exit_used = -1;
+    return(exit_flag = 0);
+  }
   return -1;
 }
 
@@ -1560,14 +1569,16 @@ static U32 test_exit(void)
 static void t_warn(char *msg, char *txt)
 {
   int i;
-  ++warn_count;
-  if (!fWarnings) return;
 
+  ++warn_count;
+  if (!fWarnings) 
+    return;
   incl_line[include] = line_number;
-  for(i=0; i <= include; ++i) {
-      put_num(incl_line[i], list_fh);
-      fputc(':', list_fh);
-      }
+  for (i = 0; i <= include; ++i) 
+  {
+    put_num(incl_line[i], list_fh);
+    fputc(':', list_fh);
+  }
   fputc(' ', list_fh);
   put_str("Warning: ", list_fh);
   put_str(msg, list_fh);
@@ -1587,18 +1598,17 @@ static void t_error(char *msg, char *txt)
   char emsg[50], *ptr;
 
   ptr = emsg;
-  while(*msg)
-      *ptr++ = *msg++;
+  while (*msg)
+    *ptr++ = *msg++;
   *ptr++ = ':';
   *ptr++ = ' ';
   *ptr++ = 0x27;      /* single quote */
-  while(*txt)
-      *ptr++ = *txt++;
+  while (*txt)
+    *ptr++ = *txt++;
   *ptr++ = 0x27;      /* single quote */
   *ptr = 0;
   line_error(emsg);
 }
-
 
 /******************************************************************************
 * Report an error involving a freshly parsed symbol name
@@ -1607,7 +1617,6 @@ static void symbol_error(char *msg)
 {
   t_error(msg, gst);
 }
-
 
 /******************************************************************************
 * Report a syntax error
@@ -1641,8 +1650,8 @@ static char test_token(U32 token)
 {
   U32 token1;
 
-  if((token1 = get_token()) == token)
-      return -1;
+  if ((token1 = get_token()) == token)
+    return -1;
   unget_token(token1);
   return 0;
 }
@@ -1654,8 +1663,8 @@ static char test_token(U32 token)
 ******************************************************************************/
 static void expect(U32 token)
 {
-  if(!test_token(token))
-      t_error("Expected", tokens[token]);
+  if (!test_token(token))
+    t_error("Expected", tokens[token]);
 }
 
 /******************************************************************************
@@ -1663,8 +1672,8 @@ static void expect(U32 token)
 ******************************************************************************/
 static void put_str(char *ptr, FILE *fh)
 {
-  while(*ptr)
-      fputc(*ptr++, fh);
+  while (*ptr)
+    fputc(*ptr++, fh);
 }
 
 /******************************************************************************
@@ -1675,18 +1684,18 @@ static void UTC_error(void)
   U32 i;
 
   incl_line[include] = line_number;
-  for(i=0; i <= include; ++i) {
-      put_num(incl_line[i], list_fh);
-      fputc(':', list_fh);
-      }
+  for (i = 0; i <= include; ++i) 
+  {
+    put_num(incl_line[i], list_fh);
+    fputc(':', list_fh);
+  }
   fputc(' ', list_fh);
   put_str("Unterminated comment from line: ", list_fh);
   put_num(begin_comment, list_fh);
   fputc('\r', list_fh);
   fputc('\n', list_fh);
-
-  if(++error_count == MAX_ERRORS)
-      fatal_error("Too many errors");
+  if (++error_count == MAX_ERRORS)
+    fatal_error("Too many errors");
 }
 
 /******************************************************************************
@@ -1697,17 +1706,17 @@ static void line_error(char *message)
   U32 i;
 
   incl_line[include] = line_number;
-  for(i=0; i <= include; ++i) {
-      put_num(incl_line[i], list_fh);
-      fputc(':', list_fh);
-      }
+  for (i = 0; i <= include; ++i) 
+  {
+    put_num(incl_line[i], list_fh);
+    fputc(':', list_fh);
+  }
   fputc(' ', list_fh);
   put_str(message, list_fh);
   fputc('\r', list_fh);
   fputc('\n', list_fh);
-
-  if(++error_count == MAX_ERRORS)
-      fatal_error("Too many errors");
+  if (++error_count == MAX_ERRORS)
+    fatal_error("Too many errors");
 }
 
 /******************************************************************************
@@ -1719,20 +1728,21 @@ static void fatal_error(char *string)
 
   /* put this out even if fQuiet */
   put_str("Fatal error, compilation aborted\r\n", stdout);
-
-  if (fList) {
-      put_str("Fatal error, compilation aborted\r\n", list_fh);
-      if (fLISTOpen)
-          fclose(list_fh);
-      }
-
-  /* close files */
-  if (fTEMPOpen) { fclose(temp_fh);
-  remove(tmpname);  /* leave out while troubleshooting */
+  if (fList) 
+  {
+    put_str("Fatal error, compilation aborted\r\n", list_fh);
+    if (fLISTOpen)
+      fclose(list_fh);
   }
-  if (fASMOpen) fclose(asm_fh);
+  /* close files */
+  if (fTEMPOpen) 
+  { 
+    fclose(temp_fh);
+    remove(tmpname);  /* leave out while troubleshooting */
+  }
+  if (fASMOpen) 
+    fclose(asm_fh);
   exit(-1);  /* We are done ! */
-
 }
 
 /******************************************************************************
@@ -1741,10 +1751,10 @@ static void fatal_error(char *string)
 static void check_loop(U32 stack[])
 {
   expect(SEMI);
-  if(loop_ptr)
-      exit_flag = stack[loop_ptr-1];
+  if (loop_ptr)
+    exit_flag = stack[loop_ptr-1];
   else
-      line_error("No active loop");
+    line_error("No active loop");
 }
 
 /******************************************************************************
@@ -1752,8 +1762,8 @@ static void check_loop(U32 stack[])
 ******************************************************************************/
 static U32 check_switch(void)
 {
-  if(!sdefault)
-      line_error("No active switch");
+  if (!sdefault)
+    line_error("No active switch");
   gen_label(++next_lab);
   return next_lab;
 }
@@ -1765,8 +1775,8 @@ static U32 check_switch(void)
 ******************************************************************************/
 static void test_jump(U32 label)
 {
-  if(test_exit())
-      jump(label, -1);
+  if (test_exit())
+    jump(label, -1);
 }
 
 /******************************************************************************
@@ -1775,16 +1785,14 @@ static void test_jump(U32 label)
 ******************************************************************************/
 static void cond_jump(char cond, U32 label, char ljmp)
 {
-  if(zero_flag)
+  if (zero_flag)
   {
-      out_inst("AND EAX,EAX");
-      zero_flag = 0;
+    out_inst("AND EAX,EAX");
+    zero_flag = 0;
   }
-
   jump_if(cond ^ not_flag, label, ljmp);
   not_flag = 0;
 }
-
 
 /******************************************************************************
 * Get a number in a number base for a maximum # of digits
@@ -1796,20 +1804,22 @@ static U32 get_number(U32 base, U32 digits)
   char c;
 
   value = 0;
-  do {
-      if(is_digit(c = *input_ptr))        /* convert numeric digits */
-          c -= '0';
-      else if(c >= 'a')               /* convert lower case alphas */
-          c -= ('a' - 10);
-      else if(c >= 'A')               /* convert upper case alphas */
-          c -= ('A' - 10);
-      else
-          break;
-      if(c >= base)                   /* outside of base */
-          break;
-      value = (value * base) + c;     /* include in total */
-      ++input_ptr; }
-  while(--digits);                    /* enforce maximum digits */
+  do 
+  {
+    if (is_digit(c = *input_ptr))                /* convert numeric digits */
+      c -= '0';
+    else if (c >= 'a')                           /* convert lower case alphas */
+      c -= ('a' - 10);
+    else if (c >= 'A')                           /* convert upper case alphas */
+      c -= ('A' - 10);
+    else
+      break;
+    if (c >= base)                               /* outside of base */
+      break;
+    value = (value * base) + c;                  /* include in total */
+    ++input_ptr; 
+  }
+  while (--digits);                              /* enforce maximum digits */
   return value;
 }
 
@@ -1822,83 +1832,84 @@ static void clean_up(void)
 {
   U32 type, size, i, j;
 
-  if(in_function)
-      fatal_error("Unterminated function");
-
+  if (in_function)
+    fatal_error("Unterminated function");
   /* generate references for DASM */
-
-  for(sptr = 0; sptr < global_top; ++sptr)
+  for (sptr = 0; sptr < global_top; ++sptr)
   {
-      if((type = symtab[sptr].type) & (EXTERNAL))
-          if (type & REFERENCE)
-              gen_ext_data_DASM(sptr);
+    if ((type = symtab[sptr].type) & (EXTERNAL))
+      if (type & REFERENCE)
+        gen_ext_data_DASM(sptr);
   }
-
   /* dump literal pool */
   gen_literal(literal_pool, literal_top);
-
   /* Generate all global variables that are not initialized */
-  for(sptr = 0; sptr < global_top; ++sptr) {
-      type = symtab[sptr].type;
-      if(!(type & (FUNCTION | INITED | EXTERNAL | TYPDEF))) {
-
-          if (type & (POINTER | DWORD)) size = 4;
-          else if (type & WORD)  size = 2;
-          else if (type & BYTE)  size = 1;
-          else if (type & STRUCT) {
-            size = symtab[sptr].strucoff;     /* contains size */
-            }
-          else size = 1;  /* should be an error maybe?? */
-
-          if(type & ARRAY) {              /* calculate size of array */
-              i = symtab[sptr].dindex;    /* i = index to dimpool */
-              j = dim_pool[i++];          /* j = nDims */
-              while(j--) size *= dim_pool[i++];
-              }
-          gen_global(sptr, size);
+  for (sptr = 0; sptr < global_top; ++sptr) 
+  {
+    type = symtab[sptr].type;
+    if (!(type & (FUNCTION | INITED | EXTERNAL | TYPDEF))) 
+    {
+      if (type & (POINTER | DWORD)) 
+        size = 4;
+      else if (type & WORD)  
+        size = 2;
+      else if (type & BYTE)  
+        size = 1;
+      else if (type & STRUCT)
+      {
+        size = symtab[sptr].strucoff;            /* contains size */
       }
+      else 
+        size = 1;                                /* should be an error maybe?? */
+      if (type & ARRAY)                          /* calculate size of array */
+      {              
+        i = symtab[sptr].dindex;                 /* i = index to dimpool */
+        j = dim_pool[i++];                       /* j = nDims */
+        while (j--) 
+          size *= dim_pool[i++];
+      }
+      gen_global(sptr, size);
+    }
   }
-
   fclose(temp_fh);
-
-  if (!error_count) {  /* No optimize if errors */
-
-      if (fNoOpt) {
-          if(!(temp_fh = fopen(tmpname, "r")))
-              fatal_error("Cannot re-open temp file");
+  if (!error_count) /* No optimize if errors */
+  { 
+    if (fNoOpt)
+    {
+      if (!(temp_fh = fopen(tmpname, "r")))
+        fatal_error("Cannot re-open temp file");
+      else
+        while (fgets(buffer, LINE_MAX, temp_fh))
+        {
+          if (fGen)
+            fputs(buffer, code_fh);
           else
-              while (fgets(buffer, LINE_MAX, temp_fh)) {
-                  if (fGen)
-                      fputs(buffer, code_fh);
-                  else
-                      fputs(buffer, asm_fh);
-              }
-      }
-      else {
-          if(!(temp_fh = fopen(tmpname, "r")))
-              fatal_error("Cannot re-open temp file");
-          optimize();
-      }
+            fputs(buffer, asm_fh);
+        }
+    }
+    else
+    {
+      if (!(temp_fh = fopen(tmpname, "r")))
+        fatal_error("Cannot re-open temp file");
+      optimize();
+    }
   }
   fclose(temp_fh);
   fclose(asm_fh);
   if (fLISTOpen)
-      fclose(list_fh);
+    fclose(list_fh);
   if (fCODEOpen)
-      fclose(code_fh);
-
+    fclose(code_fh);
   remove(tmpname); /*   leave out while troubleshooting  */
-
-  if(!fQuiet) {
-      put_num(error_count, stdout);
-      put_str(" errors\r\n", stdout);
-      put_num(warn_count, stdout);
-      put_str(" warnings\r\n", stdout);
-      }
-
+  if (!fQuiet)
+  {
+    put_num(error_count, stdout);
+    put_str(" errors\r\n", stdout);
+    put_num(warn_count, stdout);
+    put_str(" warnings\r\n", stdout);
+  }
   exit(0);  /* We are done ! */
 }
-
 
 /******************************************************************************
 * Read a character from the input file
@@ -1907,11 +1918,13 @@ static char read_char(void)
 {
   char c;
 
-  while(!(c = *input_ptr++)) {        /* end of this line */
-      if (!readline()) {
-          clean_up();
-          exit(error_count);
-      }
+  while (!(c = *input_ptr++))  /* end of this line */ 
+  {
+    if (!readline())
+    {
+      clean_up();
+      exit(error_count);
+    }
   }
   return c;
 }
@@ -1924,7 +1937,6 @@ static void unget_token(U32 token)
   ungot_token = token;
 }
 
-
 /******************************************************************************
 * Read special character (with translations)
 ******************************************************************************/
@@ -1932,37 +1944,39 @@ static U32 read_special(char delim)
 {
   S32 c;
 
-  if((c = read_char()) == delim)
-      return 0xff00;
-  if(c == '\\')
-    switch(c = read_char()) {
-      case 'n':               /* newline */
+  if ((c = read_char()) == delim)
+    return 0xff00;
+  if (c == '\\')
+    switch (c = read_char())
+    {
+      case 'n':                                 /* newline */
           c = 0x0a;
           break;
-      case 'r':               /* return */
+      case 'r':                                  /* return */
           c = 0x0d;
           break;
-      case 't':               /* tab */
+      case 't':                                  /* tab */
           c = 0x09;
           break;
-      case 'f' :              /* formfeed */
+      case 'f' :                                 /* formfeed */
           c = 0x0c;
           break;
-      case 'b':               /* backspace */
+      case 'b':                                  /* backspace */
           c = 0x08;
           break;
-      case 'v':               /* vertical tab */
+      case 'v':                                  /* vertical tab */
           c = 0x0b;
           break;
-      case 'x' :              /* hex value */
+      case 'x' :                                 /* hex value */
           c = get_number(16, 2);
           break;
       default:
-          if(is_digit(c)) {       /* octal value */
-              --input_ptr;
-              c = get_number(8, 3);
-      }
-  }
+          if (is_digit(c))                       /* octal value */
+          {       
+            --input_ptr;
+            c = get_number(8, 3);
+          }
+    }
   return c & 0xff;
 }
 
@@ -1978,51 +1992,62 @@ static U32 get_token(void)
 
   /* if a token has been ungot, re-get it */
   /* (gvalue & gst) will not have changed */
-  if(ungot_token) {
-      i = ungot_token;
-      ungot_token = 0;
-      return i;
+  if (ungot_token) 
+  {
+    i = ungot_token;
+    ungot_token = 0;
+    return i;
   }
 
   /* skip any leading whilespace  */
-  do {
-      chr = read_char();
-      }
-  while((chr == ' ') || (chr == '\t') ||
-      (chr == '\n') || (chr == '\r'));
-
+  do 
+  {
+    chr = read_char();
+  }
+  while (
+         (chr == ' ')  ||
+         (chr == '\t') ||
+         (chr == '\n') || 
+         (chr == '\r')
+        );
   --input_ptr;
-
   /* lookup token in token table */
   last_pos = input_ptr;               /* remember where we were */
-
-  if (itoken[*input_ptr] != 0) {
-          /* start at first match char */
-      for(i=itoken[*input_ptr]; ptr = tokens[i]; ++i) {
-          if (*input_ptr != *ptr) break;
-          while((chr = *input_ptr) && (*ptr == chr)) {
-              ++ptr;
-              ++input_ptr; }
-          if(!*ptr) {                     /* we found a token */
-              if(is_alpha(*(ptr-1)) && is_alpha(*input_ptr))
-                  continue;                   /* not this token */
-              return i; }
-          input_ptr = last_pos;           /* reset pointer */
+  if (itoken[*input_ptr] != 0)        /* start at first match char */
+  {
+    for (i = itoken[*input_ptr]; ptr = tokens[i]; ++i) 
+    {
+      if (*input_ptr != *ptr)
+        break;
+      while ((chr = *input_ptr) && (*ptr == chr))
+      {
+        ++ptr;
+        ++input_ptr; 
       }
+      if (!*ptr)                      /* we found a token */
+      {                     
+        if (is_alpha(*(ptr-1)) && is_alpha(*input_ptr))
+          continue;                   /* not this token */
+        return i;
+      }
+      input_ptr = last_pos;           /* reset pointer */
+    }
   }
   /* we didn't find a token, check out special cases */
   input_ptr = last_pos;
-
-  if((chr = *input_ptr) == '"')   {   /* string value */
-      ++input_ptr;
-      gvalue = literal_top;       /* set to index to string */
-      do {
-          if(literal_top >= LITER_BUFF)
-              fatal_error("String space exausted");
-          literal_pool[literal_top++] = i = read_special('"');
-      }
-      while(!(i & 0xff00));   /* 0xff00 returned from read_special */
-      return STRING; }
+  if ((chr = *input_ptr) == '"')      /* string value */
+  {   
+    ++input_ptr;
+    gvalue = literal_top;             /* set to index to string */
+    do
+    {
+      if (literal_top >= LITER_BUFF)
+        fatal_error("String space exausted");
+      literal_pool[literal_top++] = i = read_special('"');
+     }
+     while (!(i & 0xff00));           /* 0xff00 returned from read_special */
+     return STRING; 
+  }
 
   /* Quoted values (e.g., '\n') are read into gvalue.
       ANSI says that multibyte character constants are
@@ -2031,52 +2056,55 @@ static U32 get_token(void)
       make gvalue equal 0x0D0A even though the \n (0x0A) is
       first.
     */
-
-  if(chr == 0x27)
-  {                   /* quoted value */
+  if (chr == 0x27)                    /* quoted value */
+  {                   
+    ++input_ptr;
+    while (!((i = read_special(0x27)) & 0xff00))
+      gvalue =  i & 0xff;             /* strip notify bits */
+    return NUMBER;
+  }
+  if (is_digit(chr))                  /* numeric constant */ 
+  {
+    if (chr == '0')
+    {
       ++input_ptr;
-      while( !((i = read_special(0x27)) & 0xff00) )
-          gvalue =  i & 0xff; /* strip notify bits */
-      return NUMBER;
-  }
-
-
-  if(is_digit(chr)) {                 /* numeric constant */
-      if(chr == '0') {
-          ++input_ptr;
-          if((*input_ptr == 'x') || (*input_ptr == 'X')) {
-              ++input_ptr;
-              gvalue = get_number(16, 0);         /* hex */
-          }
-          else
-              gvalue = get_number(8, 0);          /* octal */
+      if ((*input_ptr == 'x') || (*input_ptr == 'X'))
+      {
+        ++input_ptr;
+        gvalue = get_number(16, 0);   /* hex */
       }
-      else gvalue = get_number(10, 0);            /* decimal */
-
-      /* Look for Unsigned and Long terminal characters */
-
-      if((*input_ptr == 'U') || (*input_ptr == 'u')) {
-          ++input_ptr;
-          if((*input_ptr == 'L') || (*input_ptr == 'l')) ++input_ptr;
-      }
-      else if((*input_ptr == 'L') || (*input_ptr == 'l')) ++input_ptr;
-
-      return NUMBER;
+      else
+        gvalue = get_number(8, 0);    /* octal */
+    }
+    else 
+      gvalue = get_number(10, 0);                /* decimal */
+    /* Look for Unsigned and Long terminal characters */
+    if ((*input_ptr == 'U') || (*input_ptr == 'u')) 
+    {
+      ++input_ptr;
+      if ((*input_ptr == 'L') || (*input_ptr == 'l')) 
+        ++input_ptr;
+    }
+    else if ((*input_ptr == 'L') || (*input_ptr == 'l')) 
+      ++input_ptr;
+    return NUMBER;
   }
-
-  if(is_alpha(chr)) {                 /* symbol name */
-      gvalue = 0;
-      while(is_alnum(chr = *input_ptr)) {
-          if(gvalue < SYMBOL_SIZE)
-              gst[gvalue++] = chr;
-          ++input_ptr; }
-      gst[gvalue] = 0;
-      namesize = gvalue;
-      return SYMBOL; }
-
+  if (is_alpha(chr))                             /* symbol name */ 
+  {
+    gvalue = 0;
+    while (is_alnum(chr = *input_ptr))
+    {
+     if (gvalue < SYMBOL_SIZE)
+       gst[gvalue++] = chr;
+    ++input_ptr;
+    }
+    gst[gvalue] = 0;
+    namesize = gvalue;
+    return SYMBOL;
+  }
   /* not a token or special value */
-  ++input_ptr;            /* skip offending character */
-  return -1;              /* report "unknown" token type */
+  ++input_ptr;                                   /* skip offending character */
+  return -1;                                     /* report "unknown" token type */
 }
 
 /******************************************************************************
@@ -2087,15 +2115,15 @@ static U32 lookup_local(void)
   U16 i,j;
 
   i = MAX_SYMBOLS-1;
-  while(i > local_top-1) {
-      j = symtab[i].oname;
-      if(equal_string(gst, &LPool[j]))
-          return symtab[sptr=i].type |= REFERENCE;
-      i--;
+  while (i > local_top-1) 
+  {
+    j = symtab[i].oname;
+    if (equal_string(gst, &LPool[j]))
+      return symtab[sptr=i].type |= REFERENCE;
+    i--;
   }
   return 0;
 }
-
 
 /******************************************************************************
   Locate a symbol in the global symbol table.
@@ -2104,10 +2132,11 @@ static U32 lookup_global(void)
 {
   U16 i, j;
 
-  for(i=0; i < global_top; i++) {
-      j = symtab[i].oname;
-      if(equal_string(gst, &GPool[j]))
-          return symtab[sptr=i].type |= REFERENCE;
+  for (i = 0; i < global_top; i++) 
+  {
+    j = symtab[i].oname;
+    if (equal_string(gst, &GPool[j]))
+      return symtab[sptr=i].type |= REFERENCE;
   }
   return 0;
 }
@@ -2126,34 +2155,34 @@ static U32 lookup_member(U16 CrntStruc)
       the structure definition entry for CrntStruc.
   */
 
-  for (i=SYMBOL_SIZE; i > 0; i--)     /* fix member name  */
-          gst[i] = gst[i-1];
-    gst[0] = '0';                  /* make it start with digit */
-    ++namesize;
-
+  for (i = SYMBOL_SIZE; i > 0; i--)              /* fix member name  */
+    gst[i] = gst[i-1];
+  gst[0] = '0';                                  /* make it start with digit */
+  ++namesize;
   CrntStrucDef = symtab[CrntStruc].itypedef;
-
-  if (symtab[CrntStrucDef].type & GLOBAL) {
-
-      for(i=CrntStrucDef+1; i < global_top; i++) {
-          if (!(symtab[i].type & STRUCMEM))
-              break;
-          j = symtab[i].oname;
-          if(equal_string(gst, &GPool[j]))
-              return symtab[sptr=i].type |= REFERENCE;
-      }
+  if (symtab[CrntStrucDef].type & GLOBAL) 
+  {
+    for (i = CrntStrucDef+1; i < global_top; i++)
+    {
+      if (!(symtab[i].type & STRUCMEM))
+        break;
+      j = symtab[i].oname;
+      if (equal_string(gst, &GPool[j]))
+        return symtab[sptr=i].type |= REFERENCE;
+    }
   }
-  else {  /* must be local */
-
-      for(i=CrntStrucDef-1; i > local_top-1; i--) {
-          if (!(symtab[i].type & STRUCMEM))
-              break;
-          j = symtab[i].oname;
-          if(equal_string(gst, &LPool[j]))
-              return symtab[sptr=i].type |= REFERENCE;
-      }
+  else                                           /* must be local */ 
+  {
+    for (i = CrntStrucDef-1; i > local_top-1; i--) 
+    {
+      if (!(symtab[i].type & STRUCMEM))
+        break;
+      j = symtab[i].oname;
+      if (equal_string(gst, &LPool[j]))
+        return symtab[sptr=i].type |= REFERENCE;
+    }
   }
-  return 0;       /* didn't find it! */
+  return 0;                                      /* didn't find it! */
 }
 
 /******************************************************************************
@@ -2165,85 +2194,93 @@ static void define_symbol(U32 type, U32 dim_index)
   U32 index = 0;
   U16 i, j;
 
-  if(in_function) {       /* within a function, use local */
-      if (type&PROTO) {   /* give it a false name to satisfy symbol table */
-          gst[0] = '_';               /* 2 underscores */
-          gst[1] = '-';
-          gst[2] = arg_count + 65;    /* A-Z */
-          gst[3] = '\0';                  /* null terminate */
-          namesize = 3;
-          }
-      else {
-          if(lookup_local()) {
-              symbol_error("Duplicate local or arg");
-              return;
-              }
-          }
-
-      sptr = --local_top;
-      if(type & ARGUMENT) {
-
-          type &= ~PROTO;  /* turn off proto warning */
-
-          /* if a prototype arg already exists, make sure it's the same */
-          if (icrntpro) {
-              if (proto_list[icrntpro++] != type) {
-                j=symtab[fptr].oname;
-                t_warn("Arg not same type as prototype in ", &GPool[j]);
-              }
-          }
-          else proto_list[iproto_next++] = type;
-          if(iproto_next>MAX_PROTOS)
-            fatal_error("Prototype table full");
+  if (in_function)                     /* within a function, use local */
+  {       
+    if (type & PROTO)                   /* give it a false name to satisfy symbol table */ 
+    {
+      gst[0] = '_';                   /* 2 underscores */
+      gst[1] = '-';
+      gst[2] = arg_count + 65;        /* A-Z */
+      gst[3] = '\0';                  /* null terminate */
+      namesize = 3;
+    }
+    else
+    {
+      if (lookup_local())
+      {
+        symbol_error("Duplicate local or arg");
+        return;
+      }
+    }
+    sptr = --local_top;
+    if (type & ARGUMENT) 
+    {
+      type &= ~PROTO;                 /* turn off proto warning */
+      /* if a prototype arg already exists, make sure it's the same */
+      if (icrntpro)
+      {
+        if (proto_list[icrntpro++] != type)
+        {
+          j = symtab[fptr].oname;
+          t_warn("Arg not same type as prototype in ", &GPool[j]);
+        }
       }
       else
-          index = local_stack;
-
-      if(global_top > local_top)
-          fatal_error("Symbol table full");
-      if((oNextLName+SYMBOL_SIZE) > LBUFFSIZE)
-          fatal_error("Local symbol name pool full");
-      symtab[sptr].oname=oNextLName;
-      copystring(&LPool[oNextLName], gst);
-      oNextLName += namesize;
-      oNextLName++;               /* for null */
-      symtab[sptr].type = type;
-      symtab[sptr].argoffset = index;
-      symtab[sptr].dindex = dim_index;
-
+        proto_list[iproto_next++] = type;
+      if (iproto_next>MAX_PROTOS)
+        fatal_error("Prototype table full");
+    }
+    else
+      index = local_stack;
+    if (global_top > local_top)
+      fatal_error("Symbol table full");
+    if ((oNextLName+SYMBOL_SIZE) > LBUFFSIZE)
+      fatal_error("Local symbol name pool full");
+    symtab[sptr].oname=oNextLName;
+    copystring(&LPool[oNextLName], gst);
+    oNextLName += namesize;
+    oNextLName++;                     /* for null */
+    symtab[sptr].type = type;
+    symtab[sptr].argoffset = index;
+    symtab[sptr].dindex = dim_index;
   }
-  else {                  /* outside of function, use global */
-      type |= GLOBAL;
-      if(index = lookup_global()) {       /* symbol already exists */
-          if(index & (PROTO|FUNCTION)) {  /* re-definition */
-              if((index | (INITED|REFERENCE|EXTERNAL|PROTO)) !=
-                  (type | (INITED|REFERENCE|EXTERNAL|PROTO)))
-                  symbol_error("Inconsistant re-declaration");
-              symtab[sptr].type = type;
-              return;
-          }
-          else if (type & STRUCMEM)
-                {}     /* no error */
-          else if ((type & STRUCDEF) &&
-                    (equal_string(&structname[0], &GPool[symtab[sptr].oname])))
-                {}     /* no error */
-          else {
-              symbol_error("Duplicate global");
-              return; }
+  else                                /* outside of function, use global */ 
+  {
+    type |= GLOBAL;
+    if (index = lookup_global())      /* symbol already exists */ 
+    {       
+      if (index & (PROTO|FUNCTION))   /* re-definition */ 
+      {  
+        if ((index | (INITED|REFERENCE|EXTERNAL|PROTO)) != (type | (INITED|REFERENCE|EXTERNAL|PROTO)))
+          symbol_error("Inconsistant re-declaration");
+        symtab[sptr].type = type;
+        return;
       }
-      sptr = global_top++;
-      index = global_count++;
-      if(global_top > local_top)
-          fatal_error("Symbol table full");
-      if((oNextGName+SYMBOL_SIZE) > GBUFFSIZE)
-          fatal_error("Global symbol name pool full");
-      symtab[sptr].oname = oNextGName;
-      copystring(&GPool[oNextGName], gst);
-      oNextGName += namesize;
-      oNextGName++;            /* for null */
-      symtab[sptr].type = type;
-      symtab[sptr].argoffset = index;
-      symtab[sptr].dindex = dim_index;
+      else if (type & STRUCMEM)
+      {                               /* no error */
+      }
+      else if ((type & STRUCDEF) && (equal_string(&structname[0], &GPool[symtab[sptr].oname])))
+      {                               /* no error */
+      }
+      else 
+      {
+        symbol_error("Duplicate global");
+        return;
+      }
+    }
+    sptr = global_top++;
+    index = global_count++;
+    if (global_top > local_top)
+      fatal_error("Symbol table full");
+    if ((oNextGName+SYMBOL_SIZE) > GBUFFSIZE)
+      fatal_error("Global symbol name pool full");
+    symtab[sptr].oname = oNextGName;
+    copystring(&GPool[oNextGName], gst);
+    oNextGName += namesize;
+    oNextGName++;                     /* for null */
+    symtab[sptr].type = type;
+    symtab[sptr].argoffset = index;
+    symtab[sptr].dindex = dim_index;
   }
 }
 
@@ -2252,9 +2289,8 @@ static void define_symbol(U32 type, U32 dim_index)
 ******************************************************************************/
 static void push(U32 token, U32 value, U32 type, U32 offset)
 {
-  if(expr_ptr >= EXPR_DEPTH)
-      fatal_error("Expression stack overflow");
-
+  if (expr_ptr >= EXPR_DEPTH)
+    fatal_error("Expression stack overflow");
   expstk[expr_ptr].token = token;
   expstk[expr_ptr].value = value;
   expstk[expr_ptr].type  = type;
@@ -2267,16 +2303,14 @@ static void push(U32 token, U32 value, U32 type, U32 offset)
 ******************************************************************************/
 static void pop(U32 *token, U32 *value, U32 *type, U32 *offset)
 {
-  if(!expr_ptr)
-      fatal_error("Expression stack underflow");
-
+  if (!expr_ptr)
+    fatal_error("Expression stack underflow");
   expr_ptr--;
   *token  = expstk[expr_ptr].token;
   *value  = expstk[expr_ptr].value;
   *type   = expstk[expr_ptr].type;
   *offset = expstk[expr_ptr].offset;
 }
-
 
 /******************************************************************************
 * Get a constant value (NUMBER or STRING)
@@ -2287,12 +2321,10 @@ static void get_constant(U32 *token, U32 *value)
   U32 type, offset;
 
   expr_ptr = 0;
-  unget_token(do_oper(SEMI));     /* do_oper gets the token... */
-
+  unget_token(do_oper(SEMI));         /* do_oper gets the token... */
   pop(token, value, &type, &offset);  /* then we pop it into token */
-
-  if((*token != NUMBER) && (*token != STRING))
-      line_error("Constant expression required");
+  if ((*token != NUMBER) && (*token != STRING))
+    line_error("Constant expression required");
 }
 
 /******************************************************************************
@@ -2304,215 +2336,229 @@ static void define_var(U32 type)
   U32 sDim1, nDims, iDim, eTotal;
   char eflag, nflag;
 
-  if(in_function > 1)
-      line_error("Declaration must preceed code");
-
+  if (in_function > 1)
+    line_error("Declaration must preceed code");
   /* calculate base variable size - store in j for later use if array */
-
-  if (type&BYTE) size = 1;
-  else if (type&WORD)  size = 2;
-  else if (type&DWORD) size = 4;
-  else if (type&STRUCT)
-      size = symtab[CrntStrucDef].strucoff;
+  if (type & BYTE) 
+    size = 1;
+  else if (type & WORD)  
+    size = 2;
+  else if (type & DWORD) 
+    size = 4;
+  else if (type & STRUCT)
+    size = symtab[CrntStrucDef].strucoff;
   else
-      line_error("Type specifier missing");
-
-  if (type&(ARGUMENT | POINTER))  size = 4; /* pointers are 32 bit offsets */
+    line_error("Type specifier missing");
+  if (type & (ARGUMENT | POINTER))
+    size = 4; /* pointers are 32 bit offsets */
   j = size;
-
   /* If fInStruct then this is a structure member definition.
       NOT a structure member! */
-
-  if (fInStruct) {
-      type |= (STRUCMEM|TYPDEF);          /* make it a member definition */
-      for (i=SYMBOL_SIZE; i > 0; i--)     /* fix member name  */
-          gst[i] = gst[i-1];
-      gst[0] = '0';                   /* make it start with digit */
-      ++namesize;
-      }
-
+  if (fInStruct) 
+  {
+    type |= (STRUCMEM|TYPDEF);        /* make it a member definition */
+    for (i = SYMBOL_SIZE; i > 0; i--)   /* fix member name  */
+      gst[i] = gst[i-1];
+    gst[0] = '0';                     /* make it start with digit */
+    ++namesize;
+  }
   /* evaluate any array indexes */
   iDim = dim_top;
   nflag = 0;
   nDims = 0;
-  while(test_token(OSB)) {            /* array definition */
-      ++nDims;
-      ++dim_top;
-      if(test_token(CSB)) {       /* null definition */
-          if ((nflag) || (nDims > 1))
-              line_error("Null only allowed in first index");
-          --nflag;
-          size *= dim_pool[dim_top] = 1;  /* dummy up unbounded array */
-          continue; }
-      get_constant(&token, &value);
-      if(token != NUMBER)
-          line_error("Numeric constant required");
-      size *= dim_pool[dim_top] = value;
-      expect(CSB);
+  while (test_token(OSB))             /* array definition */
+  {            
+    ++nDims;
+    ++dim_top;
+    if (test_token(CSB))             /* null definition */ 
+    {
+      if ((nflag) || (nDims > 1))
+        line_error("Null only allowed in first index");
+      --nflag;
+      size *= dim_pool[dim_top] = 1;  /* dummy up unbounded array */
+      continue; 
+    }
+    get_constant(&token, &value);
+    if (token != NUMBER)
+      line_error("Numeric constant required");
+    size *= dim_pool[dim_top] = value;
+    expect(CSB);
   }
-
-  if(nDims) {         /* defining an array */
-      type |= ARRAY;
-      dim_pool[iDim] = nDims;
-      if(++dim_top > DIM_SIZE)
-          fatal_error("Dimension table full");
+  if (nDims)                          /* defining an array */ 
+  {
+    type |= ARRAY;
+    dim_pool[iDim] = nDims;
+    if (++dim_top > DIM_SIZE)
+      fatal_error("Dimension table full");
   }
-
-  if(test_token(ASSIGN))      /* initialized variable */
-      type |= INITED;
-
-  local_stack += size;        /* Keep track of offset of local vars */
-
-  define_symbol(type, iDim);  /* Create the symbol table entry */
-
-  if (type&(STRUCMEM|TYPDEF)) {
-      symtab[sptr].itypedef = CrntStrucDef;
-      symtab[sptr].strucoff = symtab[CrntStrucDef].strucoff;
-      symtab[CrntStrucDef].strucoff += size;  /* add to the total */
-      }
-
-  if (type&(STRUCT)) {
-      symtab[sptr].itypedef = CrntStrucDef;
-      symtab[sptr].strucoff = symtab[CrntStrucDef].strucoff;
-      }
-
+  if (test_token(ASSIGN))             /* initialized variable */
+    type |= INITED;
+  local_stack += size;                /* Keep track of offset of local vars */
+  define_symbol(type, iDim);          /* Create the symbol table entry */
+  if (type & (STRUCMEM|TYPDEF)) 
+  {
+    symtab[sptr].itypedef = CrntStrucDef;
+    symtab[sptr].strucoff = symtab[CrntStrucDef].strucoff;
+    symtab[CrntStrucDef].strucoff += size;  /* add to the total */
+  }
+  if (type & (STRUCT))
+  {
+    symtab[sptr].itypedef = CrntStrucDef;
+    symtab[sptr].strucoff = symtab[CrntStrucDef].strucoff;
+  }
   /*
       Initialization of arrays has changed with ANSI. Nested braces and
       trailing commas are now allowed. We make sure the braces balance.
   */
-  eflag = -1;     /* Expexting initializer */
-  sDim1 = 0;      /* tracks nDimensions for unbounded arrays [] */
-  eTotal = 0;     /* Total elements initialized so far */
-
-  if(type & INITED) {     /* force immediate allocation */
-      if ((in_function) || (fInStruct))
-          line_error("Illegal initialization");
-      data_global(sptr);  /* generate label in DSeg */
-      ocbcnt = 0;     /* number of open brackets */
-      index = 0;      /* tracks index for current dimensions */
-      do {
-          switch (token=get_token()) {
-          case OCB:
-              if ((nflag) && (ocbcnt == 1))   /* count for unbounded */
-                  ++sDim1;
-              ocbcnt++;
-              if (ocbcnt > nDims)
-                  line_error("Too many open braces");
-              lasttoken = OCB;
-              eflag = -1;
-              break;
-          case CCB:
-              if (ocbcnt) --ocbcnt;
-              else
-                  line_error("Unbalanced braces");
-              if ((nDims > 1) && (ocbcnt))  {
-                  while (index < dim_pool[dim_top-1]) {
-                      init_static(NUMBER, 0, j);
-                      ++index;
-                      }
-                  }
-              eTotal+=index;      /* total inited so far */
-              index = 0;          /* tracks index for current dimensions */
-              eflag = 0;          /* no constant expected now! */
-              lasttoken = CCB;
-              break;              /* we need a comma first/ocb first */
-          case COMMA:
-              /* secial case of char[x][y] = {"abc","def","ghi"}; */
-              if ((nDims > 1) && (ocbcnt==1) &&
-                  (lasttoken==STRING) && !(type & POINTER)) {
-                  while (index < dim_pool[dim_top-1]) {
-                      init_static(NUMBER, 0, j);
-                      ++index;
-                      }
-                  eTotal+=index;      /* total inited so far */
-                  index = 0;
-                  }
-              if (lasttoken==CCB) eflag = 0;
-              else eflag = -1;
-              lasttoken = COMMA;
-              break;
-          case STRING:
-              /* special case of char[x] = "xx"; or char[] = "xx";  */
-              if ((!ocbcnt) && (nDims==1))
-                  eflag = -1;
-          case NUMBER:
-          case SUB:
-          case COM:
-          case NOT:
-              unget_token(token);     /* put it back */
-              if (eflag) {            /* we are expecting a constant */
-                  if ((nflag) && (ocbcnt == 1))
-                      ++sDim1;
-                  get_constant(&token, &value);
-                  if((token == STRING) && !(type & POINTER)) {
-                      do {
-                          init_static(NUMBER, literal_pool[value], j);
-                          ++index;}
-                      while(++value < literal_top);
-                      literal_top = gvalue;
-
-                      /* special case of char[]="xx" or char[x]="xx";  */
-                      if ((!ocbcnt) && (nDims==1)) {
-                          eTotal = index;
-                          sDim1 = index;
-                          }
-                      }
-                  else {
-                      init_static(token, value, j);
-                      if (!nDims)
-                          ++eTotal;   /* tracked by index if array */
-                      ++index;
-                      }
-                  lasttoken=token;
-                  }
-              else line_error("Improper bracketed initialization");
-              break;
-          case SYMBOL:
-              lasttoken=token;
-              if (eflag) {    /* we are expecting an initializer */
-                  if (type&POINTER) {
-                      if(stype=lookup_global()) {
-                          if (stype&(EXTERNAL|FUNCTION))
-                              symbol_error("Invalid init type");
-                          else {
-                              init_static(SYMBOL, sptr, j);
-                              index += j;
-                              }
-                          }
-                      else symbol_error("Undefined");
-                      }
-                  else line_error("Must be pointer array");
-                  }
-              else line_error("Improper bracketed initialization");
-              break;
-          default:
-              line_error("Improper symbol in initialization");
-              break;
+  eflag  = -1;                        /* Expexting initializer */
+  sDim1  = 0;                         /* tracks nDimensions for unbounded arrays [] */
+  eTotal = 0;                         /* Total elements initialized so far */
+  if (type & INITED)                  /* force immediate allocation */ 
+  {
+    if ((in_function) || (fInStruct))
+      line_error("Illegal initialization");
+    data_global(sptr);                /* generate label in DSeg */
+    ocbcnt = 0;                       /* number of open brackets */
+    index  = 0;                       /* tracks index for current dimensions */
+    do
+    {
+      switch (token = get_token())
+      {
+        case OCB:
+          if ((nflag) && (ocbcnt == 1))   /* count for unbounded */
+            ++sDim1;
+          ocbcnt++;
+          if (ocbcnt > nDims)
+            line_error("Too many open braces");
+          lasttoken = OCB;
+          eflag = -1;
+          break;
+        case CCB:
+          if (ocbcnt)
+            --ocbcnt;
+          else
+            line_error("Unbalanced braces");
+          if ((nDims > 1) && (ocbcnt))
+          {
+            while (index < dim_pool[dim_top-1])
+            {
+              init_static(NUMBER, 0, j);
+              ++index;
+            }
           }
+          eTotal+=index;              /* total inited so far */
+          index = 0;                  /* tracks index for current dimensions */
+          eflag = 0;                  /* no constant expected now! */
+          lasttoken = CCB;
+          break;                      /* we need a comma first/ocb first */
+        case COMMA:
+        /* secial case of char[x][y] = {"abc","def","ghi"}; */
+          if ((nDims > 1) && (ocbcnt==1) && (lasttoken==STRING) && !(type & POINTER)) 
+          {
+            while (index < dim_pool[dim_top-1])
+            {
+              init_static(NUMBER, 0, j);
+              ++index;
+            }
+            eTotal+=index;            /* total inited so far */
+            index = 0;
+          }
+          if (lasttoken==CCB)
+            eflag = 0;
+          else 
+            eflag = -1;
+          lasttoken = COMMA;
+          break;
+        case STRING:
+        /* special case of char[x] = "xx"; or char[] = "xx";  */
+        if ((!ocbcnt) && (nDims==1))
+          eflag = -1;
+        case NUMBER:
+        case SUB:
+        case COM:
+        case NOT:
+          unget_token(token);         /* put it back */
+          if (eflag)              /* we are expecting a constant */ 
+          {
+            if ((nflag) && (ocbcnt == 1))
+              ++sDim1;
+            get_constant(&token, &value);
+            if ((token == STRING) && !(type & POINTER)) 
+            {
+              do
+              {
+                init_static(NUMBER, literal_pool[value], j);
+                ++index;
+              }
+              while (++value < literal_top);
+              literal_top = gvalue;
+              /* special case of char[]="xx" or char[x]="xx";  */
+              if ((!ocbcnt) && (nDims==1))
+              {
+                eTotal = index;
+                sDim1 = index;
+              }
+            }
+            else
+            {
+              init_static(token, value, j);
+              if (!nDims)
+                ++eTotal;             /* tracked by index if array */
+              ++index;
+            }
+            lasttoken = token;
+          }
+          else 
+            line_error("Improper bracketed initialization");
+          break;
+        case SYMBOL:
+          lasttoken=token;
+          if (eflag)                  /* we are expecting an initializer */ 
+          {
+            if (type & POINTER)
+            {
+              if (stype = lookup_global())
+              {
+                if (stype & (EXTERNAL|FUNCTION))
+                  symbol_error("Invalid init type");
+                else
+                {
+                  init_static(SYMBOL, sptr, j);
+                  index += j;
+                }
+              }
+              else
+                symbol_error("Undefined");
+            }
+            else
+              line_error("Must be pointer array");
+           }
+           else
+            line_error("Improper bracketed initialization");
+          break;
+        default:
+          line_error("Improper symbol in initialization");
+          break;
       }
-      while(((ocbcnt) || (lasttoken==COMMA)) && (token!=SEMI));
-      if(ocbcnt) expect(CCB);     /* make sure brackets balance!! */
-
-      if(nflag)               /* fixup null definition */
-          dim_pool[iDim+1] = sDim1;
-
-      /* new we make sure all the array elements were initialized
-          to ensure we have allocated Dseg for them.
-      */
-
-      i=1;
-      while (nDims) i*= dim_pool[iDim+nDims--];   /* i has total elements */
-
-      while (eTotal < i) {        /* eTotal is total inited */
-          init_static(NUMBER, 0, j);
-          ++eTotal;
-      }
-
-      if (eTotal > i)
-          line_error("Too many initial values");
-
-      end_static();
-
+    } while (((ocbcnt) || (lasttoken == COMMA)) && (token != SEMI)); /* End of Do */
+    if (ocbcnt)                      /* make sure brackets balance!! */
+      expect(CCB);
+    if (nflag)                        /* fixup null definition */
+      dim_pool[iDim+1] = sDim1;
+    /* now we make sure all the array elements were initialized
+        to ensure we have allocated Dseg for them.
+    */
+    i = 1;
+    while (nDims) 
+      i *= dim_pool[iDim+nDims--];    /* i has total elements */
+    while (eTotal < i)                /* eTotal is total inited */
+    {        
+      init_static(NUMBER, 0, j);
+      ++eTotal;
+    }
+    if (eTotal > i)
+      line_error("Too many initial values");
+    end_static();
   }  /* if (INITED) */
 }
 
@@ -2521,12 +2567,16 @@ static void define_var(U32 type)
 ******************************************************************************/
 static void check_func(void)
 {
-  if(in_function) {
-      if(in_function < 2) {       /* first invocation */
-          in_function = 2;
-          enter_func(fptr, local_stack); } }
+  if (in_function)
+  {
+    if (in_function < 2)              /* first invocation */ 
+    {
+      in_function = 2;
+      enter_func(fptr, local_stack);
+    }
+  }
   else
-      line_error("Incorrect declaration");
+    line_error("Incorrect declaration");
 }
 
 /******************************************************************************
@@ -2549,165 +2599,174 @@ static void check_func(void)
 static void declare(U32 token, U32 type)
 {
   fInStruct = 0;
-  for(;;) {
-      switch(token) {
-          case CHAR:
-              type &= ~WORD;      /* cancel WORD */
-              type |= BYTE;
-              break;
-          case INT:
-              if (!(type&DWORD)) type |= WORD;
-              break;
-          case SHORT:
-              type |= WORD;
-              break;
-          case LONG:
-              type &= ~WORD;      /* cancel WORD */
-              type |= DWORD;
-              break;
-          case UNSIGN:
-              type |= WORD;       /* cancelled for char or long */
-              type |= UNSIGNED;
-              break;
-          case SIGNED:
-              type |= WORD;       /* this will be cancelled if it's long */
-              type &= ~UNSIGNED;
-              break;
-          case STAT:
-              type |= STATIC;
-              break;
-          case STRUC:
-              type |= STRUCDEF;
-              break;
-          case CONST:
-              type |= CONSTANT;
-              break;
-          case EXTERN:
-              type |= EXTERNAL;
-              break;
-          case REGIS:
-              type |= REGISTER;
-              break;
-          case INTR:
-              type |= ISR;    /* ISR modified for functions */
-              break;
-          case VOIDD:
-              type |= VOID;
-              break;
-          case FARR:
-              type |= FAR;
-              break;
-          case STAR:      /* pointer reference */
-              do
-                  ++type;
-              while(test_token(STAR));
-
-              /* allow for prototype arg pointers with no symbol name */
-
-              if((type&ARGUMENT) && (test_token(COMMA))) {
-                  define_var(type|=PROTO); /* tell 'em it may be symboless */
-                  return;
-                  }
-              else
-              if(!test_token(SYMBOL)) syntax_error();
-          case SYMBOL:        /* we have a symbol name */
-              /* If STRUCDEF, MUST be a Struct Tag Name (new or existing) */
-              if(type & STRUCDEF) {      /* This symbol follows "struct" */
-                  if (lookup_global()) {   /* Existing tag ?? */
-                      if (symtab[sptr].type & STRUCDEF) {
-                          CrntStrucDef = sptr;  /* tag we just found */
-                          /* might be a pointer to a structure */
-                          if (test_token(STAR))
-                              do
-                                  ++type;
-                              while(test_token(STAR));
-                          /* now expect a new structure variable name */
-                          if(!test_token(SYMBOL)) {
-                            line_error("struct variable expected");
-                            return;
-                          }
-                          else {
-                            type &= ~STRUCDEF; /* struct variable w/tag */
-                            type |= STRUCT;
-                          }
-                      }
-                      else
-                        line_error("struct tag name expected");
-                  }
-
-                  /* we didn't find the tag so it must be a new one! */
-
-                  else {     /* So add the strucdef */
-                      define_symbol(type|TYPDEF, 0);
-                      CrntStrucDef = sptr;    /* symbol we just found */
-                      if(!(test_token(OCB)))   /* expecting {          */
-                        line_error("Structure { expected");
-                      else {
-                          fInStruct = 1;        /* we are in it now...  */
-                          type = 0;
-                          break;
-                      }
-                  }
-              }
-              if(type&ARGUMENT) {
-                  define_var(type);
-                  return;
-                  }
-              if(test_token(ORB))
-                  define_func(type);  /* function definition */
-              else
-                  define_var(type);   /* variable definition */
-              if(test_token(COMMA))
-                  break;
-
-              test_token(SEMI);  /* eat the semicolon if there */
-
-              if (fInStruct) {    /* still defining struct members */
-                  type = 0;
-                  break;
-                  }
-              else
-                  return;
-          case OCB:       /* '{' only allowed for immediate struct defs */
-              if(type & STRUCDEF) {    /* Immediate struct definition */
-                  copystring(gst, structname);
-                  gvalue = 11;
-                  define_symbol(type|TYPDEF, 0);
-                  CrntStrucDef = sptr;  /* symbol we just added */
-                  fInStruct = 1;        /* we are in it now...  */
-                  type = 0;
-                  break;
-                  }
-              else
-                  syntax_error();
-              break;
-          case CCB:
-              if (!fInStruct) {
-                  syntax_error();
-                  return;
-                  }
-              else {
-                  type &= ~STRUCDEF; /* struct variable */
-                  type |= STRUCT;
-                  fInStruct = 0;
-                  }
-              if (test_token(SEMI))  /* if semicolon, eat it and return */
-                  return;
-              break;
-          case CRB:
-              unget_token(token);     /* fall thru to COMMA */
-          case COMMA:
-              if(type&ARGUMENT) {
-                  define_var(type|=PROTO);
-                  return;
-                  }
-              break;
-          default:
-              syntax_error();
-
+  for (;;)
+  {
+    switch (token)
+    {
+      case CHAR:
+        type &= ~WORD;                /* cancel WORD */
+        type |= BYTE;
+        break;
+      case INT:
+        if (!(type&DWORD)) type |= WORD;
+          break;
+      case SHORT:
+        type |= WORD;
+        break;
+      case LONG:
+        type &= ~WORD;                /* cancel WORD */
+        type |= DWORD;
+        break;
+      case UNSIGN:
+        type |= WORD;                 /* cancelled for char or long */
+        type |= UNSIGNED;
+        break;
+      case SIGNED:
+        type |= WORD;                 /* this will be cancelled if it's long */
+        type &= ~UNSIGNED;
+        break;
+      case STAT:
+        type |= STATIC;
+        break;
+      case STRUC:
+        type |= STRUCDEF;
+        break;
+      case CONST:
+        type |= CONSTANT;
+        break;
+      case EXTERN:
+        type |= EXTERNAL;
+        break;
+      case REGIS:
+        type |= REGISTER;
+        break;
+      case INTR:
+        type |= ISR;                  /* ISR modified for functions */
+        break;
+      case VOIDD:
+        type |= VOID;
+        break;
+      case FARR:
+        type |= FAR;
+        break;
+      case STAR:                      /* pointer reference */
+        do
+          ++type;
+        while (test_token(STAR));
+        /* allow for prototype arg pointers with no symbol name */
+        if ((type & ARGUMENT) && (test_token(COMMA))) 
+        {
+          define_var(type|=PROTO);    /* tell 'em it may be symboless */
+          return;
         }
-      type &= ~(POINTER | ARRAY);  /* clear indirection and rg of last var */
-      token = get_token();
+        else
+          if (!test_token(SYMBOL)) 
+            syntax_error();
+      case SYMBOL:                    /* we have a symbol name */
+        /* If STRUCDEF, MUST be a Struct Tag Name (new or existing) */
+        if (type & STRUCDEF)          /* This symbol follows "struct" */ 
+        {
+          if (lookup_global())        /* Existing tag ?? */ {
+            if (symtab[sptr].type & STRUCDEF)
+            {
+              CrntStrucDef = sptr;  /* tag we just found */
+              /* might be a pointer to a structure */
+              if (test_token(STAR))
+              do
+                ++type;
+              while (test_token(STAR));
+              /* now expect a new structure variable name */
+              if (!test_token(SYMBOL))
+              {
+                line_error("struct variable expected");
+                return;
+              }
+              else
+              {
+                type &= ~STRUCDEF;    /* struct variable w/tag */
+                type |= STRUCT;
+              }
+            }
+            else
+              line_error("struct tag name expected");
+          }
+          /* we didn't find the tag so it must be a new one! */
+          else /* So add the strucdef */ 
+          {
+            define_symbol(type|TYPDEF, 0);
+            CrntStrucDef = sptr;      /* symbol we just found */
+            if (!(test_token(OCB)))   /* expecting {          */
+              line_error("Structure { expected");
+            else
+            {
+              fInStruct = 1;          /* we are in it now...  */
+              type = 0;
+              break;
+            }
+          }
+        }
+        if (type & ARGUMENT)
+        {
+          define_var(type);
+          return;
+        }
+        if (test_token(ORB))
+          define_func(type);          /* function definition */
+        else
+          define_var(type);           /* variable definition */
+        if (test_token(COMMA))
+          break;
+        test_token(SEMI);             /* eat the semicolon if there */
+        if (fInStruct) /* still defining struct members */ 
+        {
+          type = 0;
+          break;
+        }
+        else
+          return;
+      case OCB:                       /* '{' only allowed for immediate struct defs */
+        if (type & STRUCDEF)          /* Immediate struct definition */ 
+        {
+          copystring(gst, structname);
+          gvalue = 11;
+          define_symbol(type|TYPDEF, 0);
+          CrntStrucDef = sptr;        /* symbol we just added */
+          fInStruct = 1;              /* we are in it now...  */
+          type = 0;
+          break;
+        }
+        else
+          syntax_error();
+        break;
+      case CCB:
+        if (!fInStruct)
+        {
+          syntax_error();
+          return;
+        }
+        else
+        {
+          type &= ~STRUCDEF;          /* struct variable */
+          type |= STRUCT;
+          fInStruct = 0;
+        }
+        if (test_token(SEMI))         /* if semicolon, eat it and return */
+          return;
+        break;
+      case CRB:
+        unget_token(token);           /* fall thru to COMMA */
+      case COMMA:
+        if (type & ARGUMENT)
+        {
+          define_var(type |= PROTO);
+          return;
+        }
+        break;
+      default:
+        syntax_error();
+    }
+    type &= ~(POINTER | ARRAY);       /* clear indirection and rg of last var */
+    token = get_token();
   }
 }
 
@@ -2752,145 +2811,147 @@ static void define_func(U32 type)
 {
   U32 token, dim_save, t, flastarg, i, stackpop;
 
-  icrntpro = 0;
-  flastarg = 0;
-  arg_count = 0;
+  icrntpro   = 0;
+  flastarg   = 0;
+  arg_count  = 0;
   oNextLName = 0;
-
   /* do not allow functions or protos within functions */
-
-  if(in_function) {
-      line_error("Illegally nested function or prototype");
-      return;
+  if (in_function) 
+  {
+    line_error("Illegally nested function or prototype");
+    return;
   }
-
-  if(t = lookup_global()) {       /* symbol already exists */
-      if (t & PROTO) {
-          icrntpro = symtab[sptr].dindex; /* icrntpro points to arg types */
-      }
+  if (t = lookup_global())            /* symbol already exists */ 
+  {
+    if (t & PROTO) 
+    {
+      icrntpro = symtab[sptr].dindex; /* icrntpro points to arg types */
+    }
   }
-  else {
-      define_symbol(type | FUNCTION | GLOBAL, 0);
-      symtab[sptr].dindex = iproto_next;
+  else
+  {
+    define_symbol(type | FUNCTION | GLOBAL, 0);
+    symtab[sptr].dindex = iproto_next;
   }
-
   fptr = sptr;
-
   /* accept variable declarations for local arguments */
   /* These must be inside the parens -- ANSI style    */
-  local_top = MAX_SYMBOLS;
-  dim_save = dim_top;
+  local_top   = MAX_SYMBOLS;
+  dim_save    = dim_top;
   in_function = 1;                    /* indicate inside a function */
-
-  do {
-      switch(token = get_token()) {   /* define local arguments */
-          case SHORT:
-          case LONG:
-          case INT:
-          case SIGNED:
-          case UNSIGN:
-          case CHAR:
-          case FAR:
-          case CONST:
-          case STRUC:
-              declare(token, ARGUMENT);
-              arg_count += 1;
-              break;
-          case COMMA: break;
-          case ELIPSE:
-              proto_list[iproto_next++] = VOID;
-              flastarg = -1;
-              symtab[fptr].type |= VARARGS;
-              break;
-          case VOIDD:
-              if (arg_count) syntax_error();  /* fall through to default */
-          default:
-              if (!flastarg) {
-                  proto_list[iproto_next++] = VOID;
-                  if(iproto_next>MAX_PROTOS)
-                    fatal_error("Prototype table full");
-                  flastarg = -1;
-              if (token==CRB) unget_token(token);
-              }
-              break;
+  do 
+  {
+    switch(token = get_token())       /* define local arguments */
+    {   
+      case SHORT:
+      case LONG:
+      case INT:
+      case SIGNED:
+      case UNSIGN:
+      case CHAR:
+      case FAR:
+      case CONST:
+      case STRUC:
+        declare(token, ARGUMENT);
+        arg_count += 1;
+        break;
+      case COMMA:
+        break;
+      case ELIPSE:
+        proto_list[iproto_next++] = VOID;
+        flastarg = -1;
+        symtab[fptr].type |= VARARGS;
+        break;
+      case VOIDD:
+        if (arg_count)                /* fall through to default */
+          syntax_error();  
+      default:
+        if (!flastarg) 
+        {
+          proto_list[iproto_next++] = VOID;
+          if (iproto_next>MAX_PROTOS)
+            fatal_error("Prototype table full");
+          flastarg = -1;
+          if (token==CRB)
+            unget_token(token);
+        }
+        break;
       }
-  } while (!flastarg);
-
+  } while (!flastarg); /* End of Do */
   token = get_token();
-  if(token != CRB)
-      syntax_error();
+  if (token != CRB)
+    syntax_error();
+  if (test_token(SEMI))                /* a prototype function !! */ 
+  {      
+    symtab[fptr].type |= PROTO;
+    in_function = 0;
+    exit_label  = 0;
+    exit_flag   = 0;
+    exit_used   = 0;
+    dim_top     = dim_save;
+    if (symtab[fptr].type & EXTERNAL)
+      gen_extern_DASM(fptr);
+  }
+  else 
+  {
+    symtab[fptr].type &= ~PROTO;
+    symtab[fptr].type |= FUNCTION;
+    local_stack = 0;
+    exit_label  = 0;
+    exit_flag   = 0;
+    exit_used   = 0;
+    stackpop    = 0;
+    /* Loop through the args putting in correct stack offsets
+    NOTE: For running 32 bit code in a 16 bit environment, the
+    value to be added to stackpop is 6 for each item on the stack.
+    For a 32 bit environment its 8 for each.
 
-  if(test_token(SEMI)) {      /* a prototype function !! */
-      symtab[fptr].type |= PROTO;
-      in_function = 0;
-      exit_label = 0;
-      exit_flag = 0;
-      exit_used = 0;
-      dim_top = dim_save;
-      if (symtab[fptr].type & EXTERNAL)
-          gen_extern_DASM(fptr);
-      }
-  else {
-      symtab[fptr].type &= ~PROTO;
-      symtab[fptr].type |= FUNCTION;
-      local_stack = 0;
-      exit_label = 0;
-      exit_flag = 0;
-      exit_used = 0;
-      stackpop = 0;
+      +-----+-----+ xx
+      |Last param |     The last parameter pushed is here
+      +-----+-----+ 06/8/0C
+      | n Bytes   |     Return Address (2, 4 or 8)
+      +-----+-----+ 04
+      | 4 Bytes   |     Previous Frame Pointer
+      +-----+-----+ 00
 
-      /* Loop through the args putting in correct stack offsets
-      NOTE: For running 32 bit code in a 16 bit environment, the
-      value to be added to stackpop is 6 for each item on the stack.
-      For a 32 bit environment its 8 for each.
-
-        +-----+-----+ xx
-        |Last param |     The last parameter pushed is here
-        +-----+-----+ 06/8/0C
-        | n Bytes   |     Return Address (2, 4 or 8)
-        +-----+-----+ 04
-        | 4 Bytes   |     Previous Frame Pointer
-        +-----+-----+ 00
-
-      The Return Address is either 2, 4 or 8 bytes depending on
-      the environment and whether the call was Near or Far.
-      16 Bit segments -  n = 2 for Near, 4 for Far
-      32 Bit segments -  n = 4 for Near, 8 for Far
-
-      */
-
-      for(i=arg_count; i>0; i--) {
-          if (symtab[fptr].type & FAR)
-              symtab[MAX_SYMBOLS-i].argoffset = stackpop+12; /* 12 for 32 far */
-          else
-              symtab[MAX_SYMBOLS-i].argoffset = stackpop+8; /* 8 for MMURTL */
-          stackpop += 4;
-      }
-      statement(token=get_token());
-      check_func();   /* ensure enter gets written in null func */
-      if((exit_label) && (exit_used))
-          gen_label(exit_label);
-      if (symtab[fptr].type & VARARGS)
-          end_func(0);
+    The Return Address is either 2, 4 or 8 bytes depending on
+    the environment and whether the call was Near or Far.
+    16 Bit segments -  n = 2 for Near, 4 for Far
+    32 Bit segments -  n = 4 for Near, 8 for Far
+    */
+    for (i = arg_count; i > 0; i--)
+    {
+      if (symtab[fptr].type & FAR)
+        symtab[MAX_SYMBOLS-i].argoffset = stackpop+12; /* 12 for 32 far */
       else
-          end_func(stackpop);
-      in_function = 0;
-      exit_label = 0;
-      exit_flag = 0;
-      exit_used = 0;
-      dim_top = dim_save;
-
-      /* Error reporting when end of func is reached and certain
-          conditions exist */
-
-      while(local_top < MAX_SYMBOLS) {
-          if((token = symtab[local_top].type) & EXTERNAL)
-              t_error("Unresolved", &LPool[symtab[local_top].oname]);
-          if(!(token & REFERENCE))
-              t_warn("Unreferenced", &LPool[symtab[local_top].oname]);
-          ++local_top; }
-      return;
+        symtab[MAX_SYMBOLS-i].argoffset = stackpop+8;  /* 8 for MMURTL */
+      stackpop += 4;
     }
+    statement(token=get_token());
+    check_func();                     /* ensure enter gets written in null func */
+    if ((exit_label) && (exit_used))
+      gen_label(exit_label);
+    if (symtab[fptr].type & VARARGS)
+      end_func(0);
+    else
+      end_func(stackpop);
+    in_function = 0;
+    exit_label  = 0;
+    exit_flag   = 0;
+    exit_used   = 0;
+    dim_top     = dim_save;
+    /* Error reporting when end of func is reached and certain
+        conditions exist */
+    while (local_top < MAX_SYMBOLS) 
+    {
+      if ((token = symtab[local_top].type) & EXTERNAL)
+        t_error("Unresolved", &LPool[symtab[local_top].oname]);
+      if (!(token & REFERENCE))
+        t_warn("Unreferenced", &LPool[symtab[local_top].oname]);
+      ++local_top;
+    }
+    return;
+  }
 }
 
 /******************************************************************************
@@ -2899,112 +2960,113 @@ static void define_func(U32 type)
 ******************************************************************************/
 static void write_oper(U32 token, U32 value, U32 type, U32 offset)
 {
-  switch(token) {
-      case INEAX:
-          code_str("EAX");
-          break;
-      case NUMBER:
-          code_num(value);
-          break;
-      case STRING:
-          code_str("OFFSET ");
-          code_chr(prefix);
-          code_str("_lit+");
-          code_num(value);
-          break;
-      case SYMBOL:
-          if(type & GLOBAL) {
-              code_chr('_');      /* prefix with _ */
-              code_str(&GPool[symtab[value].oname]);
-              break; }
-          if(type & ARGUMENT)
-          {
-              if (symtab[fptr].type & VARARGS)
-              {
-                  if (type&(DWORD|POINTER))
-                      code_str("DWORD PTR [EBP+EDI+");
-                  else if (type & WORD)
-                      code_str("WORD PTR [EBP+EDI+");
-                  else
-                      code_str("BYTE PTR [EBP+EDI+");
-                  code_num(symtab[value].argoffset);
-                  code_chr(']');
-              }
-              else
-              {
-                  if (type&(DWORD|POINTER))
-                      code_str("DWORD PTR [EBP+");
-                  else if (type & WORD)
-                      code_str("WORD PTR [EBP+");
-                  else
-                      code_str("BYTE PTR [EBP+");
-                  code_num(symtab[value].argoffset);
-                  code_chr(']');
-              }
-          }
-          else
-          {
-              if (type&(DWORD|POINTER))
-                  code_str("DWORD PTR [EBP-");
-              else if (type & WORD)
-                  code_str("WORD PTR [EBP-");
-              else
-                  code_str("BYTE PTR [EBP-");
-              code_num(symtab[value].argoffset);
-              code_chr(']');
-          }
-          break;
-      case INECX:
-          code_str("ECX");
-          break;
-      case INEDX:
-          code_str("EDX");
-          break;
-      case PESI:
-      case PEDX:
-      case PECX:          /* pointer in other reg - indirect access */
-      case ISTACK_TOP:
-          if (type&(DWORD|POINTER))
-              code_str("DWORD PTR ");
+  switch(token) 
+  {
+    case INEAX:
+      code_str("EAX");
+      break;
+    case NUMBER:
+      code_num(value);
+      break;
+    case STRING:
+      code_str("OFFSET ");
+      code_chr(prefix);
+      code_str("_lit+");
+      code_num(value);
+      break;
+    case SYMBOL:
+      if (type & GLOBAL) 
+      {
+        code_chr('_');                /* prefix with _ */
+        code_str(&GPool[symtab[value].oname]);
+        break; 
+      }
+      if (type & ARGUMENT)
+      {
+        if (symtab[fptr].type & VARARGS)
+        {
+          if (type & (DWORD|POINTER))
+            code_str("DWORD PTR [EBP+EDI+");
           else if (type & WORD)
-              code_str("WORD PTR ");
+            code_str("WORD PTR [EBP+EDI+");
           else
-              code_str("BYTE PTR ");
-
-          if (offset)
-          {
-              if (token==PESI)
-                  code_str("[ESI+");
-              else if (token==PECX)
-                  code_str("[ECX+");
-              else if (token==PEDX)
-                  code_str("[EDX+");
-              else
-                  code_str("[EBX+");
-              code_num(offset);
-              code_chr(']');
-          }
+            code_str("BYTE PTR [EBP+EDI+");
+            code_num(symtab[value].argoffset);
+            code_chr(']');
+        }
+        else
+        {
+          if (type & (DWORD|POINTER))
+            code_str("DWORD PTR [EBP+");
+          else if (type & WORD)
+            code_str("WORD PTR [EBP+");
           else
-          {
-              if (token==PESI)
-                  code_str("[ESI]");
-              else if (token==PEDX)
-                  code_str("[EDX]");
-              else if (token==PECX)
-                  code_str("[ECX]");
-              else
-                  code_str("[EBX]");
-          }
-          break;
-      case STACK_TOP:
-          code_str("EBX");
-          break;
-
-      case ION_STACK:     /* shouldn't happen */
-      case ON_STACK:
-      default:        /* Unknown (error) */
-          code_num(token);
-          code_str(" ERROR in write_oper\n");
+            code_str("BYTE PTR [EBP+");
+            code_num(symtab[value].argoffset);
+            code_chr(']');
+        }
+      }
+      else
+      {
+        if (type & (DWORD|POINTER))
+          code_str("DWORD PTR [EBP-");
+        else if (type & WORD)
+          code_str("WORD PTR [EBP-");
+        else
+          code_str("BYTE PTR [EBP-");
+        code_num(symtab[value].argoffset);
+        code_chr(']');
+      }
+      break;
+    case INECX:
+      code_str("ECX");
+      break;
+    case INEDX:
+      code_str("EDX");
+      break;
+    case PESI:
+    case PEDX:
+    case PECX:                        /* pointer in other reg - indirect access */
+    case ISTACK_TOP:
+      if (type & (DWORD|POINTER))
+        code_str("DWORD PTR ");
+      else if (type & WORD)
+        code_str("WORD PTR ");
+      else
+        code_str("BYTE PTR ");
+      if (offset)
+      {
+        if (token == PESI)
+          code_str("[ESI+");
+        else if (token==PECX)
+          code_str("[ECX+");
+        else if (token==PEDX)
+          code_str("[EDX+");
+        else
+          code_str("[EBX+");
+        code_num(offset);
+        code_chr(']');
+      }
+      else
+      {
+        if (token==PESI)
+          code_str("[ESI]");
+        else if (token==PEDX)
+          code_str("[EDX]");
+        else if (token==PECX)
+          code_str("[ECX]");
+        else
+          code_str("[EBX]");
+      }
+      break;
+    case STACK_TOP:
+      code_str("EBX");
+      break;
+    case ION_STACK:                   /* shouldn't happen */
+    case ON_STACK:
+    default:                          /* Unknown (error) */
+      code_num(token);
+      code_str(" ERROR in write_oper\n");
   }
 }
 
@@ -3016,12 +3078,13 @@ static void GenCodeOper(char *ptr, U32 token, U32 value, U32 type, U32 offset)
 {
   /* interpret the output string & insert the operand */
   code_chr('\t');
-  while(*ptr) {
-      if(*ptr == '|')
-          write_oper(token, value, type, offset);
-      else
-          code_chr(*ptr);
-      ++ptr;
+  while (*ptr) 
+  {
+    if (*ptr == '|')
+      write_oper(token, value, type, offset);
+    else
+      code_chr(*ptr);
+    ++ptr;
   }
   code_chr('\n');
 }
@@ -3038,26 +3101,26 @@ static void StackEAX(void)
 {
   S32 i, j;
 
-  for(i=0; i < expr_ptr; ++i) {
-      if (expstk[i].token == INEAX)       /* Found it */
+  for (i = 0; i < expr_ptr; ++i)
+  {
+    if (expstk[i].token == INEAX)     /* Found it */
+    {
+      for (j = 0; j < expr_ptr; ++j)
       {
-          for(j=0; j < expr_ptr; ++j)
-          {
-              if ((expstk[j].token == STACK_TOP) ||
-                  (expstk[j].token == ISTACK_TOP))
-              {
-                  out_inst("PUSH EBX");
-                  if (expstk[j].token == STACK_TOP)
-                      expstk[j].token = ON_STACK;
-                  else
-                      expstk[j].token = ION_STACK;
-                  break;
-              }
-          }
-          test_not();
-          out_inst("MOV EBX,EAX");
-          expstk[i].token = STACK_TOP;
+        if ((expstk[j].token == STACK_TOP) || (expstk[j].token == ISTACK_TOP))
+        {
+          out_inst("PUSH EBX");
+          if (expstk[j].token == STACK_TOP)
+            expstk[j].token = ON_STACK;
+          else
+            expstk[j].token = ION_STACK;
+          break;
+        }
       }
+      test_not();
+      out_inst("MOV EBX,EAX");
+      expstk[i].token = STACK_TOP;
+    }
   }
 }
 
@@ -3069,15 +3132,15 @@ static void StackEAX(void)
 ******************************************************************************/
 static U32 CheckStack(U32 token)
 {
-  if (token==ION_STACK)
+  if (token == ION_STACK)
   {
-      out_inst("POP EDX");
-      token = PEDX;
+    out_inst("POP EDX");
+    token = PEDX;
   }
-  else if (token==ON_STACK)
+  else if (token == ON_STACK)
   {
-      out_inst("POP EDX");
-      token = INEDX;
+    out_inst("POP EDX");
+    token = INEDX;
   }
   return(token);
 }
@@ -3088,50 +3151,48 @@ static U32 CheckStack(U32 token)
 ******************************************************************************/
 static void LoadEAX(U32 token, U32 value, U32 type, U32 offset)
 {
-  if(type & FUNCTION)
+  if (type & FUNCTION)
       type_error();
 
-  if(token == INEAX) {        /* Already there */
-      test_not();
-      return;
-  }
-
-  token = CheckStack(token);   /* If it's on the processor stack, get it into EDX */
-
-  StackEAX();             /* stack EAX if needed */
-  not_flag = 0;
-
-  if((token == NUMBER) && (!value)) {     /* 0 Value */
-      test_not();
-      code_str("\tXOR EAX,EAX\n");
-      return;
-  }
-
-  if ((type&(DWORD|POINTER)) ||
-      (token == NUMBER) ||
-      (token == INEDX) ||
-      (token == STACK_TOP) ||
-      (token == INECX))
-
-      GenCodeOper("MOV EAX,|", token, value, type, offset);
-  else if (type & WORD) 
+  if (token == INEAX)                 /* Already there */ 
   {
-      if (type & UNSIGNED)
-          GenCodeOper("MOVZX EAX,|", token, value, type, offset);
-      else
-          GenCodeOper("MOVSX EAX,|", token, value, type, offset);
+    test_not();
+    return;
+  }
+  token = CheckStack(token);          /* If it's on the processor stack, get it into EDX */
+  StackEAX();                         /* stack EAX if needed */
+  not_flag = 0;
+  if ((token == NUMBER) && (!value))  /* 0 Value */ 
+  {
+    test_not();
+    code_str("\tXOR EAX,EAX\n");
+    return;
+  }
+  if (
+      (type & (DWORD|POINTER)) ||
+      (token == NUMBER)        ||
+      (token == INEDX)         ||
+      (token == STACK_TOP)     ||
+      (token == INECX)
+     )
+    GenCodeOper("MOV EAX,|", token, value, type, offset);
+  else if (type & WORD)
+  {
+    if (type & UNSIGNED)
+      GenCodeOper("MOVZX EAX,|", token, value, type, offset);
+    else
+      GenCodeOper("MOVSX EAX,|", token, value, type, offset);
   }
   else
   {
-      if (type & UNSIGNED)
-      {
-          code_str("\tXOR EAX,EAX\n");
-          GenCodeOper("MOV AL,|", token, value, type, offset);
-      }
-      else
-          GenCodeOper("MOVSX EAX,|", token, value, type, offset);
+    if (type & UNSIGNED)
+    {
+      code_str("\tXOR EAX,EAX\n");
+      GenCodeOper("MOV AL,|", token, value, type, offset);
+    }
+    else
+      GenCodeOper("MOVSX EAX,|", token, value, type, offset);
   }
-
   zero_flag = -1;
 }
 
@@ -3141,44 +3202,42 @@ static void LoadEAX(U32 token, U32 value, U32 type, U32 offset)
 ******************************************************************************/
 static void LoadECX(U32 token, U32 value, U32 type, U32 offset)
 {
-  if(type & FUNCTION)
-      type_error();
-
-  if(token == INECX)
-  {       /* Already there */
-      return;
+  if (type & FUNCTION)
+    type_error();
+  if (token == INECX)
+  {                                   /* Already there */
+    return;
   }
-
-  token = CheckStack(token);   /* If it's on the processor stack, get it into EDX */
-
+  token = CheckStack(token);          /* If it's on the processor stack, get it into EDX */
   if ((token == NUMBER) && (!value))
-  {       /* 0 Value */
-      code_str("\tXOR ECX,ECX\n");
-      return;
+  {                                   /* 0 Value */
+    code_str("\tXOR ECX,ECX\n");
+    return;
   }
-
-  if ((type&(DWORD|POINTER)) ||
-      (token == NUMBER) ||
-      (token == INEDX) ||
-      (token == STACK_TOP) ||
-      (token == INEAX))
-
-      GenCodeOper("MOV ECX,|", token, value, type, offset);
-  else if (type & WORD) {
-      if (type & UNSIGNED)
-          GenCodeOper("MOVZX ECX,|", token, value, type, offset);
-      else
-          GenCodeOper("MOVSX ECX,|", token, value, type, offset);
+  if (
+      (type & (DWORD|POINTER)) ||
+      (token == NUMBER)        ||
+      (token == INEDX)         ||
+      (token == STACK_TOP)     ||
+      (token == INEAX)
+     )
+    GenCodeOper("MOV ECX,|", token, value, type, offset);
+  else if (type & WORD) 
+  {
+    if (type & UNSIGNED)
+      GenCodeOper("MOVZX ECX,|", token, value, type, offset);
+    else
+      GenCodeOper("MOVSX ECX,|", token, value, type, offset);
   }
   else
   {
-      if (type & UNSIGNED)
-      {
-          code_str("\tXOR ECX,ECX\n");
-          GenCodeOper("MOV CL,|", token, value, type, offset);
-      }
-      else
-          GenCodeOper("MOVSX ECX,|", token, value, type, offset);
+    if (type & UNSIGNED)
+    {
+      code_str("\tXOR ECX,ECX\n");
+      GenCodeOper("MOV CL,|", token, value, type, offset);
+    }
+    else
+      GenCodeOper("MOVSX ECX,|", token, value, type, offset);
   }
 }
 
@@ -3192,13 +3251,15 @@ static void sub_eval(U32 term)
 {
   U32 token;
 
-  for(;;) {
-      if((token = do_oper(SEMI)) != COMMA) {
-          unget_token(token);
-          expect(term);
-          return;
-      }
-      pop(&token, &token, &token, &token);    /* throw it away */
+  for (;;) 
+  {
+    if ((token = do_oper(SEMI)) != COMMA)
+    {
+      unget_token(token);
+      expect(term);
+      return;
+    }
+    pop(&token, &token, &token, &token);    /* throw it away */
   }
 }
 
@@ -3213,10 +3274,9 @@ static void eval(U32 term, char flag)
   expr_ptr = 0;
   not_flag = 0;
   sub_eval(term);
-
   pop(&token, &value, &type, &offset);
-  if((token != INEAX) || flag)
-      LoadEAX(token, value, type, offset);
+  if ((token != INEAX) || flag)
+    LoadEAX(token, value, type, offset);
 }
 
 /******************************************************************************
@@ -3240,18 +3300,17 @@ static void StackTop(void)
 {
   S32 i, j;
 
-  for(j=0; j < expr_ptr; ++j)
+  for (j = 0; j < expr_ptr; ++j)
   {
-      if ((expstk[j].token == STACK_TOP) ||
-          (expstk[j].token == ISTACK_TOP))
-      {
-          out_inst("PUSH EBX");
-          if (expstk[j].token == STACK_TOP)
-              expstk[j].token = ON_STACK;
-          else
-              expstk[j].token = ION_STACK;
-          break;
-      }
+    if ((expstk[j].token == STACK_TOP) || (expstk[j].token == ISTACK_TOP))
+    {
+      out_inst("PUSH EBX");
+      if (expstk[j].token == STACK_TOP)
+        expstk[j].token = ON_STACK;
+      else
+        expstk[j].token = ION_STACK;
+      break;
+    }
   }
 }
 
@@ -3267,25 +3326,25 @@ static void StackESI(void)
 {
   S32 i, j;
 
-  for(i=0; i < expr_ptr; ++i) {
-      if (expstk[i].token == PESI)        /* Found it */
+  for (i = 0; i < expr_ptr; ++i)
+  {
+    if (expstk[i].token == PESI)        /* Found it */
+    {
+      for (j = 0; j < expr_ptr; ++j)
       {
-          for(j=0; j < expr_ptr; ++j)
-          {
-              if ((expstk[j].token == STACK_TOP) ||
-                  (expstk[j].token == ISTACK_TOP))
-              {
-                  out_inst("PUSH EBX");
-                  if (expstk[j].token == STACK_TOP)
-                      expstk[j].token = ON_STACK;
-                  else
-                      expstk[j].token = ION_STACK;
-                  break;
-              }
-          }
-          out_inst("MOV EBX,ESI");
-          expstk[i].token = ISTACK_TOP;
+        if ((expstk[j].token == STACK_TOP) || (expstk[j].token == ISTACK_TOP))
+        {
+          out_inst("PUSH EBX");
+          if (expstk[j].token == STACK_TOP)
+            expstk[j].token = ON_STACK;
+          else
+            expstk[j].token = ION_STACK;
+          break;
+        }
       }
+      out_inst("MOV EBX,ESI");
+      expstk[i].token = ISTACK_TOP;
+    }
   }
 }
 
@@ -3295,10 +3354,10 @@ static void StackESI(void)
 static void load_index(U32 t, U32 v, U32 tt, U32 o)
 {
   StackESI();
-  if((tt & ARGUMENT) || !(tt & ARRAY))    /* pointer or argument */
-      index_ptr(t, v, tt, o);
-  else                                    /* standard array */
-      index_adr(t, v, tt, o);
+  if ((tt & ARGUMENT) || !(tt & ARRAY))     /* pointer or argument */
+    index_ptr(t, v, tt, o);
+  else                                      /* standard array */
+    index_adr(t, v, tt, o);
 }
 
 /******************************************************************************
@@ -3313,64 +3372,63 @@ static void do_unary(U32 oper)
   pop(&token, &value, &type, &offset);
   flag = 0;
   /* Evaluate any operations that can be performed at compile time */
-  if(token == NUMBER)
+  if (token == NUMBER)
   {
-      flag = -1;
-      switch(oper)
-      {
-          case SUB :      /* unary minus */
-              value = -value;
-              break;
-          case COM:       /* ones complement */
-              value = ~value;
-              break;
-          case NOT:       /* logical complement */
-              value = !value;
-              break;
-          default:
-              flag = 0;
-      }
+    flag = -1;
+    switch (oper)
+    {
+      case SUB :                            /* unary minus */
+        value = -value;
+        break;
+      case COM:                             /* ones complement */
+        value = ~value;
+        break;
+      case NOT:                             /* logical complement */
+        value = !value;
+        break;
+      default:
+        flag = 0;
+    }
   }
-
   /* Generate code to perform operation */
-  if(!flag)
+  if (!flag)
   {
-      switch(oper)
-      {
-          case SUB:               /* unary minus */
-              GenCodeOper("NEG |", token, value, type, offset);
-              break;
-          case COM:               /* ones complement */
-              GenCodeOper("NOT |", token, value, type, offset);
-              break;
-          case NOT:               /* logical complement */
-              LoadEAX(token, value, type, offset);
-              token = INEAX;
-              not_flag = TRUE;
-              break;
-          case INC:               /* '++' increment token & load */
-              if (ispStruct(type, value))
-                  GenCodeOper("ADD |,strucsize", token, value, type, offset);
-              else if (isp32(type))
-                  GenCodeOper("ADD |,4", token, value, type, offset);
-              else if (isp16(type))
-                  GenCodeOper("ADD |,2", token, value, type, offset);
-              else
-                  GenCodeOper("INC |", token, value, type, offset);
-              break;
-          case DEC:               /* '--' decrement & store */
-              if (ispStruct(type, value))
-                  GenCodeOper("SUB |,strucsize", token, value, type, offset);
-              else if (isp32(type))
-                  GenCodeOper("SUB |,4", token, value, type, offset);
-              else if (isp16(type))
-                  GenCodeOper("SUB |,2", token, value, type, offset);
-              else
-                  GenCodeOper("DEC |", token, value, type, offset);
-              break;
-          default:
-              syntax_error();
-      }
+    switch (oper)
+    {
+      case SUB:                             /* unary minus */
+        GenCodeOper("NEG |", token, value, type, offset);
+        break;
+      case COM:                             /* ones complement */
+        GenCodeOper("NOT |", token, value, type, offset);
+        break;
+      case NOT:                             /* logical complement */
+        LoadEAX(token, value, type, offset);
+        token = INEAX;
+        not_flag = TRUE;
+        break;
+      case INC:                             /* '++' increment token & load */
+        if (ispStruct(type, value))
+          GenCodeOper("ADD |,strucsize", token, value, type, offset);
+        else if (isp32(type))
+          GenCodeOper("ADD |,4", token, value, type, offset);
+        else if (isp16(type))
+          GenCodeOper("ADD |,2", token, value, type, offset);
+        else
+          GenCodeOper("INC |", token, value, type, offset);
+          break;
+      case DEC:                             /* '--' decrement & store */
+        if (ispStruct(type, value))
+          GenCodeOper("SUB |,strucsize", token, value, type, offset);
+        else if (isp32(type))
+          GenCodeOper("SUB |,4", token, value, type, offset);
+        else if (isp16(type))
+          GenCodeOper("SUB |,2", token, value, type, offset);
+        else
+          GenCodeOper("DEC |", token, value, type, offset);
+          break;
+      default:
+        syntax_error();
+    }
   }
   push(token, value, type, offset);
 }
@@ -3384,73 +3442,71 @@ static S8 eval_index(U32 t, U32 v, U32 tp, U32 ofs, U32 *tpRet)
   U32 token, tp1, dptr, iSym, vsize, ofs1;
   char fMultiDim;
 
-  fMultiDim = FALSE;  /* true when processing second or subsequent dims */
-
-  if(tp & ARRAY) {            /* array, get # dimensions */
-      dptr = symtab[v].dindex;
-      ndim = dim_pool[dptr++];
-      }
-  else                    /* pointer, fake # dims as 1 */
-      dptr = ndim = 1;
-
-  iSym = v;           /* save index into symtab */
-
-  push(t, v, tp, ofs);    /* save symbol we are indexing on exp stack */
-
-  do {                /* calculate index */
-
-      /* this gets the size of variable into vsize */
-
-      v = tp & (POINTER | ARRAY);
-      if ((v==ARRAY) || (v < 2)) {
-            if (tp & BYTE) vsize = 1;
-            else if (tp & WORD) vsize = 2;
-            else if (tp & DWORD) vsize = 4;
-            else if (tp & STRUCT)
-              vsize = symtab[iSym].strucoff; /* strucoff = size of struc*/
-        }
-      else vsize = 4;
-      --ndim;
-      if(tp & ARRAY)          /* array reference */
-      {
-          t = ++dptr;
-          if(!(v = ndim))     /* all indices given, load pointer */
-              tp &= ~ARRAY;   /* Not an array ref anymore, ptr instead */
-          while(v--)
-              vsize *= dim_pool[t++];
-      }
-      else
-      {
-          if(tp & POINTER)
-          {       /* pointer reference */
-              --tp;               /* drop defer level by one */
-              if(fMultiDim)
-              {                   /* array of pointers */
-                  pop(&t, &v, &tp1, &ofs1);
-                  LoadEAX(t, v, tp1, ofs1);
-                  pop(&t, &v, &tp1, &ofs1);
-                  load_index(t, v, tp1, ofs1);
-                  out_inst("ADD ESI,EAX");
-                  push(t = PESI, v, tp, ofs1);
-                  fMultiDim = 0;
-              }
-          }
-          else                    /* invalid indexing */
-              index_error();
-      }
-      sub_eval(CSB);      /* GET the value inside the [] */
-
-          /* Multiply [] by size of index */
-
-      if(vsize != 1) {    /* optimize away size of 1 */
-          push(NUMBER, vsize, DWORD, 0);
-          do_lr2op(STAR);             /* multiply by size */
-      }
-      if(fMultiDim) do_lr2op(ADD);    /* add to last index if there */
-      fMultiDim = TRUE;               /* if there is another... */
+  fMultiDim = FALSE;                        /* true when processing second or subsequent dims */
+  if (tp & ARRAY)                           /* array, get # dimensions */ 
+  {
+    dptr = symtab[v].dindex;
+    ndim = dim_pool[dptr++];
   }
-  while(test_token(OSB));
-
+  else                                      /* pointer, fake # dims as 1 */
+    dptr = ndim = 1;
+  iSym = v;                                 /* save index into symtab */
+  push(t, v, tp, ofs);                      /* save symbol we are indexing on exp stack */
+  do                                        /* calculate index */
+  {                                         /* this gets the size of variable into vsize */
+    v = tp & (POINTER | ARRAY);
+    if ((v == ARRAY) || (v < 2)) 
+    {
+      if (tp & BYTE)
+        vsize = 1;
+      else if (tp & WORD) 
+        vsize = 2;
+      else if (tp & DWORD) 
+        vsize = 4;
+      else if (tp & STRUCT)
+        vsize = symtab[iSym].strucoff;      /* strucoff = size of struc*/
+    }
+    else
+      vsize = 4;
+    --ndim;
+    if (tp & ARRAY)                         /* array reference */
+    {
+      t = ++dptr;
+      if (!(v = ndim))                      /* all indices given, load pointer */
+        tp &= ~ARRAY;                       /* Not an array ref anymore, ptr instead */
+      while (v--)
+        vsize *= dim_pool[t++];
+    }
+    else
+    {
+      if (tp & POINTER)
+      {                                     /* pointer reference */
+        --tp;                               /* drop defer level by one */
+        if (fMultiDim)
+        {                                   /* array of pointers */
+          pop(&t, &v, &tp1, &ofs1);
+          LoadEAX(t, v, tp1, ofs1);
+          pop(&t, &v, &tp1, &ofs1);
+          load_index(t, v, tp1, ofs1);
+          out_inst("ADD ESI,EAX");
+          push(t = PESI, v, tp, ofs1);
+          fMultiDim = 0;
+        }
+      }
+      else                                  /* invalid indexing */
+        index_error();
+      }
+      sub_eval(CSB);                        /* GET the value inside the [] */
+      /* Multiply [] by size of index */
+      if (vsize != 1)                       /* optimize away size of 1 */ 
+      {    
+        push(NUMBER, vsize, DWORD, 0);
+        do_lr2op(STAR);                     /* multiply by size */
+      }
+      if (fMultiDim)
+        do_lr2op(ADD);                      /* add to last index if there */
+      fMultiDim = TRUE;                     /* if there is another... */
+  } while (test_token(OSB));
   *tpRet = tp;
   return fMultiDim;
 }
@@ -3466,373 +3522,390 @@ static void get_value(void)
   U32 i, j, size, token, t, v, tp, tp1, ofs, ofs1;
   char fMultiDim, fvarargs;
 
-  switch(token = get_token()) {
-      case NUMBER:            /* a constant number */
-          t = NUMBER;         /* constant */
-          v = gvalue;         /* value of number */
-          tp = DWORD;         /* all constants are DWORDS */
-          ofs = 0;            /* no constant offset */
-          break;
-      case STRING:            /* a literal string */
-          t = STRING;         /* will be found in lit pool */
-          v = gvalue;         /* length of string  */
-          tp = BYTE | 1;      /* 1 is level of indirection  */
-          ofs = 0;            /* offset of zero */
-          break;
-      case SYMBOL:            /* symbol value */
-          if(!(lookup_local() || lookup_global())) {      /* not defined */
-              if(test_token(ORB)) {           /* function, but no proto! */
-                  symbol_error("Function not prototyped");
-              }
-              else                            /* variable, report error */
-                  symbol_error("Undefined symbol");
-          }
-          t = SYMBOL;
-          v = sptr;               /* symtab entry */
-          tp = symtab[v].type;
-          ofs = 0;            /* offset of zero */
-          break;
-      case STAR:              /* pointer dereference */
-          get_value();
-          pop(&t, &v, &tp, &ofs);
-          StackESI();
-          index_ptr(t, v, tp, ofs);
-          t = PESI;
-          if(tp & POINTER)
-              --tp;
-          else
-              index_error();
-          break;
-      case AND:               /* address of */
-          get_value();
-          pop(&t, &v, &tp, &ofs);
-          if(t == SYMBOL)
-          {
-              StackEAX();
-              code_str((tp & GLOBAL) ? "\tMOV EAX,OFFSET " : "\tLEA EAX,");
-              write_oper(t, v, tp, ofs);
-              code_chr('\n');
-              not_flag=0;
-              tp = (tp + 1) & ~FUNCTION;  /* tp + 1 ups the ptr ref count */
-              t = INEAX;
-          }
-          else if (t == PESI)
-          {
-              StackEAX();
-              not_flag=0;
-              out_inst("MOV EAX,ESI");
-              tp = (tp + 1) & ~FUNCTION;  /* tp + 1 ups the ptr ref count */
-              t = INEAX;
-          }
-          else if ((t == INEAX) && (tp & POINTER))
-          { /* do nothing... it's there. */ }
-          else
-              line_error("Invalid '&' operation");
-          break;
-      case ORB:               /* sub-expression */
-          sub_eval(CRB);
-          pop(&t, &v, &tp, &ofs);
-          break;
-      case SIZEOF:                /* sizeof */
-          if(test_token(ORB)) {
-              get_value();            /* look for a symbol */
-              pop(&t, &v, &tp, &ofs);
-              if (t == SYMBOL) {
-                  if (tp & POINTER) size = 4;
-                  else if (tp & BYTE) size = 1;
-                  else if (tp & WORD) size = 2;
-                  else if (tp & DWORD) size = 4;
-                  else if (tp & STRUCT)
-                      size = symtab[v].strucoff; /* strucoff = size */
-                  else size = 4;
-                  if ((tp & ARRAY) && (!(tp & POINTER))) { /* array ref */
-                      i = symtab[v].dindex;    /* i = index to dimpool */
-                      j = dim_pool[i++];          /* j = nDims */
-                      while(j--) size *= dim_pool[i++];
-                  }
-                  t = NUMBER;
-                  tp = DWORD;         /* all constants are DWORDS */
-                  v = size;
-                  push(t, v, tp, 0);  /* PUSH THE "Value" ON THE EXP STACK */
-                  expect(CRB);
-                  return;
-              }
-              else
-                  line_error("Symbol expected");
-          }
-          else
-              line_error("'(' expected");
-          break;
-      default:                /* anything else (operators) */
-          get_value();        /* look for a value */
-          do_unary(token);
-          return;
-  }
-
-  /* Function calls  - Open Round Brackett (ORB) */
-
-  if(test_token(ORB))
+  switch (token = get_token()) 
   {
-      iarg = symtab[v].dindex;    /* index to prototyped args! */
-      push(t, v, tp, ofs);
-      StackEAX();
+    case NUMBER:                            /* a constant number */
+      t   = NUMBER;                         /* constant */
+      v   = gvalue;                         /* value of number */
+      tp  = DWORD;                          /* all constants are DWORDS */
+      ofs = 0;                              /* no constant offset */
+      break;
+    case STRING:                            /* a literal string */
+      t   = STRING;                         /* will be found in lit pool */
+      v   = gvalue;                         /* length of string  */
+      tp  = BYTE | 1;                       /* 1 is level of indirection  */
+      ofs = 0;                              /* offset of zero */
+      break;
+    case SYMBOL:                            /* symbol value */
+      if (!(lookup_local() || lookup_global())) /* not defined */
+      {      
+        if (test_token(ORB))                /* function, but no proto! */ 
+        {
+          symbol_error("Function not prototyped");
+        }
+        else                                /* variable, report error */
+         symbol_error("Undefined symbol");
+      }
+      t   = SYMBOL;
+      v   = sptr;                           /* symtab entry */
+      tp  = symtab[v].type;
+      ofs = 0;                              /* offset of zero */
+      break;
+    case STAR:                              /* pointer dereference */
+      get_value();
+      pop(&t, &v, &tp, &ofs);
       StackESI();
-      if (tp & VARARGS) fvarargs = -1;
-      else fvarargs = 0;
-      vcnt = ndim = 0;
-      StackTop();
-      if(!test_token(CRB))
-      {       /* evaluate function operands */
-          do {
-              argtype = proto_list[iarg]; /* current arg type */
-              if(!(argtype&VOID)) iarg++; /* if not end of proto args, get next*/
-              token = do_oper(SEMI);      /* handle operation on arg */
-              pop(&t, &v, &tp, &ofs);     /* get token arg from expstack */
-              LoadEAX(t, v, tp, ofs);
-              if ((t != PESI) && (ofs) && (tp&POINTER))
-              {   /* offset must be added */
-                  code_str("\tADD EAX,");
-                  code_num(ofs);
-                  code_chr('\n');
-              }
-              out_inst("PUSH EAX");
-
-              ++ndim;
-              if ((!fvarargs) || (fvarargs && (argtype==VOID))) {
-                  ++vcnt;
-              }
-          }
-          while(token == COMMA);
-          if(token != CRB)
-              syntax_error();
+      index_ptr(t, v, tp, ofs);
+      t = PESI;
+      if (tp & POINTER)
+        --tp;
+      else
+        index_error();
+      break;
+    case AND:                               /* address of */
+      get_value();
+      pop(&t, &v, &tp, &ofs);
+      if (t == SYMBOL)
+      {
+        StackEAX();
+        code_str((tp & GLOBAL) ? "\tMOV EAX,OFFSET " : "\tLEA EAX,");
+        write_oper(t, v, tp, ofs);
+        code_chr('\n');
+        not_flag=0;
+        tp = (tp + 1) & ~FUNCTION;          /* tp + 1 ups the ptr ref count */
+        t = INEAX;
       }
-      iarg = 0;
-      pop(&t, &v, &tp, &ofs); /* get function back off the expr stack */
-
-      /*  if the function we are about to call had variable parameters
-          then put the count of bytes that were pushed into EDI as the
-          code in a vararg function uses it to access the fixed args.
-          Also, we leave ndim (total count of bytes push) with it's
-          value so that the "call" function knows he must remove the
-          data from the stack and the "end_func" function knows not
-          to use the RET XX instruction.
-      */
-
-      if (fvarargs) {
-          code_str("\tMOV EDI, ");
-          code_num(vcnt*4);
-          code_chr('\n');
+      else if (t == PESI)
+      {
+        StackEAX();
+        not_flag = 0;
+        out_inst("MOV EAX,ESI");
+        tp = (tp + 1) & ~FUNCTION;          /* tp + 1 ups the ptr ref count */
+        t = INEAX;
       }
-      else ndim = 0;
-
-      call(t, v, tp, ofs, ndim);
-
-      t = INEAX;          /* set up to leave the return value in ACC */
-      tp &= ~FUNCTION;
-  }
-
-  /* Indexing operations - Open Square Brackett (OSB) */
-  fMultiDim = 0;
-  if(test_token(OSB)) {
-      fMultiDim = eval_index(t, v, tp, ofs, &tp);
-
-      /* get index value token pushed by eval_index */
-      pop(&token, &v, &t, &ofs);
-      if ((token==NUMBER) & (!v))
-      {  /* index is 0 */
-          pop(&t, &v, &tp1, &ofs);        /* Get var base */
-          if ((tp1 & (POINTER|ARRAY)) && (t!=PESI))
-              load_index(t, v, tp1, ofs); /* Load base into Index reg */
+      else if ((t == INEAX) && (tp & POINTER))
+      { 
+        /* do nothing... it's there. */ 
       }
       else
+        line_error("Invalid '&' operation");
+      break;
+    case ORB:                               /* sub-expression */
+      sub_eval(CRB);
+      pop(&t, &v, &tp, &ofs);
+      break;
+    case SIZEOF:                            /* sizeof */
+      if (test_token(ORB))
       {
-          LoadEAX(token, v, t, ofs);  /* load it into ACC */
-          pop(&t, &v, &tp1, &ofs);        /* Get var base */
-          if (tp1 & (POINTER|ARRAY) && (t!=PESI))
-              load_index(t, v, tp1, ofs); /* Load base into Index reg */
-          out_inst("ADD ESI,EAX");
+        get_value();                        /* look for a symbol */
+        pop(&t, &v, &tp, &ofs);
+        if (t == SYMBOL)
+        {
+          if (tp & POINTER)
+            size = 4;
+          else if (tp & BYTE) 
+            size = 1;
+          else if (tp & WORD) 
+            size = 2;
+          else if (tp & DWORD) 
+            size = 4;
+          else if (tp & STRUCT)
+            size = symtab[v].strucoff;      /* strucoff = size */
+          else 
+            size = 4;
+          if ((tp & ARRAY) && (!(tp & POINTER))) /* array ref */ 
+          {
+            i = symtab[v].dindex;           /* i = index to dimpool */
+            j = dim_pool[i++];              /* j = nDims */
+            while (j--) 
+              size *= dim_pool[i++];
+          }
+          t  = NUMBER;
+          tp = DWORD;                       /* all constants are DWORDS */
+          v  = size;
+          push(t, v, tp, 0);                /* PUSH THE "Value" ON THE EXP STACK */
+          expect(CRB);
+          return;
+        }
+        else
+          line_error("Symbol expected");
       }
-      t = PESI;           /* Let em know ESI pts to item */
+      else
+        line_error("'(' expected");
+        break;
+    default:                                /* anything else (operators) */
+      get_value();                          /* look for a value */
+      do_unary(token);
+      return;
   }
-
+  /* Function calls  - Open Round Brackett (ORB) */
+  if (test_token(ORB))
+  {
+    iarg = symtab[v].dindex;                /* index to prototyped args! */
+    push(t, v, tp, ofs);
+    StackEAX();
+    StackESI();
+    if (tp & VARARGS) fvarargs = -1;
+    else fvarargs = 0;
+    vcnt = ndim = 0;
+    StackTop();
+    if (!test_token(CRB))
+    {                                       /* evaluate function operands */
+      do
+      {
+        argtype = proto_list[iarg];         /* current arg type */
+        if (!(argtype&VOID))                /* if not end of proto args, get next*/
+          iarg++; 
+        token = do_oper(SEMI);              /* handle operation on arg */
+        pop(&t, &v, &tp, &ofs);             /* get token arg from expstack */
+        LoadEAX(t, v, tp, ofs);
+        if ((t != PESI) && (ofs) && (tp&POINTER))
+        {                                   /* offset must be added */
+          code_str("\tADD EAX,");
+          code_num(ofs);
+          code_chr('\n');
+        }
+        out_inst("PUSH EAX");
+        ++ndim;
+        if ((!fvarargs) || (fvarargs && (argtype==VOID))) 
+        {
+          ++vcnt;
+        }
+      } while (token == COMMA);
+      if (token != CRB)
+        syntax_error();
+    }
+    iarg = 0;
+    pop(&t, &v, &tp, &ofs);                 /* get function back off the expr stack */
+    /*  if the function we are about to call had variable parameters
+        then put the count of bytes that were pushed into EDI as the
+        code in a vararg function uses it to access the fixed args.
+        Also, we leave ndim (total count of bytes push) with it's
+        value so that the "call" function knows he must remove the
+        data from the stack and the "end_func" function knows not
+        to use the RET XX instruction.
+    */
+    if (fvarargs)
+    {
+      code_str("\tMOV EDI, ");
+      code_num(vcnt*4);
+      code_chr('\n');
+    }
+    else
+      ndim = 0;
+    call(t, v, tp, ofs, ndim);
+    t = INEAX;                              /* set up to leave the return value in ACC */
+    tp &= ~FUNCTION;
+  }
+  /* Indexing operations - Open Square Brackett (OSB) */
+  fMultiDim = 0;
+  if (test_token(OSB))
+  {
+    fMultiDim = eval_index(t, v, tp, ofs, &tp);
+    /* get index value token pushed by eval_index */
+    pop(&token, &v, &t, &ofs);
+    if ((token == NUMBER) & (!v))
+    {                                       /* index is 0 */
+      pop(&t, &v, &tp1, &ofs);              /* Get var base */
+      if ((tp1 & (POINTER|ARRAY)) && (t != PESI))
+        load_index(t, v, tp1, ofs);         /* Load base into Index reg */
+    }
+    else
+    {
+      LoadEAX(token, v, t, ofs);            /* load it into ACC */
+      pop(&t, &v, &tp1, &ofs);              /* Get var base */
+      if (tp1 & (POINTER|ARRAY) && (t != PESI))
+        load_index(t, v, tp1, ofs);         /* Load base into Index reg */
+      out_inst("ADD ESI,EAX");
+    }
+    t = PESI;                               /* Let em know ESI pts to item */
+  }
   /* Convert any [UNINDEXED] array references to address values.
       This is done later to structures and struct members.
   */
-  if((tp & ARRAY) && (!(tp & (STRUCT|STRUCMEM)))) {
-      tp = (tp + 1) & ~ARRAY;         /* tp+1 ups the ptr ref count */
-      if(!(tp & ARGUMENT))
+  if ((tp & ARRAY) && (!(tp & (STRUCT|STRUCMEM)))) 
+  {
+    tp = (tp + 1) & ~ARRAY;                 /* tp+1 ups the ptr ref count */
+    if (!(tp & ARGUMENT))
+    {
+      if (!fMultiDim)
       {
-          if(!fMultiDim)
-          {
-              StackEAX();             /* save what's in EAX and ESI */
-              StackESI();
-              index_adr(t, v, tp, ofs);   /* load address of rg into ESI */
-          }
-          StackEAX();             /* save what's in EAX if needed */
-          not_flag = 0;
-          out_inst("MOV EAX,ESI");
-          t = INEAX;
+        StackEAX();                         /* save what's in EAX and ESI */
+        StackESI();
+        index_adr(t, v, tp, ofs);           /* load address of rg into ESI */
       }
+      StackEAX();                           /* save what's in EAX if needed */
+      not_flag = 0;
+      out_inst("MOV EAX,ESI");
+      t = INEAX;
+    }
   }
 
   /* handle the dereference operators . and -> for
       structures and pointers to structures if present */
-  if(test_token(DEREF)) {
-      if ((tp & STRUCT) && ((tp & POINTER) || (t==PESI)) ) {
-          if (t == SYMBOL) {              /* may already be PESI */
-              StackEAX();                 /* save what's in EAX */
-              StackESI();             /* stack ESI */
-              index_ptr(t, v, tp, ofs);       /* pointer base into ESI */
-              t = PESI;               /* tell em it's indirect now */
-          }
-          if (test_token(SYMBOL)) {
-              if (lookup_member(v)) {
-                  memoffset = symtab[sptr].strucoff;
-                  tp = symtab[sptr].type;
-                  v = sptr;
-                  ofs = memoffset;    /* NEW */
-
-                  if (tp & ARRAY)
-                      tp = (tp + 1) & ~ARRAY;  /* tp+1 ups the ptr ref count */
-                  t = PESI;       /* tell em it's indirect now */
-              }
-              else
-                  line_error("Not a structure member");
-          }
-          else
-              line_error("Structure member expected");
+  if (test_token(DEREF))
+  {
+    if ((tp & STRUCT) && ((tp & POINTER) || (t == PESI)))
+    {
+      if (t == SYMBOL)                      /* may already be PESI */ 
+      {
+        StackEAX();                         /* save what's in EAX */
+        StackESI();                         /* stack ESI */
+        index_ptr(t, v, tp, ofs);           /* pointer base into ESI */
+        t = PESI;                           /* tell em it's indirect now */
+      }
+      if (test_token(SYMBOL)) 
+      {
+        if (lookup_member(v))
+        {
+          memoffset = symtab[sptr].strucoff;
+          tp        = symtab[sptr].type;
+          v         = sptr;
+          ofs       = memoffset;            /* NEW */
+          if (tp & ARRAY)
+            tp = (tp + 1) & ~ARRAY;         /* tp+1 ups the ptr ref count */
+          t = PESI;                         /* tell em it's indirect now */
+        }
+        else
+          line_error("Not a structure member");
       }
       else
-          line_error("Pointer to Struct expected");
+        line_error("Structure member expected");
+    }
+    else
+      line_error("Pointer to Struct expected");
   }
-
-  if (test_token(DOT)) {
-      if ((tp & STRUCT) && (!(tp & POINTER))) {
-          if (t == SYMBOL) {              /* may already be PESI */
-              StackEAX();                 /* save what's in EAX */
-              StackESI();             /* stack ESI */
-              index_adr(t, v, tp, ofs);   /* ptr to base of struct into ESI */
-              t = PESI;
-          }
-          if (test_token(SYMBOL)) {
-              if (lookup_member(v)) {
-                  memoffset = symtab[sptr].strucoff;
-                  tp = symtab[sptr].type;     /* member type */
-                  v = sptr;                   /* symtab entry of member */
-                  ofs = memoffset;    /* NEW */
-
-                  t = PESI;       /* tell em it's indirect now */
-
-              }
-              else
-                  line_error("Structure member expected");
-          }
-          else
-              line_error("Structure member expected");
+  if (test_token(DOT)) 
+  {
+    if ((tp & STRUCT) && (!(tp & POINTER)))
+    {
+      if (t == SYMBOL)                      /* may already be PESI */
+      {              
+        StackEAX();                         /* save what's in EAX */
+        StackESI();                         /* stack ESI */
+        index_adr(t, v, tp, ofs);           /* ptr to base of struct into ESI */
+        t = PESI;
+      }
+      if (test_token(SYMBOL)) 
+      {
+        if (lookup_member(v))
+        {
+          memoffset = symtab[sptr].strucoff;
+          tp = symtab[sptr].type;     /* member type */
+          v = sptr;                   /* symtab entry of member */
+          ofs = memoffset;    /* NEW */
+          t = PESI;       /* tell em it's indirect now */
+        }
+        else
+          line_error("Structure member expected");
       }
       else
-          line_error("Invalid structure operation");
+        line_error("Structure member expected");
+    }
+    else
+      line_error("Invalid structure operation");
   }
 
   /* Indexing operations for STRUCTMEMS- Open Square Brackett (OSB) */
   fMultiDim = 0;
-  if(test_token(OSB)) {
-      fMultiDim = eval_index(t, v, tp, ofs, &tp);
-      pop(&token, &v, &t, &ofs);      /* get index value token just pushed */
-      if ((token==NUMBER) & (!v))
-      {   /* index is 0 */
-          pop(&t, &v, &tp1, &ofs);    /* Get var base */
-          if (tp1 & (POINTER|ARRAY) && (t!=PESI))
-          {
-              load_index(t, v, tp1, ofs); /* Load base into Index reg */
-              if ((t==ISTACK_TOP) &&
-                  (symtab[v].type & ARRAY))
-                  t=STACK_TOP;
-          }
+  if (test_token(OSB))
+  {
+    fMultiDim = eval_index(t, v, tp, ofs, &tp);
+    pop(&token, &v, &t, &ofs);              /* get index value token just pushed */
+    if ((token == NUMBER) & (!v))
+    {                                       /* index is 0 */
+      pop(&t, &v, &tp1, &ofs);              /* Get var base */
+      if (tp1 & (POINTER|ARRAY) && (t!=PESI))
+      {
+        load_index(t, v, tp1, ofs);         /* Load base into Index reg */
+        if ((t == ISTACK_TOP) && (symtab[v].type & ARRAY))
+          t = STACK_TOP;
       }
-      else {
-          LoadEAX(token, v, t, ofs);  /* load it into ACC */
-          pop(&t, &v, &tp1, &ofs);            /* Get var base */
-          if (tp1 & (POINTER|ARRAY) && (t!=PESI)) {
-              if ((t==ISTACK_TOP) &&
-                  (symtab[v].type & ARRAY))
-                  t=STACK_TOP;
-              load_index(t, v, tp1, ofs); /* Load base into Index reg */
-          }
-          out_inst("ADD ESI,EAX");
+    }
+    else
+    {
+      LoadEAX(token, v, t, ofs);            /* load it into ACC */
+      pop(&t, &v, &tp1, &ofs);              /* Get var base */
+      if (tp1 & (POINTER|ARRAY) && (t != PESI))
+      {
+        if ((t == ISTACK_TOP) && (symtab[v].type & ARRAY))
+          t = STACK_TOP;
+        load_index(t, v, tp1, ofs);         /* Load base into Index reg */
       }
-      t = PESI;           /* Let em know ESI pts to item */
+      out_inst("ADD ESI,EAX");
+    }
+    t = PESI;                               /* Let em know ESI pts to item */
   }
 
 
   /* Convert any [UNINDEXED] array references to address values
       for struct members that are arrays.
   */
-  if((tp & ARRAY) && (tp & (STRUCMEM))) {
-      tp = (tp + 1) & ~ARRAY;         /* tp+1 ups the ptr ref count */
-      if(!(tp & ARGUMENT))
+  if ((tp & ARRAY) && (tp & (STRUCMEM)))
+  {
+    tp = (tp + 1) & ~ARRAY;                 /* tp+1 ups the ptr ref count */
+    if (!(tp & ARGUMENT))
+    {
+      if (!fMultiDim)
       {
-          if(!fMultiDim)
-          {
-              StackEAX();                 /* stack EAX */
-              StackESI();             /* stack ESI */
-              index_adr(t, v, tp, ofs);   /* load address of rg into ESI */
-          }
-          StackEAX();                 /* stack EAX if needed */
-          not_flag = 0;
-          out_inst("MOV EAX,ESI");
-          t = INEAX;
+        StackEAX();                         /* stack EAX */
+        StackESI();                         /* stack ESI */
+        index_adr(t, v, tp, ofs);           /* load address of rg into ESI */
       }
+      StackEAX();                           /* stack EAX if needed */
+      not_flag = 0;
+      out_inst("MOV EAX,ESI");
+      t = INEAX;
+    }
   }
-
   /* handle any post operators (++ and --) if present */
-  if(test_token(INC)) {           /* post '++' */
-      if (tp & POINTER)
-      {
-          load_index(t, v, tp, ofs);
-      }
-      else
-          LoadEAX(t, v, tp, ofs);
-      if (ispStruct(tp, v))
-          GenCodeOper("ADD |,strucsize", t, v, tp, ofs);
-      else if (isp32(tp))
-          GenCodeOper("ADD |,4", t, v, tp, ofs);
-      else if (isp16(tp))
-          GenCodeOper("ADD |,2", t, v, tp, ofs);
-      else
-          GenCodeOper("INC |", t, v, tp, ofs);
-      if (tp & POINTER)
-      {
-          t = PESI;
-      }
-      else
-          t = INEAX;
+  if (test_token(INC))                      /* post '++' */
+  {           
+    if (tp & POINTER)
+    {
+      load_index(t, v, tp, ofs);
+    }
+    else
+      LoadEAX(t, v, tp, ofs);
+    if (ispStruct(tp, v))
+      GenCodeOper("ADD |,strucsize", t, v, tp, ofs);
+    else if (isp32(tp))
+      GenCodeOper("ADD |,4", t, v, tp, ofs);
+    else if (isp16(tp))
+      GenCodeOper("ADD |,2", t, v, tp, ofs);
+    else
+      GenCodeOper("INC |", t, v, tp, ofs);
+    if (tp & POINTER)
+    {
+      t = PESI;
+    }
+    else
+      t = INEAX;
   }
-
-  else if(test_token(DEC))
-  {                                   /* post '--' */
-      if (tp & POINTER)
-      {
-          load_index(t, v, tp, ofs);
-      }
-      else
-          LoadEAX(t, v, tp, ofs);
-      if (ispStruct(tp, v))
-          GenCodeOper("SUB |,strucsize", t, v, tp, ofs);
-      else if (isp32(tp))
-          GenCodeOper("SUB |,4", t, v, tp, ofs);
-      else if (isp16(tp))
-          GenCodeOper("SUB |,2", t, v, tp, ofs);
-      else
-          GenCodeOper("DEC |", t, v, tp, ofs);
-      if (tp & POINTER)
-      {
-          t = PESI;
-      }
-      else
-          t = INEAX;
+  else if (test_token(DEC))
+  {                                         /* post '--' */
+    if (tp & POINTER)
+    {
+      load_index(t, v, tp, ofs);
+    }
+    else
+      LoadEAX(t, v, tp, ofs);
+    if (ispStruct(tp, v))
+      GenCodeOper("SUB |,strucsize", t, v, tp, ofs);
+    else if (isp32(tp))
+      GenCodeOper("SUB |,4", t, v, tp, ofs);
+    else if (isp16(tp))
+      GenCodeOper("SUB |,2", t, v, tp, ofs);
+    else
+      GenCodeOper("DEC |", t, v, tp, ofs);
+    if (tp & POINTER)
+    {
+      t = PESI;
+    }
+    else
+      t = INEAX;
   }
-  push(t, v, tp, ofs);    /* FINALLY PUSH THE "Value" ON THE EXP STACK */
+  push(t, v, tp, ofs);                      /* FINALLY PUSH THE "Value" ON THE EXP STACK */
 }
 
 /******************************************************************************
@@ -3848,34 +3921,33 @@ static U32 combine(U32 type1, U32 type2)
   /* preserve width and indirection if pointer operation is involved */
   /* if neither is pointer no harm is done with this code */
   if ((type1 & POINTER) >= (type2 & POINTER))
-      new_type = type1 & POINTER;
+    new_type = type1 & POINTER;
   else
-      new_type = type2 & POINTER;
-
+    new_type = type2 & POINTER;
   /* raise to lowest common type */
-  if ((type1 & DWORD) || (type2 & DWORD)) new_type |= DWORD;
-  else if ((type1 & WORD) || (type2 & WORD)) new_type |= WORD;
-  else new_type |= BYTE;
-
+  if ((type1 & DWORD) || (type2 & DWORD)) 
+    new_type |= DWORD;
+  else if ((type1 & WORD) || (type2 & WORD)) 
+    new_type |= WORD;
+  else 
+    new_type |= BYTE;
   /* ANSI says: If combining unsigned and signed types and signed var
      is large enough to hold all values of unsigned then combined type
      remains SIGNED, else the type becomes UNSIGNED!
   */
-  if (!((type1 & type2) & UNSIGNED))  /* both signed */
-      return new_type;
-
-  if ((type1 & UNSIGNED) && (type2 & UNSIGNED)) {  /* both unsigned */
-      new_type |=UNSIGNED;
-      return new_type;
+  if (!((type1 & type2) & UNSIGNED))             /* both signed */
+    return new_type;
+  if ((type1 & UNSIGNED) && (type2 & UNSIGNED))  /* both unsigned */ 
+  {
+    new_type |=UNSIGNED;
+    return new_type;
   }
-
   /* ONLY one is signed... */
   if (((type1 & SIZEMASK) >= (type2 & SIZEMASK)) && (type2 & UNSIGNED))
-      new_type |= UNSIGNED;
+    new_type |= UNSIGNED;
   else
-  if (((type1 & SIZEMASK) <= (type2 & SIZEMASK)) && (type1 & UNSIGNED))
+    if (((type1 & SIZEMASK) <= (type2 & SIZEMASK)) && (type1 & UNSIGNED))
       new_type |= UNSIGNED;
-
   return new_type;
 }
 
@@ -3887,63 +3959,55 @@ static U32 do_oper(U32 token)
   U32 token1, t, v, tp, tp1, ofs, ofs1, exit_lab;
 
   /* Handle "special" binary operators which involve jumps */
-  if((token == DAND) || (token == DOR) || (token == QUEST))
+  if ((token == DAND) || (token == DOR) || (token == QUEST))
   {
+    pop(&t, &v, &tp, &ofs);
+    StackEAX();                                  /* stack EAX */
+    StackESI();                                  /* stack ESI */
+    if (t != INEAX)
+      LoadEAX(t, v, tp, ofs);
+    exit_lab = ++next_lab;
+    if (token == QUEST)
+    {                                            /* conditional expression */
+      cond_jump(FALSE, token1 = ++next_lab, 0);
+      sub_eval(COLON);
       pop(&t, &v, &tp, &ofs);
-      StackEAX();                 /* stack EAX */
-      StackESI();             /* stack ESI */
-      if(t != INEAX)
-          LoadEAX(t, v, tp, ofs);
-      exit_lab = ++next_lab;
-      if(token == QUEST)
-      {       /* conditional expression */
-          cond_jump(FALSE, token1 = ++next_lab, 0);
-          sub_eval(COLON);
-          pop(&t, &v, &tp, &ofs);
-          LoadEAX(t, v, tp, ofs);
-          jump(exit_lab, 0);
-          gen_label(token1);
-      }
+      LoadEAX(t, v, tp, ofs);
+      jump(exit_lab, 0);
+      gen_label(token1);
+    }
+    else
+    {                                            /* && and || */
+      test_not();
+      if (token == DAND)
+        cond_jump(FALSE, exit_lab, -1);
       else
-      {                   /* && and || */
-          test_not();
-          if(token == DAND)
-              cond_jump(FALSE, exit_lab, -1);
-          else
-              cond_jump(TRUE, exit_lab, -1);
-      }
-      token1 = do_oper(SEMI);
-      pop(&t, &v, &tp1, &ofs1);
-      LoadEAX(t, v, tp1, ofs1);
-      gen_label(exit_lab);
-      push(INEAX, v, combine(tp, tp1), ofs1);
-      return token1;
+        cond_jump(TRUE, exit_lab, -1);
+    }
+    token1 = do_oper(SEMI);
+    pop(&t, &v, &tp1, &ofs1);
+    LoadEAX(t, v, tp1, ofs1);
+    gen_label(exit_lab);
+    push(INEAX, v, combine(tp, tp1), ofs1);
+    return token1;
   }
-
-  get_value();            /* stack the value (number or whatever) */
-
+  get_value();                                   /* stack the value (number or whatever) */
   /* Handle operator precedence and grouping. optype is 2 if operator
       separates two operands and grouping is L-R. It's 3 if R-L */
-  token1 = get_token();   /* Look at next operator */
-      while((optype[token1] > 1) &&
-            (priority[token1] >= priority[token]))
-      {
-          /* if they are the same priority AND grouping == L-R */
-
-          if((priority[token1] == priority[token]) &&
-              (optype[token] == 2)) 
-          {
-              do_lr2op(token);
-              return do_oper(token1);
-          }
-
-          token1 = do_oper(token1);
-      }
-
-  /* Perform the operation */
-  if(token!=SEMI)
+  token1 = get_token();                         /* Look at next operator */
+  while ((optype[token1] > 1) && (priority[token1] >= priority[token]))
+  {
+    /* if they are the same priority AND grouping == L-R */
+    if ((priority[token1] == priority[token]) && (optype[token] == 2))
+    {
       do_lr2op(token);
-
+      return do_oper(token1);
+    }
+    token1 = do_oper(token1);
+  }
+  /* Perform the operation */
+  if (token!=SEMI)
+    do_lr2op(token);
   return token1;
 }
 
@@ -3953,7 +4017,7 @@ static U32 do_oper(U32 token)
  Produce code to perform operation if necessary.
  The two operands are on the top of the expression stack and are
  loaded into token and token1. The item at the top of the stack is the
- second operand.  This means that if it were "A minus B", A would go into 
+ second operand.  This means that if it were "A minus B", A would go into
  token and B would go into token1.
 ******************************************************************************/
 static void do_lr2op(U32 oper)
@@ -3964,389 +4028,377 @@ static void do_lr2op(U32 oper)
 
   pop(&token1, &value1, &type1, &offset1);
   pop(&token, &value,  &type, &offset);
-
   uflag = swap = order = atoken = 0;
-
   /* Constant numbers assume the type of the other operand */
-  if(token == NUMBER)
+  if (token == NUMBER)
   {
-      swap = 1;
-      type = type1;
+    swap = 1;
+    type = type1;
   }
-  if(token1 == NUMBER)
+  if (token1 == NUMBER)
   {
-      swap = 0;
-      type1 = type;
+    swap  = 0;
+    type1 = type;
   }
-
   ctype = combine(type, type1);
-
   /* Do any operations that can be performed at compile time */
-  if((token == NUMBER) && (token1 == NUMBER) &&
-      (oper != DAND) && (oper != DOR)) {
-      switch(oper) {
-          case ADD :
-              value += value1;
-              break;
-          case SUB :
-              value -= value1;
-              break;
-          case STAR:
-              value *= value1;
-              break;
-          case DIV:
-              value /= value1;
-              break;
-          case MOD:
-              value %= value1;
-              break;
-          case AND:
-              value &= value1;
-              break;
-          case OR:
-              value |= value1;
-              break;
-          case XOR:
-              value ^= value1;
-              break;
-          case SHL:
-              value <<= value1;
-              break;
-          case SHR:
-              value >>= value1;
-              break;
-          case EQ:
-              value = value == value1;
-              break;
-          case NE:
-              value = value != value1;
-              break;
-          case LT:
-              value = value < value1;
-          case LE:
-              value = value <= value1;
-              break;
-          case GT:
-              value = value > value1;
-              break;
-          case GE:
-              value = value >= value1;
-              break;
-          default:
-              syntax_error();
-      }
+  if ((token == NUMBER) && (token1 == NUMBER) && (oper != DAND) && (oper != DOR)) 
+  {
+    switch (oper)
+    {
+      case ADD :
+        value += value1;
+        break;
+      case SUB :
+        value -= value1;
+        break;
+      case STAR:
+        value *= value1;
+        break;
+      case DIV:
+        value /= value1;
+        break;
+      case MOD:
+        value %= value1;
+        break;
+      case AND:
+        value &= value1;
+        break;
+      case OR:
+        value |= value1;
+        break;
+      case XOR:
+        value ^= value1;
+        break;
+      case SHL:
+        value <<= value1;
+        break;
+      case SHR:
+        value >>= value1;
+        break;
+      case EQ:
+        value = value == value1;
+        break;
+      case NE:
+        value = value != value1;
+        break;
+      case LT:
+        value = value < value1;
+      case LE:
+        value = value <= value1;
+        break;
+      case GT:
+        value = value > value1;
+        break;
+      case GE:
+        value = value >= value1;
+        break;
+      default:
+        syntax_error();
+    }
   }
   else
   {
-      /* Generate code to perform the operation */
-      avalue = value;
-      atype = type;
-      wheretok = INEAX;       /* default place for result */
-
-      /* Use unsigned operations if needed */
-      if((type | type1) & (POINTER | UNSIGNED))
-          uflag = 1;
-
-      /* Try and re-arrange for partial results already in ACC */
-      if(token1 == INEAX)
-          swap = 1;
-
-      /* This first switch sets up self assignments and
-          changes the operand to the real operation to be
-          performed
-      */
-      switch(oper)
-      {
-          case DAND:  /* logical AND and OR are done elsewhere */
-          case DOR:
-              push(token1, value1, type1, offset1);
-              return;
-          case ADDE:
-              atoken = token; /* nonzero atoken indicates self assignment*/
-              oper = ADD;
-              break;
-          case SUBE:
-              atoken = token;
-              oper = SUB;
-              break;
-          case STARE:
-              atoken = token;
-              oper = STAR;
-              break;
-          case DIVE:
-              oper = DIV;
-              atoken = token;
-              break;
-          case MODE:
-              oper = MOD;
-              atoken = token;
-              break;
-          case SHLE:
-              oper = SHL;
-              atoken = token;
-              break;
-          case SHRE:
-              oper = SHR;
-              atoken = token;
-              break;
-          case ANDE:
-              oper = AND;
-              atoken = token;
-              break;
-          case ORE:
-              oper = OR;
-              atoken = token;
-              break;
-          case XORE:
-              oper = XOR;
-              atoken = token;
-              break;
-      }
-
-      /* this next switch looks for operations that MUST
-          use special registers (such as EAX or EDX).
-          Or must be in a special order for a particular
-          operation.
-      */
-      switch(oper)
-      {
-          case SUB:
-          case DIV:
-          case MOD:
-          case SHL:
-          case SHR:
-              order = 1;
-              break;
-          case LT:
-              if (swap) {
-                  if (uflag)
-                      oper = UGT;
-                  else
-                      oper = GT;
-              }
-              else if (uflag)
-                  oper = ULT;
-              break;
-          case LE:
-              if (swap) {
-                  if (uflag)
-                      oper = UGE;
-                  else
-                      oper = GE;
-              }
-              else if (uflag)
-                  oper = ULE;
-              break;
-          case GT:
-              if (swap) {
-                  if (uflag)
-                      oper = ULT;
-                  else
-                      oper = LT;
-              }
-              else if (uflag)
-                  oper = UGT;
-              break;
-          case GE:
-              if (swap) {
-                  if (uflag)
-                      oper = ULE;
-                  else
-                      oper = LE;
-              }
-              else if (uflag)
-                  oper = UGE;
-              break;
-      }
-
-      /* Now we can use the flags to set up a swap of operands if
-          indicated so long as ordering was not important (order flag).
-          Some operations require the use of EAX.
-      */
-      if((token1 == INEAX) && order)
-      {   /* out of order - use ECX */
-          test_not();
-          out_inst("MOV ECX,EAX");
-          token1 = INECX;
-      }
-
-      if(swap && !order)
-      {
-          temp = token;  token = token1;   token1 = temp;
-          temp = value;  value = value1;   value1 = temp;
-          temp = type;   type  = type1;    type1  = temp;
-          temp = offset; offset = offset1; offset1 = temp;
-      }
-
-      if(type1 & FUNCTION)
-          type_error();
-
-      if (oper != ASSIGN)  /* simple assignment is optimized case */
-      {
-          LoadEAX(token, value, type, offset);    /* insure its loaded */
-      }
-
-      /* If it's on the processor stack, get it into EDX */
-      token1 = CheckStack(token1);
-
-      /* Now we perform the operation */
-      switch(oper)
-      {
-          case ASSIGN:
-              /* optimize away an assigment */
-              if ((token1 == token) && (value == value1))
-              {
-                  wheretok = token;
-                  break;
-              }
-              if (swap)   /* token to store is already in EAX */
-              {
-                  store(token1, value1, type1, offset1);
-              }
-              else  /* token1 may not be loaded already */
-              {
-                  LoadEAX(token1, value1, type1, offset1);
-                  store(token, value, type, offset);
-              }
-              break;
-          case ADD:
-              if (type1&(DWORD|POINTER))
-                  GenCodeOper("ADD EAX,|", token1, value1, type1, offset1);
-              else
-              {
-                  LoadECX(token1, value1, type1, offset1);
-                  out_inst("ADD EAX,ECX");
-              }
-              zero_flag = 0;
-              break;
-          case SUB:
-              if (type1&(DWORD|POINTER))
-                  GenCodeOper("SUB EAX,|", token1, value1, type1, offset1);
-              else
-              {
-                  LoadECX(token1, value1, type1, offset1);
-                  out_inst("SUB EAX,ECX");
-              }
-              zero_flag = 0;
-              break;
-          case STAR:
-              LoadECX(token1, value1, type1, offset1);
-              if (ctype & UNSIGNED)
-                  out_inst("MUL ECX");
-              else
-                  out_inst("IMUL ECX");
-              zero_flag = 1;
-              break;
-          case DIV:
-          case MOD:
-              LoadECX(token1, value1, type1, offset1);
-              if (ctype & UNSIGNED)
-              {
-                  out_inst("XOR EDX,EDX");
-                  out_inst("DIV ECX");
-              }
-              else
-              {
-                  out_inst("CDQ");
-                  out_inst("IDIV ECX");
-              }
-              zero_flag = -1;
-              if (oper == MOD)
-                  out_inst("MOV EAX,EDX");
-              break;
-          case AND:
-              if (type1 & (DWORD|POINTER))
-                  GenCodeOper("AND EAX,|", token1, value1, type1, offset1);
-              else
-              {
-                  LoadECX(token1, value1, type1, offset1);
-                  out_inst("AND EAX,ECX");
-              }
-              zero_flag = 0;
-              break;
-          case OR:
-              if (type1 & (DWORD|POINTER))
-                  GenCodeOper("OR EAX,|", token1, value1, type1, offset1);
-              else
-              {
-                  LoadECX(token1, value1, type1, offset1);
-                  out_inst("OR EAX,ECX");
-              }
-              zero_flag = 0;
-              break;
-          case XOR:
-              if (type1 & (DWORD|POINTER))
-                  GenCodeOper("XOR EAX,|", token1, value1, type1, offset1);
-              else
-              {
-                  LoadECX(token1, value1, type1, offset1);
-                  out_inst("XOR EAX,ECX");
-              }
-              zero_flag = 0;
-              break;
-          case SHL:
-              LoadECX(token1, value1, type1, offset1);
-              out_inst("SHL EAX,CL");
-              if(ctype & WORD)
-                  out_inst("AND EAX,0FFFFh");
-              else if (ctype & BYTE)
-                  out_inst("AND EAX,0FFh");
-              zero_flag = 0;
-              break;
-          case SHR:
-              LoadECX(token1, value1, type1, offset1);
-              if (ctype & (DWORD | POINTER))
-                  out_inst("SHR EAX,CL");
-              else if (ctype & WORD)
-                  out_inst("SHR AX,CL");
-              else
-                  out_inst("SHR AL,CL");
-              zero_flag = 0;
-              break;
-          case EQ:        /* compare & test */
-          case NE:
-          case LT:
-          case LE:
-          case GT:
-          case GE:
-          case ULT:
-          case ULE:
-          case UGT:
-          case UGE:
-              if (type1&(DWORD|POINTER))
-                  GenCodeOper("CMP EAX,|", token1, value1, type1, offset1);
-              else
-              {
-                  LoadECX(token1, value1, type1, offset1);
-                  out_inst("CMP EAX,ECX");
-              }
-              switch(oper)
-              {
-                  case EQ:  out_inst("SETE AL");  break;
-                  case NE:  out_inst("SETNE AL");  break;
-                  case LT:  out_inst("SETL AL");  break;
-                  case LE:  out_inst("SETLE AL");  break;
-                  case GT:  out_inst("SETG AL");  break;
-                  case GE:  out_inst("SETGE AL");  break;
-                  case ULT: out_inst("SETB AL");  break;
-                  case ULE: out_inst("SETBE AL");  break;
-                  case UGT: out_inst("SETA AL");  break;
-                  case UGE: out_inst("SETAE AL");  break;
-              }
-              out_inst("AND AL,AL");
-              zero_flag = 0;
-              break;
-          default:
-              syntax_error();
-      }
-
-      /* for self assigns, replace value */
-      if(atoken)
-          store(atoken, avalue, atype, offset);
-
-      token = wheretok;
+    /* Generate code to perform the operation */
+    avalue = value;
+    atype = type;
+    wheretok = INEAX;                            /* default place for result */
+    /* Use unsigned operations if needed */
+    if ((type | type1) & (POINTER | UNSIGNED))
+      uflag = 1;
+    /* Try and re-arrange for partial results already in ACC */
+    if (token1 == INEAX)
+      swap = 1;
+    /* This first switch sets up self assignments and
+        changes the operand to the real operation to be
+        performed
+    */
+    switch (oper)
+    {
+      case DAND:                                 /* logical AND and OR are done elsewhere */
+      case DOR:
+        push(token1, value1, type1, offset1);
+        return;
+      case ADDE:
+        atoken = token;                          /* nonzero atoken indicates self assignment*/
+        oper = ADD;
+        break;
+      case SUBE:
+        atoken = token;
+        oper = SUB;
+        break;
+      case STARE:
+        atoken = token;
+        oper = STAR;
+        break;
+      case DIVE:
+        oper = DIV;
+        atoken = token;
+        break;
+      case MODE:
+        oper = MOD;
+        atoken = token;
+        break;
+      case SHLE:
+        oper = SHL;
+        atoken = token;
+        break;
+      case SHRE:
+        oper = SHR;
+        atoken = token;
+        break;
+      case ANDE:
+        oper = AND;
+        atoken = token;
+        break;
+      case ORE:
+        oper = OR;
+        atoken = token;
+        break;
+      case XORE:
+        oper = XOR;
+        atoken = token;
+        break;
+    }
+    /* this next switch looks for operations that MUST
+        use special registers (such as EAX or EDX).
+        Or must be in a special order for a particular
+        operation.
+    */
+    switch (oper)
+    {
+      case SUB:
+      case DIV:
+      case MOD:
+      case SHL:
+      case SHR:
+        order = 1;
+        break;
+      case LT:
+        if (swap) 
+        {
+          if (uflag)
+            oper = UGT;
+          else
+            oper = GT;
+        }
+        else if (uflag)
+          oper = ULT;
+          break;
+      case LE:
+        if (swap) 
+        {
+          if (uflag)
+            oper = UGE;
+          else
+            oper = GE;
+        }
+        else if (uflag)
+          oper = ULE;
+        break;
+      case GT:
+        if (swap)
+        {
+          if (uflag)
+            oper = ULT;
+          else
+            oper = LT;
+        }
+        else if (uflag)
+          oper = UGT;
+          break;
+      case GE:
+        if (swap)
+        {
+          if (uflag)
+            oper = ULE;
+          else
+            oper = LE;
+        }
+        else if (uflag)
+          oper = UGE;
+          break;
+    }
+    /* Now we can use the flags to set up a swap of operands if
+        indicated so long as ordering was not important (order flag).
+        Some operations require the use of EAX.
+    */
+    if ((token1 == INEAX) && order)
+    {                                            /* out of order - use ECX */
+      test_not();
+      out_inst("MOV ECX,EAX");
+      token1 = INECX;
+    }
+    if (swap && !order)
+    {
+      temp = token;  token  = token1;  token1 = temp;
+      temp = value;  value  = value1;  value1 = temp;
+      temp = type;   type   = type1;   type1  = temp;
+      temp = offset; offset = offset1; offset1 = temp;
+    }
+    if (type1 & FUNCTION)
+      type_error();
+    if (oper != ASSIGN)                          /* simple assignment is optimized case */
+    {
+      LoadEAX(token, value, type, offset);       /* insure its loaded */
+    }
+    /* If it's on the processor stack, get it into EDX */
+    token1 = CheckStack(token1);
+    /* Now we perform the operation */
+    switch (oper)
+    {
+      case ASSIGN:
+        /* optimize away an assigment */
+        if ((token1 == token) && (value == value1))
+        {
+          wheretok = token;
+          break;
+        }
+        if (swap)                                /* token to store is already in EAX */
+        {
+          store(token1, value1, type1, offset1);
+        }
+        else  /* token1 may not be loaded already */
+        {
+          LoadEAX(token1, value1, type1, offset1);
+          store(token, value, type, offset);
+        }
+        break;
+      case ADD:
+        if (type1 & (DWORD|POINTER))
+          GenCodeOper("ADD EAX,|", token1, value1, type1, offset1);
+        else
+        {
+          LoadECX(token1, value1, type1, offset1);
+          out_inst("ADD EAX,ECX");
+        }
+        zero_flag = 0;
+        break;
+      case SUB:
+        if (type1&(DWORD|POINTER))
+          GenCodeOper("SUB EAX,|", token1, value1, type1, offset1);
+        else
+        {
+          LoadECX(token1, value1, type1, offset1);
+          out_inst("SUB EAX,ECX");
+        }
+        zero_flag = 0;
+        break;
+      case STAR:
+        LoadECX(token1, value1, type1, offset1);
+        if (ctype & UNSIGNED)
+          out_inst("MUL ECX");
+        else
+          out_inst("IMUL ECX");
+        zero_flag = 1;
+        break;
+      case DIV:
+      case MOD:
+        LoadECX(token1, value1, type1, offset1);
+        if (ctype & UNSIGNED)
+        {
+          out_inst("XOR EDX,EDX");
+          out_inst("DIV ECX");
+        }
+        else
+        {
+          out_inst("CDQ");
+          out_inst("IDIV ECX");
+        }
+        zero_flag = -1;
+        if (oper == MOD)
+          out_inst("MOV EAX,EDX");
+        break;
+      case AND:
+        if (type1 & (DWORD|POINTER))
+          GenCodeOper("AND EAX,|", token1, value1, type1, offset1);
+        else
+        {
+          LoadECX(token1, value1, type1, offset1);
+          out_inst("AND EAX,ECX");
+        }
+        zero_flag = 0;
+        break;
+      case OR:
+        if (type1 & (DWORD|POINTER))
+          GenCodeOper("OR EAX,|", token1, value1, type1, offset1);
+        else
+        {
+          LoadECX(token1, value1, type1, offset1);
+          out_inst("OR EAX,ECX");
+        }
+        zero_flag = 0;
+        break;
+      case XOR:
+        if (type1 & (DWORD|POINTER))
+          GenCodeOper("XOR EAX,|", token1, value1, type1, offset1);
+        else
+        {
+          LoadECX(token1, value1, type1, offset1);
+          out_inst("XOR EAX,ECX");
+        }
+        zero_flag = 0;
+        break;
+      case SHL:
+        LoadECX(token1, value1, type1, offset1);
+        out_inst("SHL EAX,CL");
+        if (ctype & WORD)
+          out_inst("AND EAX,0FFFFh");
+        else if (ctype & BYTE)
+          out_inst("AND EAX,0FFh");
+        zero_flag = 0;
+        break;
+      case SHR:
+        LoadECX(token1, value1, type1, offset1);
+        if (ctype & (DWORD | POINTER))
+          out_inst("SHR EAX,CL");
+        else if (ctype & WORD)
+          out_inst("SHR AX,CL");
+        else
+          out_inst("SHR AL,CL");
+        zero_flag = 0;
+        break;
+      case EQ:                                   /* compare & test */
+      case NE:
+      case LT:
+      case LE:
+      case GT:
+      case GE:
+      case ULT:
+      case ULE:
+      case UGT:
+      case UGE:
+        if (type1 & (DWORD|POINTER))
+          GenCodeOper("CMP EAX,|", token1, value1, type1, offset1);
+        else
+        {
+          LoadECX(token1, value1, type1, offset1);
+          out_inst("CMP EAX,ECX");
+        }
+        switch(oper)
+        {
+          case EQ:  out_inst("SETE AL");   break;
+          case NE:  out_inst("SETNE AL");  break;
+          case LT:  out_inst("SETL AL");   break;
+          case LE:  out_inst("SETLE AL");  break;
+          case GT:  out_inst("SETG AL");   break;
+          case GE:  out_inst("SETGE AL");  break;
+          case ULT: out_inst("SETB AL");   break;
+          case ULE: out_inst("SETBE AL");  break;
+          case UGT: out_inst("SETA AL");   break;
+          case UGE: out_inst("SETAE AL");  break;
+        }
+        out_inst("AND AL,AL");
+        zero_flag = 0;
+        break;
+      default:
+        syntax_error();
+    }
+    /* for self assigns, replace value */
+    if (atoken)
+      store(atoken, avalue, atype, offset);
+    token = wheretok;
   }
-
   push(token, value, ctype, offset);
 }
 
@@ -4356,13 +4408,13 @@ static void do_lr2op(U32 oper)
 ******************************************************************************/
 static void test_not(void)
 {
-  if(not_flag)
+  if (not_flag)
   {
-      out_inst("AND EAX,EAX");
-      out_inst("SETZ AL");
-      out_inst("AND AL,AL");
-      not_flag = 0;
-      zero_flag = 0;
+    out_inst("AND EAX,EAX");
+    out_inst("SETZ AL");
+    out_inst("AND AL,AL");
+    not_flag  = 0;
+    zero_flag = 0;
   }
 }
 
@@ -4373,25 +4425,25 @@ static void store(U32 token, U32 value, U32 type, U32 offset)
 {
   char *ptr;
 
-  token = CheckStack(token);  /* get stack operand to EDX if needed */
-
-  switch(token) {
-      case SYMBOL:
-      case PESI:
-      case PECX:
-      case PEDX:
-      case ISTACK_TOP:
-          token = CheckStack(token);  /* get stack operand to EDX if needed */
-          if(type & (DWORD | POINTER))
-              GenCodeOper("MOV |, EAX", token, value, type, offset);
-          else if (type & WORD)
-              GenCodeOper("MOV |, AX", token, value, type, offset);
-          else
-              GenCodeOper("MOV |, AL", token, value, type, offset);
-          zero_flag = -1;
-          break;
-      default:
-          line_error("Non-assignable");
+  token = CheckStack(token);                     /* get stack operand to EDX if needed */
+  switch (token) 
+  {
+    case SYMBOL:
+    case PESI:
+    case PECX:
+    case PEDX:
+    case ISTACK_TOP:
+      token = CheckStack(token);                 /* get stack operand to EDX if needed */
+      if (type & (DWORD | POINTER))
+        GenCodeOper("MOV |, EAX", token, value, type, offset);
+      else if (type & WORD)
+        GenCodeOper("MOV |, AX", token, value, type, offset);
+      else
+        GenCodeOper("MOV |, AL", token, value, type, offset);
+      zero_flag = -1;
+      break;
+    default:
+      line_error("Non-assignable");
   }
 }
 
@@ -4400,13 +4452,14 @@ static void store(U32 token, U32 value, U32 type, U32 offset)
 ******************************************************************************/
 static U32 ispStruct(U32 type, U32 value)
 {
-  if((type & POINTER) > 1)    /* pointer to pointer */
-      return 0;
-  if ((type & STRUCT) && (type & POINTER)) {
-      strucsize = symtab[value].strucoff;
-      return 1;
+  if ((type & POINTER) > 1)                      /* pointer to pointer */
+    return 0;
+  if ((type & STRUCT) && (type & POINTER)) 
+  {
+    strucsize = symtab[value].strucoff;
+    return 1;
   }
-  return 0;                   /* not our pointer */
+  return 0;                                      /* not our pointer */
 }
 
 /******************************************************************************
@@ -4414,11 +4467,11 @@ static U32 ispStruct(U32 type, U32 value)
 ******************************************************************************/
 static U32 isp32(U32 type)
 {
-  if(type & (POINTER-1))      /* pointer to pointer */
-      return 1;
-  if(type & POINTER)          /* first level pointer */
-      return (type & DWORD);
-  return 0;                   /* not a pointer */
+  if (type & (POINTER-1))                        /* pointer to pointer */
+    return 1;
+  if (type & POINTER)                            /* first level pointer */
+    return (type & DWORD);
+  return 0;                                      /* not a pointer */
 }
 
 /******************************************************************************
@@ -4426,9 +4479,9 @@ static U32 isp32(U32 type)
 ******************************************************************************/
 static U32 isp16(U32 type)
 {
-  if(type & POINTER)          /* first level pointer */
-      return (type & WORD);
-  return 0;                   /* not a pointer */
+  if (type & POINTER)                            /* first level pointer */
+    return (type & WORD);
+  return 0;                                      /* not a pointer */
 }
 
 /******************************************************************************
@@ -4448,45 +4501,61 @@ static void init_static(U32 token, U32 value, char word)
   U32  i;
 
   ptr = "";
-
-  if(global_width)        /* continuing definition */
-      ptr = ",";
-  else {                  /* new definition */
-      if      (word==1) ptr = " DB ";
-      else if (word==2) ptr = " DW ";
-      else if (word==4) ptr = " DD ";
+  if (global_width)                              /* continuing definition */
+    ptr = ",";
+  else 
+  {                                              /* new definition */
+    if (word == 1) 
+      ptr = " DB ";
+    else if (word == 2) 
+      ptr = " DW ";
+    else if (word == 4) 
+      ptr = " DD ";
+  }
+  if (token == SYMBOL)                           /* Symbol - MUST BE GLOBAL - NOT EXTERNAL */
+  {       
+    ptr1 = "OFFSET ";
+    global_width += 7; 
+  }
+  else if (token == STRING)                      /* literal pool entry */ 
+  {
+    ptr1 = "OFFSET L_lit+";
+    *(ptr1+7) = prefix;
+    global_width += 23;
+  }
+  else if (token == LABEL)                       /* instruction label */ 
+  {   
+    ptr1 = "L_";
+    *ptr1 = prefix;
+    global_width += 4;
+  }
+  else                                           /* constant value */
+  {                                       
+    ptr1 = "";
+    global_width += 6;
   }
 
-  if(token == SYMBOL) {       /* Symbol - MUST BE GLOBAL - NOT EXTERNAL */
-      ptr1 = "OFFSET ";
-      global_width += 7; }
-  else if(token == STRING) {      /* literal pool entry */
-      ptr1 = "OFFSET L_lit+";
-      *(ptr1+7) = prefix;
-      global_width += 23; }
-  else if(token == LABEL) {   /* instruction label */
-      ptr1 = "L_";
-      *ptr1 = prefix;
-      global_width += 4; }
-  else {                      /* constant value */
-      ptr1 = "";
-      global_width += 6; }
-
-  if (*ptr) data_str(ptr);
-  if (*ptr1) data_str(ptr1);
+  if (*ptr) 
+    data_str(ptr);
+  if (*ptr1) 
+    data_str(ptr1);
   if (token!=SYMBOL)
-      data_num(value);
-  else {
-      nptr=&GPool[symtab[value].oname];
-      data_str(nptr);
-      i=0; while(*nptr++) i+=1;
-      global_width += i;
-    }
+    data_num(value);
+  else 
+  {
+    nptr = &GPool[symtab[value].oname];
+    data_str(nptr);
+    i = 0; 
+    while (*nptr++)
+      i+=1;
+    global_width += i;
+  }
 
-  if(global_width > 60) {
-      global_width = 0;
-      data_chr('\n');
-      }
+  if (global_width > 60) 
+  {
+    global_width = 0;
+    data_chr('\n');
+  }
 }
 
 /******************************************************************************
@@ -4494,9 +4563,10 @@ static void init_static(U32 token, U32 value, char word)
 ******************************************************************************/
 static void end_static(void)
 {
-  if(global_width) {
-      data_chr('\n');
-      global_width = 0;
+  if (global_width) 
+  {
+    data_chr('\n');
+    global_width = 0;
   }
 }
 
@@ -4506,35 +4576,39 @@ static void end_static(void)
 static void gen_global(U32 symbol, U32 size)
 {
   data_global(symbol);
-  if(symtab[symbol].type & (POINTER | DWORD)) {
-      if (size==4)
-          data_str(" DD 0h\n");
-      else {
-          data_str(" DD ");
-          data_num(size/4);
-          data_str(" DUP(0)\n");
-          }
-      }
-  else
-  if(symtab[symbol].type & WORD) {
-      if (size==2)
-          data_str(" DW 0h\n");
-      else {
-          data_str(" DW ");
-          data_num(size/2);
-          data_str(" DUP(0)\n");
-          }
-      }
-  else
-  if(symtab[symbol].type & (BYTE|STRUCT)) {
-      if (size==1)
-          data_str(" DB 0h\n");
-      else {
-          data_str(" DB ");
-          data_num(size);
-          data_str(" DUP(0)\n");
-          }
-      }
+  if (symtab[symbol].type & (POINTER | DWORD)) 
+  {
+    if (size == 4)
+      data_str(" DD 0h\n");
+    else
+    {
+      data_str(" DD ");
+      data_num(size/4);
+      data_str(" DUP(0)\n");
+    }
+  }
+  else if (symtab[symbol].type & WORD)
+  {
+    if (size == 2)
+      data_str(" DW 0h\n");
+    else
+    {
+      data_str(" DW ");
+      data_num(size/2);
+      data_str(" DUP(0)\n");
+    }
+  }
+  else if (symtab[symbol].type & (BYTE|STRUCT)) 
+  {
+    if (size == 1)
+      data_str(" DB 0h\n");
+    else 
+    {
+      data_str(" DB ");
+      data_num(size);
+      data_str(" DUP(0)\n");
+    }
+  }
 }
 
 /******************************************************************************
@@ -4547,24 +4621,23 @@ static void gen_extern_DASM (U32 symbol)
   U32 type;
 
   type = symtab[symbol].type;
-
-  if (type & FAR) {
-      data_str("EXTRN ");
-      data_chr('_');
-      data_str(&GPool[symtab[symbol].oname]);
-      data_str(" FWORD");
-      data_chr('\n');
+  if (type & FAR) 
+  {
+    data_str("EXTRN ");
+    data_chr('_');
+    data_str(&GPool[symtab[symbol].oname]);
+    data_str(" FWORD");
+    data_chr('\n');
   }
   else if (type & FUNCTION)
   {
-      code_str("EXTRN ");
-      code_chr('_');
-      code_str(&GPool[symtab[symbol].oname]);
-      code_chr(':');
-      code_str(" NEAR");
-      code_chr('\n');
+    code_str("EXTRN ");
+    code_chr('_');
+    code_str(&GPool[symtab[symbol].oname]);
+    code_chr(':');
+    code_str(" NEAR");
+    code_chr('\n');
   }
-
 }
 
 /******************************************************************************
@@ -4576,19 +4649,18 @@ static void gen_ext_data_DASM (U32 symbol)
   U32 type;
 
   type = symtab[symbol].type;
-
   if (!(type & FUNCTION))
   {
-      data_str("EXTRN ");
-      data_chr('_');
-      data_str(&GPool[symtab[symbol].oname]);
-      if (type & (POINTER|DWORD))
-          data_str(" DD");
-      else if (type & WORD)
-          data_str(" DW");
-      else
-          data_str(" DB");
-      data_chr('\n');
+    data_str("EXTRN ");
+    data_chr('_');
+    data_str(&GPool[symtab[symbol].oname]);
+    if (type & (POINTER|DWORD))
+      data_str(" DD");
+    else if (type & WORD)
+      data_str(" DW");
+    else
+      data_str(" DB");
+    data_chr('\n');
   }
 }
 
@@ -4599,17 +4671,20 @@ static void enter_func(U32 symbol, U32 size)
 {
   code_global(symbol);
   code_str(":\n");
-  if (symtab[fptr].type & ISR) 
+  if (symtab[fptr].type & ISR)
   {
-      out_inst("PUSHAD");
+    out_inst("PUSHAD");
   }
-  else {
-      out_inst("PUSH EBP");
-      out_inst("MOV EBP,ESP");
-      if(size) {
-          code_str("\tSUB ESP,");
-          code_num(size);
-          code_chr('\n'); }
+  else 
+  {
+    out_inst("PUSH EBP");
+    out_inst("MOV EBP,ESP");
+    if (size) 
+    {
+      code_str("\tSUB ESP,");
+      code_num(size);
+      code_chr('\n'); 
+    }
   }
 }
 
@@ -4620,21 +4695,27 @@ static void end_func(U32 stackpop)
 {
   if (symtab[fptr].type & ISR)
   {
-          out_inst("POPAD");
-          out_inst("IRETD");
+    out_inst("POPAD");
+    out_inst("IRETD");
   }
-  else {
-      if(local_stack)
-          out_inst("MOV ESP,EBP");
-      out_inst("POP EBP");
-      if (stackpop) {
-          if (symtab[fptr].type & FAR) code_str("\tRETF ");
-          else code_str("\tRETN ");
-          code_num(stackpop);
-          code_chr('\n');
-      }
-      else if (symtab[fptr].type & FAR) out_inst("\tRETF");
-      else out_inst("RETN");
+  else 
+  {
+    if (local_stack)
+      out_inst("MOV ESP,EBP");
+    out_inst("POP EBP");
+    if (stackpop)
+    {
+      if (symtab[fptr].type & FAR) 
+        code_str("\tRETF ");
+      else
+        code_str("\tRETN ");
+      code_num(stackpop);
+      code_chr('\n');
+    }
+    else if (symtab[fptr].type & FAR) 
+      out_inst("\tRETF");
+    else 
+      out_inst("RETN");
   }
 }
 
@@ -4656,17 +4737,21 @@ static void gen_literal(unsigned char *ptr, U32 size)
 {
   U32 i;
 
-  if(size) {
-      i = 0;
-      data_chr(prefix);
-      data_str("_lit");
-      while(i < size) {
-          data_str((i % 16) ? "," : " DB ");
-          data_num(*ptr++);
-          if(!(++i % 16))
-          data_chr('\n'); }
-      if(i % 16)
-          data_chr('\n'); }
+  if (size)
+  {
+    i = 0;
+    data_chr(prefix);
+    data_str("_lit");
+    while (i < size) 
+    {
+      data_str((i % 16) ? "," : " DB ");
+      data_num(*ptr++);
+      if (!(++i % 16))
+        data_chr('\n');
+    }
+    if (i % 16)
+      data_chr('\n');
+  }
 }
 
 /******************************************************************************
@@ -4674,27 +4759,25 @@ static void gen_literal(unsigned char *ptr, U32 size)
 ******************************************************************************/
 static void call(U32 token, U32 value, U32 type, U32 offset, U32 clean)
 {
-
   token = CheckStack(token);
   if (type & FAR)
   {
-          code_str("\tCALL FWORD PTR ");
+    code_str("\tCALL FWORD PTR ");
   }
-  else code_str("\tCALL ");
-  if(token == NUMBER)
-      code_num(value);
+  else 
+    code_str("\tCALL ");
+  if (token == NUMBER)
+    code_num(value);
   else
-      write_oper(token, value, type, offset);
+    write_oper(token, value, type, offset);
   code_chr('\n');
-
-  if(clean)
-  {   /* clean up stack following function call */
-      clean *=4;              /* each stack operand is 4 bytes */
-      code_str("\tADD ESP,");
-      code_num(clean);
-      code_chr('\n');
+  if (clean)
+  {                                              /* clean up stack following function call */
+    clean *=4;                                   /* each stack operand is 4 bytes */
+    code_str("\tADD ESP,");
+    code_num(clean);
+    code_chr('\n');
   }
-
   zero_flag = -1;
 }
 
@@ -4714,10 +4797,11 @@ static void jump(U32 label, char ljmp)
 * Conditional jump to label
 ******************************************************************************/
 static void jump_if(char cond, U32 label, char ljmp)
-            /* condition TRUE or FALSE, destination, long jump required */
-{
-  if (ljmp) code_str(cond ? "\tJNZ " : "\tJZ ");
-  else code_str(cond ? "\tJNZ SHORT " : "\tJZ SHORT ");
+{                                                /* condition TRUE or FALSE, destination, long jump required */
+  if (ljmp) 
+    code_str(cond ? "\tJNZ " : "\tJZ ");
+  else
+    code_str(cond ? "\tJNZ SHORT " : "\tJZ SHORT ");
   code_chr(prefix);
   code_chr('_');
   code_num(label);
@@ -4742,15 +4826,16 @@ static void do_switch(U32 label)
 ******************************************************************************/
 static void build_switch(U32 d)
 {
-  while(switch_ptr > d) {
-      code_str("\tCMP EAX,");
-      code_num(switch_stack[--switch_ptr]);
-      code_chr('\n');
-      code_str("\tJE ");
-      code_chr(prefix);
-      code_chr('_');
-      code_num(switch_stack[--switch_ptr]);
-      code_chr('\n');
+  while (switch_ptr > d) 
+  {
+    code_str("\tCMP EAX,");
+    code_num(switch_stack[--switch_ptr]);
+    code_chr('\n');
+    code_str("\tJE ");
+    code_chr(prefix);
+    code_chr('_');
+    code_num(switch_stack[--switch_ptr]);
+    code_chr('\n');
   }
 }
 
@@ -4759,18 +4844,18 @@ static void build_switch(U32 d)
 ******************************************************************************/
 static void index_ptr(U32 token, U32 value, U32 type, U32 offset)
 {
-  if(token == INEAX)
+  if (token == INEAX)
   {
-      out_inst("MOV ESI,EAX");
+    out_inst("MOV ESI,EAX");
   }
   else if (token==PESI)
-      return;
+    return;
   else
   {
-      token = CheckStack(token);
-      code_str("\tMOV ESI,");
-      write_oper(token, value, type, offset);
-      code_str("\n");
+    token = CheckStack(token);
+    code_str("\tMOV ESI,");
+    write_oper(token, value, type, offset);
+    code_str("\n");
   }
 }
 
@@ -4781,9 +4866,9 @@ static void index_adr(U32 token, U32 value, U32 type, U32 offset)
 {
   if (token != PESI)
   {
-      code_str((type & GLOBAL) ? "\tMOV ESI,OFFSET " : "\tLEA ESI,");
-      write_oper(token, value, type, offset);
-      code_str("\n");
+    code_str((type & GLOBAL) ? "\tMOV ESI,OFFSET " : "\tLEA ESI,");
+    write_oper(token, value, type, offset);
+    code_str("\n");
   }
 }
 
@@ -4793,10 +4878,11 @@ static void index_adr(U32 token, U32 value, U32 type, U32 offset)
 static void code_global(U32 symbol)
 {
   char *ptr;
+
   ptr = &GPool[symtab[symbol].oname];
-  if(!(symtab[symbol].type & STATIC)) 
+  if (!(symtab[symbol].type & STATIC))
   {
-      code_str("PUBLIC ");
+    code_str("PUBLIC ");
   }
   code_chr('_');
   code_str(ptr);
@@ -4808,10 +4894,11 @@ static void code_global(U32 symbol)
 static void data_global(U32 symbol)
 {
   char *ptr;
+
   ptr = &GPool[symtab[symbol].oname];
-  if(!(symtab[symbol].type & STATIC)) 
+  if (!(symtab[symbol].type & STATIC))
   {
-      data_str("PUBLIC ");
+    data_str("PUBLIC ");
   }
   data_chr('_');
   data_str(ptr);
@@ -4823,7 +4910,7 @@ static void data_global(U32 symbol)
 /* Write a string to the code tmp file */
 static void code_str(char *ptr)
 {
-  while(*ptr)
+  while (*ptr)
     fputc(*ptr++, temp_fh);
 }
 
@@ -4857,7 +4944,7 @@ static void code_hex(U32 value)
 /* Write a string to the asm file (all data) */
 static void data_str(char *ptr)
 {
-  while(*ptr)
+  while (*ptr)
     fputc(*ptr++, asm_fh);
 }
 
@@ -4893,17 +4980,18 @@ static void put_num(U32 value, FILE *outfile)
   char stack[10];
   register U16 i;
 
-  if(value & 0x80000000) {
-      fputc('-', outfile);
-      value = -value; }
-
+  if (value & 0x80000000) 
+  {
+    fputc('-', outfile);
+    value = -value; 
+  }
   i = 0;
   do
-      stack[i++] = (value % 10) + '0';
-  while(value /= 10);
+    stack[i++] = (value % 10) + '0';
+  while (value /= 10);
 
-  while(i)
-      fputc(stack[--i], outfile);
+  while (i)
+    fputc(stack[--i], outfile);
 }
 
 /******************************************************************************
@@ -4913,14 +5001,16 @@ static void put_hex(U8 num, FILE *outfile)
 {
   U8 c;
 
-  c= ((num & 0xf0) >> 4) + '0';
-  if (c > 0x39) {
-      c += 7;
-      fputc('0', outfile);        /* leading zero needed */
-      }
+  c = ((num & 0xf0) >> 4) + '0';
+  if (c > 0x39) 
+  {
+    c += 7;
+    fputc('0', outfile);                         /* leading zero needed */
+  }
   fputc(c, outfile);
-  c= ((num & 0xf0) >> 4) + '0';
-  if (c > 0x39) c += 7;
+  c = ((num & 0xf0) >> 4) + '0';
+  if (c > 0x39) 
+    c += 7;
   fputc(c, outfile);
   fputc('h', outfile);
 }
@@ -4932,168 +5022,178 @@ static void statement(U32 token)
 {
   U32 a, b, c, d;
 
-  test_exit();        /* generate any preceeding exit */
-
-  switch(token) 
-  {       /* act upon the token */
-      case SEMI:      /* ';' - null statement */
-          check_func();
-          return;
-      case OCB:       /* '{' - begin a block */
-          while((token = get_token()) != CCB)
-              statement(token);
-          break;
-      case INT:       /* 16/32 integer variable declaration */
-      case CHAR:      /* 8 bit variable declaration */
-      case SHORT:     /* 16 bit variable declaration */
-      case LONG:      /* 32 bit variable declaration */
-      case SIGNED:    /* signed variable declaration (the default anyway)*/
-      case UNSIGN:    /* unsigned variable declaration */
-      case STAT:      /* static modifier */
-      case STRUC:     /* structure declaration */
-      case EXTERN:    /* external modifier */
-      case REGIS:     /* register modifier */
-      case INTR:      /* interrupt modifier for functions */
-      case VOIDD:     /* void for function, and empty args */
-          declare(token, 0);
-          break;
-      case IF:
-          check_func();
-          expect(ORB);
-          eval(CRB, 0);
-          cond_jump(FALSE, a = ++next_lab, -1);
-          statement(get_token());
-          if(test_token(ELSE)) {
-              test_jump(b = ++next_lab);
-              gen_label(a);
-              a = b;
-              statement(get_token()); }
-          test_exit();
-          gen_label(a);
-          break;
-      case WHILE:
-          check_func();
-          gen_label(continue_stack[loop_ptr] = a = ++next_lab);
-          break_stack[loop_ptr++] = b = ++next_lab;
-          expect(ORB);
-          eval(CRB, 0);
-          cond_jump(FALSE, b, -1);
-          statement(get_token());
-          test_jump(a);
-          gen_label(b);
-          --loop_ptr;
-          break;
-      case DO:
-          check_func();
-          gen_label(a = ++next_lab);
-          continue_stack[loop_ptr] = b = ++next_lab;
-          break_stack[loop_ptr++] = c = ++next_lab;
-          statement(get_token());
-          gen_label(b);
-          expect(WHILE);
-          eval(SEMI, 0);
-          cond_jump(TRUE, a, -1);
-          gen_label(c);
-          --loop_ptr;
-          break;
-      case FOR:
-          check_func();
-          expect(ORB);
-          if(!test_token(SEMI))           /* initial */
-              eval(SEMI, -1);
-          gen_label(d = a = ++next_lab);
-          break_stack[loop_ptr] = b = ++next_lab;
-          if(!test_token(SEMI)) {         /* test */
-              eval(SEMI, 0);
-              cond_jump(FALSE, b, -1); }
-          if(!test_token(CRB)) 
-          {           /* end */
-              jump(c = ++next_lab, 0);
-              gen_label(d = ++next_lab);
-              eval(CRB, -1);
-              jump(a, 0);
-              gen_label(c); 
-          }
-          continue_stack[loop_ptr++] = d;
-          statement(get_token());
-          test_jump(d);
-          gen_label(b);                   /* exit */
-          --loop_ptr;
-          break;
-      case SWITCH:
-          check_func();
-          a = sdefault;
-          break_stack[loop_ptr++] = sdefault = b = ++next_lab;
-          expect(ORB);
-          eval(CRB, -1);
-          do_switch(c = ++next_lab);
-          d = switch_ptr;
-          statement(get_token());
-          test_jump(b);
-          gen_label(c);
-          build_switch(d);
-          if (sdefault!=a) jump(sdefault, -1);
-          gen_label(b);
-          --loop_ptr;
-          sdefault = a;
-          break;
-      case CASE:
-          a = check_switch();
-          get_constant(&b, &c);
-          switch_stack[switch_ptr++] = a;
-          switch_stack[switch_ptr++] = c;
-          if(switch_ptr >= (MAX_SWITCH*2))
-              fatal_error("Too many active cases");
-          expect(COLON);
-          break;
-      case DEFAULT:
-          sdefault = check_switch();
-          expect(COLON);
-          break;
-      case RETURN:
-          check_func();
-          if(!test_token(SEMI))
-          {
-              eval(SEMI, -1);
-          }
-          exit_flag = exit_label ? exit_label : (exit_label = ++next_lab);
-          break;
-      case BREAK:
-          check_loop(break_stack);
-          break;
-      case CONTIN:
-          check_loop(continue_stack);
-          break;
-      case GOTO:
-          check_func();
-          if(get_token() != SYMBOL) {
-              syntax_error();
-              break; }
-          if(a = lookup_local()) {
-              if(!(a & GLABEL))
-                  type_error(); }
-          else
-              define_symbol(REFERENCE|GLABEL, ++next_lab);
-          jump(symtab[sptr].dindex, -1);
-          break;
-      case SYMBOL:    /* a symbol table entry */
-          if(!in_function) {      /* global definition */
-              declare(token, 0);
-              break; }
-          if(*input_ptr == ':') {     /* label definition */
-              check_func();
-              ++input_ptr;
-              if(lookup_local())
-                  symtab[sptr].type &= ~EXTERNAL;
-              else
-                  define_symbol(GLABEL, ++next_lab); /* sets sptr */
-              gen_label(symtab[sptr].dindex);
-              break;
-            }
-      default:        /* expression evaluation */
-          check_func();
-          unget_token(token);
+  test_exit();                                   /* generate any preceeding exit */
+  switch(token)
+  {                                              /* act upon the token */
+    case SEMI:                                   /* ';' - null statement */
+      check_func();
+      return;
+    case OCB:                                    /* '{' - begin a block */
+      while ((token = get_token()) != CCB)
+        statement(token);
+      break;
+    case INT:                                    /* 16/32 integer variable declaration */
+    case CHAR:                                   /* 8 bit variable declaration */
+    case SHORT:                                  /* 16 bit variable declaration */
+    case LONG:                                   /* 32 bit variable declaration */
+    case SIGNED:                                 /* signed variable declaration (the default anyway)*/
+    case UNSIGN:                                 /* unsigned variable declaration */
+    case STAT:                                   /* static modifier */
+    case STRUC:                                  /* structure declaration */
+    case EXTERN:                                 /* external modifier */
+    case REGIS:                                  /* register modifier */
+    case INTR:                                   /* interrupt modifier for functions */
+    case VOIDD:                                  /* void for function, and empty args */
+      declare(token, 0);
+      break;
+    case IF:
+      check_func();
+      expect(ORB);
+      eval(CRB, 0);
+      cond_jump(FALSE, a = ++next_lab, -1);
+      statement(get_token());
+      if (test_token(ELSE)) 
+      {
+        test_jump(b = ++next_lab);
+        gen_label(a);
+        a = b;
+        statement(get_token());
+      }
+      test_exit();
+      gen_label(a);
+      break;
+    case WHILE:
+      check_func();
+      gen_label(continue_stack[loop_ptr] = a = ++next_lab);
+      break_stack[loop_ptr++] = b = ++next_lab;
+      expect(ORB);
+      eval(CRB, 0);
+      cond_jump(FALSE, b, -1);
+      statement(get_token());
+      test_jump(a);
+      gen_label(b);
+      --loop_ptr;
+      break;
+    case DO:
+      check_func();
+      gen_label(a = ++next_lab);
+      continue_stack[loop_ptr] = b = ++next_lab;
+      break_stack[loop_ptr++] = c = ++next_lab;
+      statement(get_token());
+      gen_label(b);
+      expect(WHILE);
+      eval(SEMI, 0);
+      cond_jump(TRUE, a, -1);
+      gen_label(c);
+      --loop_ptr;
+      break;
+    case FOR:
+      check_func();
+      expect(ORB);
+      if (!test_token(SEMI))                     /* initial */
+        eval(SEMI, -1);
+      gen_label(d = a = ++next_lab);
+      break_stack[loop_ptr] = b = ++next_lab;
+      if (!test_token(SEMI)) 
+      {                                          /* test */
+        eval(SEMI, 0);
+        cond_jump(FALSE, b, -1);
+      }
+      if (!test_token(CRB))
+      {           /* end */
+        jump(c = ++next_lab, 0);
+        gen_label(d = ++next_lab);
+        eval(CRB, -1);
+        jump(a, 0);
+        gen_label(c);
+      }
+      continue_stack[loop_ptr++] = d;
+      statement(get_token());
+      test_jump(d);
+      gen_label(b);                   /* exit */
+      --loop_ptr;
+      break;
+    case SWITCH:
+      check_func();
+      a = sdefault;
+      break_stack[loop_ptr++] = sdefault = b = ++next_lab;
+      expect(ORB);
+      eval(CRB, -1);
+      do_switch(c = ++next_lab);
+      d = switch_ptr;
+      statement(get_token());
+      test_jump(b);
+      gen_label(c);
+      build_switch(d);
+      if (sdefault!=a) jump(sdefault, -1);
+      gen_label(b);
+      --loop_ptr;
+      sdefault = a;
+      break;
+    case CASE:
+      a = check_switch();
+      get_constant(&b, &c);
+      switch_stack[switch_ptr++] = a;
+      switch_stack[switch_ptr++] = c;
+      if (switch_ptr >= (MAX_SWITCH*2))
+        fatal_error("Too many active cases");
+      expect(COLON);
+      break;
+    case DEFAULT:
+      sdefault = check_switch();
+      expect(COLON);
+      break;
+    case RETURN:
+      check_func();
+      if (!test_token(SEMI))
+      {
           eval(SEMI, -1);
+      }
+      exit_flag = exit_label ? exit_label : (exit_label = ++next_lab);
+      break;
+    case BREAK:
+      check_loop(break_stack);
+      break;
+    case CONTIN:
+      check_loop(continue_stack);
+      break;
+    case GOTO:
+      check_func();
+      if (get_token() != SYMBOL)
+      {
+        syntax_error();
+        break; 
+      }
+      if (a = lookup_local()) 
+      {
+        if (!(a & GLABEL))
+          type_error(); 
+      }
+      else
+        define_symbol(REFERENCE|GLABEL, ++next_lab);
+      jump(symtab[sptr].dindex, -1);
+      break;
+    case SYMBOL:                                 /* a symbol table entry */
+      if (!in_function)                          /* global definition */ 
+      {
+        declare(token, 0);
+        break; 
+      }
+      if (*input_ptr == ':')                     /* label definition */ 
+      {
+        check_func();
+        ++input_ptr;
+        if (lookup_local())
+          symtab[sptr].type &= ~EXTERNAL;
+        else
+          define_symbol(GLABEL, ++next_lab);     /* sets sptr */
+        gen_label(symtab[sptr].dindex);
+        break;
+      }
+    default:                                     /* expression evaluation */
+      check_func();
+      unget_token(token);
+      eval(SEMI, -1);
   }
 }
 
@@ -5104,13 +5204,13 @@ static void compile(void)
 {
   define_ptr = define_pool;
   *(input_ptr = line_in) = 0;
-  if (!fGen) 
+  if (!fGen)
   {
-      code_str("\n\n.CODE\n");
-      data_str("\n.DATA\n");
+    code_str("\n\n.CODE\n");
+    data_str("\n.DATA\n");
   }
-  for(;;)
-      statement(get_token());
+  for (;;)
+    statement(get_token());
 }
 
 /******************************************************************************
@@ -5118,153 +5218,165 @@ static void compile(void)
 ******************************************************************************/
 void main(S16 argc, char *argv[])
 {
-    S16 i;
-    char *ptr, *pname;
+  S16 i;
+  char *ptr, *pname;
 
-    /* first process any filenames and command line options */
-    list_fh = stdout;   /* default the list file */
-
-  for(i=1; i < argc; ++i) {   /* start at arg 1 */
-      ptr = argv[i];
-      if (*ptr == '/') {
-        ptr++;
-        switch(*ptr) {
-          case 'S' :          /* quiet mode */
-          case 's' :
-              fQuiet = 1;
-              break;
-          case 'L' :          /* List file ON */
-          case 'l' :
-              fList = 1;
-              break;
-          case 'E' :          /* Embedded source mode */
-          case 'e' :
-              fSource = 1;
-              break;
-          case 'G' :          /* Generate separate modules */
-          case 'g' :
-              fGen = 1;
-              break;
-          case 'N' :          /* NO optimize */
-          case 'n' :
-              fNoOpt = 1;
-              break;
-          case 'O' :          /* Optimize for speed */
-          case 'o' :
-              fOptS = 1;
-              break;
-          case 'W' :          /* Warnings ON */
-          case 'w' :
-              fWarnings = 1;
-              break;
-          case 'P' :          /* Prefix label character */
-          case 'p' :
-              ptr++;
-              if (!is_alpha(*ptr))
-                  fatal_error("Invalid label prefix character");
-              prefix = *ptr;
-              break;
-          default:
-              fatal_error("Invalid switch");
-              break;
+  /* first process any filenames and command line options */
+  list_fh = stdout;                              /* default the list file */
+  for (i = 1; i < argc; ++i)                     /* start at arg 1 */
+  {           
+    ptr = argv[i];
+    if (*ptr == '/') 
+    {
+      ptr++;
+      switch (*ptr)
+      {
+        case 'S' :                               /* quiet mode */
+        case 's' :
+          fQuiet = 1;
+          break;
+        case 'L' :          /* List file ON */
+        case 'l' :
+          fList = 1;
+          break;
+        case 'E' :          /* Embedded source mode */
+        case 'e' :
+          fSource = 1;
+          break;
+        case 'G' :          /* Generate separate modules */
+        case 'g' :
+          fGen = 1;
+          break;
+        case 'N' :          /* NO optimize */
+        case 'n' :
+          fNoOpt = 1;
+          break;
+        case 'O' :          /* Optimize for speed */
+        case 'o' :
+          fOptS = 1;
+          break;
+        case 'W' :          /* Warnings ON */
+        case 'w' :
+          fWarnings = 1;
+          break;
+        case 'P' :          /* Prefix label character */
+        case 'p' :
+          ptr++;
+          if (!is_alpha(*ptr))
+            fatal_error("Invalid label prefix character");
+          prefix = *ptr;
+          break;
+        default:
+          fatal_error("Invalid switch");
+          break;
+      }
+    }
+    else
+    {
+      if (!source_fh)
+      {
+        copystring(srcname, argv[i]);
+        source_fh = fopen(argv[i], "r");
+      }
+      else if (!asm_fh)
+      {
+        copystring(asmname, argv[i]);
+        if (!(asm_fh = fopen(argv[i], "w")))
+        {
+          put_str("Error: Can't open ASM file\n", stdout);
+          exit(-1);
         }
       }
-      else {
-          if(!source_fh) {
-              copystring(srcname, argv[i]);
-              source_fh = fopen(argv[i], "r");
-              }
-          else if(!asm_fh) {
-              copystring(asmname, argv[i]);
-              if(!(asm_fh = fopen(argv[i], "w"))) {
-                put_str("Error: Can't open ASM file\n", stdout);
-                exit(-1);
-                }
-              }
-          else
-              fatal_error("Too many parameters");
-      }
+      else
+        fatal_error("Too many parameters");
+    }
   }
 
   /* Input file not explicitly named errors out */
-  if(!source_fh) {                /* default to standard input */
-      put_str("C Minus 32 Compiler, Version 2.2\r\n", stdout);
-      put_str("Usage: SourceFile [AsmFile] /S /E /G /L /W /Px\r\n", stdout);
-      put_str("/S  Suppress screen output (e.g., herald)\r\n", stdout);
-      put_str("/E  Embed source in ASM output\r\n", stdout);
-      put_str("/G  Generate separate Code & Data files\r\n", stdout);
-      put_str("/L  List file generated for errors\r\n", stdout);
-      put_str("/N  No optimization\r\n", stdout);
-      put_str("/O  Optimize for speed.\r\n", stdout);
-      put_str("/W  Warnings ON\r\n", stdout);
-      put_str("/Px Label prefix character (x=Label char)\r\n\n", stdout);
-      put_str("Error: Source filename required\r\n", stdout);
-      exit(-1);
-      }
+  if (!source_fh)                                /* default to standard input */ 
+  {
+    put_str("C Minus 32 Compiler, Version 2.2\r\n", stdout);
+    put_str("Usage: SourceFile [AsmFile] /S /E /G /L /W /Px\r\n", stdout);
+    put_str("/S  Suppress screen output (e.g., herald)\r\n", stdout);
+    put_str("/E  Embed source in ASM output\r\n", stdout);
+    put_str("/G  Generate separate Code & Data files\r\n", stdout);
+    put_str("/L  List file generated for errors\r\n", stdout);
+    put_str("/N  No optimization\r\n", stdout);
+    put_str("/O  Optimize for speed.\r\n", stdout);
+    put_str("/W  Warnings ON\r\n", stdout);
+    put_str("/Px Label prefix character (x=Label char)\r\n\n", stdout);
+    put_str("Error: Source filename required\r\n", stdout);
+    exit(-1);
+  }
 
   /* Output file not explicitly named defaults to Source.asm */
-  if(!asm_fh) {           /* default asm name to SourceName.asm */
-      copystring(asmname, srcname);
-      pname=asmname;
-      while ((*pname != '.') && (*pname!= '\0')) pname++;
-
-      if (fGen) {
-          *pname++ = '.';
-          *pname++ = 'D';
-          *pname++ = 'A';
-          *pname++ = 'S';
-          }
-      else {
-          *pname++ = '.';
-          *pname++ = 'A';
-          *pname++ = 'S';
-          *pname++ = 'M';
-          }
-      *pname   = '\0';
-      if(!(asm_fh = fopen(asmname, "w"))) {
-          put_str("Error: Can't open ASM file\r\n", stdout);
-          exit(-1);
-          }
-      }
+  if (!asm_fh) /* default asm name to SourceName.asm */ 
+  {
+    copystring(asmname, srcname);
+    pname=asmname;
+    while ((*pname != '.') && (*pname!= '\0'))
+      pname++;
+    if (fGen) 
+    {
+      *pname++ = '.';
+      *pname++ = 'D';
+      *pname++ = 'A';
+      *pname++ = 'S';
+    }
+    else 
+    {
+      *pname++ = '.';
+      *pname++ = 'A';
+      *pname++ = 'S';
+      *pname++ = 'M';
+    }
+    *pname   = '\0';
+    if (!(asm_fh = fopen(asmname, "w")))
+    {
+      put_str("Error: Can't open ASM file\r\n", stdout);
+      exit(-1);
+    }
+  }
   fASMOpen = TRUE;
 
   /* If -L then List file named Source.LST is generated. */
-  if (fList) {
-      copystring(lstname, srcname);
-      pname=lstname;
-      while ((*pname != '.') && (*pname!= '\0')) pname++;
-      *pname++ = '.';
-      *pname++ = 'L';
-      *pname++ = 'S';
-      *pname++ = 'T';
-      *pname   = '\0';
-      if(!(list_fh = fopen(lstname, "w")))
-                  fatal_error("Cannot open LIST file");
-      else fLISTOpen = TRUE;
-      }
-
+  if (fList)
+  {
+    copystring(lstname, srcname);
+    pname=lstname;
+    while ((*pname != '.') && (*pname!= '\0')) 
+      pname++;
+    *pname++ = '.';
+    *pname++ = 'L';
+    *pname++ = 'S';
+    *pname++ = 'T';
+    *pname   = '\0';
+    if (!(list_fh = fopen(lstname, "w")))
+      fatal_error("Cannot open LIST file");
+    else 
+      fLISTOpen = TRUE;
+  }
   /* open code segment tmp file  or Gen file */
-  if (fGen) {
-      copystring(codename, srcname);
-      pname=codename;
-      while ((*pname != '.') && (*pname!= '\0')) pname++;
-      *pname++ = '.';
-      *pname++ = 'C';
-      *pname++ = 'A';
-      *pname++ = 'S';
-      *pname   = '\0';
-      if(!(code_fh = fopen(codename, "w")))
-                  fatal_error("Cannot open Code file");
-      else fCODEOpen = TRUE;
-      }
-
-  if(!(temp_fh = fopen(tmpname, "w")))
-          fatal_error("Cannot open temporary file\r\n");
-
+  if (fGen) 
+  {
+    copystring(codename, srcname);
+    pname=codename;
+    while ((*pname != '.') && (*pname!= '\0')) 
+      pname++;
+    *pname++ = '.';
+    *pname++ = 'C';
+    *pname++ = 'A';
+    *pname++ = 'S';
+    *pname   = '\0';
+    if (!(code_fh = fopen(codename, "w")))
+      fatal_error("Cannot open Code file");
+    else
+      fCODEOpen = TRUE;
+  }
+  if (!(temp_fh = fopen(tmpname, "w")))
+    fatal_error("Cannot open temporary file\r\n");
   fTEMPOpen = TRUE;
-
-  if(!fQuiet)
-      put_str("C Minus 32 Compiler, Version 2.2\r\n", stdout);
-
+  if (!fQuiet)
+    put_str("C Minus 32 Compiler, Version 2.2\r\n", stdout);
   compile();
 }
