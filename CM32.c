@@ -460,12 +460,12 @@ U32 proto_list[MAX_PROTOS],                      /* list of arg types for functi
     fptr;                                        /* ptr to function symbol we are in */
 
     /* structure definition use and control variables */
-    S8 fInStruct = 0;                            /* true if currently defining struct members */
-    U16 CrntStrucDef;                            /* iSym for Structure def we are using or working on */
+    S8   fInStruct = 0;                          /* true if currently defining struct members */
+    U16  CrntStrucDef;                           /* iSym for Structure def we are using or working on */
     char structname[12] = "0StructDef";
-    U8 NxtStrucNum = 0;
-    U32 memoffset;                               /* used to calculate members offset */
-    U32 strucsize;                               /* used for size of struct in INC and DEC */
+    U8   NxtStrucNum = 0;
+    U32  memoffset;                              /* used to calculate members offset */
+    U32  strucsize;                              /* used for size of struct in INC and DEC */
 
 /* Literal + Dimension pools and associated variables */
 U32 dim_top     = 0,
@@ -474,15 +474,17 @@ U32 dim_top     = 0,
 
 char literal_pool[LITER_BUFF];
 
-/* Expression evaluation stack. The value field contents vary
-   depending on what the token is. If it's a Symbol, this is
-   the symbol table entry. If token is a number then value is
-   the actual value of the number.  If it's a string, then
-   value is the length.
-   The offset is used to hold constant values for addresses
-   that are in the index register or on the stack.
-   When accessing the data pointed to, if this is NON-zero,
-   we use the [ESI+NUM] addressing mode (Base+Offset). */
+/* 
+  Expression evaluation stack. The value field contents vary
+  depending on what the token is. If it's a Symbol, this is
+  the symbol table entry. If token is a number then value is
+  the actual value of the number.  If it's a string, then
+  value is the length.
+  The offset is used to hold constant values for addresses
+  that are in the index register or on the stack.
+  When accessing the data pointed to, if this is NON-zero,
+  we use the [ESI+NUM] addressing mode (Base+Offset). 
+*/
 
 struct expr
 {
@@ -607,10 +609,10 @@ char zero_flag,
 #include <string.h>
 #include <stdlib.h>
 
-#define OBUF_SIZE        10                      /* number of entries in peephole buffer */
-#define OLINE_SIZE      100                      /* maximum size of input line */
-#define OSYMBOLS          8                      /* maximum # symbols per peep */
-#define OSYMBOL_SIZE     25                      /* maximum size of symbol */
+#define OBUF_SIZE        10          /* number of entries in peephole buffer */
+#define OLINE_SIZE      100          /* maximum size of input line           */
+#define OSYMBOLS          8          /* maximum # symbols per peep           */
+#define OSYMBOL_SIZE     25          /* maximum size of symbol               */
 
 /******************************************************************************
  Peephole optimization table:
@@ -625,7 +627,7 @@ char zero_flag,
  4) Linefeeds (\n) should end each except for the last entry of a line.
 ******************************************************************************/
 
-char *peep_table[] =                             /* 80386/80486 Optimizations */
+char *peep_table[] =                            /* 80386/80486 Optimizations */
 {
   /* data movement & register usage optimizations */
   "\tMOV \200,\201\n\tMOV \201,\200",
