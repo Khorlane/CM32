@@ -6,7 +6,7 @@
  Permission is required from the authors for
  any commercial use of this source code.
 
- 32 bit assembly language generation specificly for the Intel 386/486
+ 32 bit assembly language generation specifically for the Intel 386/486
  for the DASM assembler.
 
  CM-32 integer support:
@@ -14,7 +14,6 @@
  long = long int = 32 bits.
 
  16 bit Intel addressing modes are NOT supported for code generation.
-
 */
 
 #define U32 unsigned int
@@ -38,7 +37,6 @@
 #pragma warning(disable : 6386)
 #pragma warning(disable : 6387)
 
-
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -49,41 +47,40 @@
 //$ CM32.H - Begin                                                                                                    $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-/***********************************************
+/******************************************************************************
  Global definitions for the C MINUS 32 compiler.
  Derived from code Copyright (c) 1989, Dave Dunfield
  Copyright 1991,1992,1993,1994 R.A. Burgess
-************************************************/
+******************************************************************************/
 
 #define FALSE       0
 #define TRUE        1
 
-/***********************************************
+/******************************************************************************
  Misc. fixed compiler parameters
-************************************************/
-#define LINE_MAX      200   /* maximum size of input line */
-#define MACROS        500   /* number of macros allowed */
-#define MAC_BUFF    15000   /* string space alloted to macro pool */
-#define PARAMETERS     10   /* maximum # parameters to a macro */
-#define PARM_BUFF     200   /* parameter names & definitions */
-#define INCL_DEPTH      5   /* maximum depth of include files */
+******************************************************************************/
+#define LINE_MAX      200   /* maximum size of input line                    */
+#define MACROS        500   /* number of macros allowed                      */
+#define MAC_BUFF    15000   /* string space alloted to macro pool            */
+#define PARAMETERS     10   /* maximum # parameters to a macro               */
+#define PARM_BUFF     200   /* parameter names & definitions                 */
+#define INCL_DEPTH      5   /* maximum depth of include files                */
+#define GBUFFSIZE   15000   /* n bytes in symbol name pool                   */
+#define LBUFFSIZE     300   /* n bytes in Local symbol name pool             */
+#define SYMBOL_SIZE    31   /* Max chars in symbol name                      */
+#define EXPR_DEPTH     20   /* maximum depth of expression stack             */
+#define MAX_SYMBOLS   300   /* maximum # active symbols                      */
+#define MAX_ARGS       20   /* maximum # arguments to a function             */
+#define MAX_PROTOS    700   /* maximum # params for all functions            */
+#define LOOP_DEPTH     10   /* maximum # nested loops                        */
+#define MAX_SWITCH     80   /* maximum # active switch-case statements       */
+#define DIM_SIZE      100   /* maximum # active array dimensions             */
+#define DEFINE_SIZE   260   /* maximum # defines - was 150                   */
+#define DEFINE_BUFF  2800   /* size of define string space - was 1500        */
+#define LITER_BUFF  10000   /* size of literal string space                  */
+#define MAX_ERRORS     15   /* # error before termination forced             */
 
-#define GBUFFSIZE   15000   /* n bytes in symbol name pool */
-#define LBUFFSIZE     300   /* n bytes in Local symbol name pool */
-#define SYMBOL_SIZE    31   /* Max chars in symbol name */
-#define EXPR_DEPTH     20   /* maximum depth of expression stack */
-#define MAX_SYMBOLS   300   /* maximum # active symbols */
-#define MAX_ARGS       20   /* maximum # arguments to a function */
-#define MAX_PROTOS    700   /* maximum # params for all functions */
-#define LOOP_DEPTH     10   /* maximum # nested loops */
-#define MAX_SWITCH     80   /* maximum # active switch-case statements */
-#define DIM_SIZE      100   /* maximum # active array dimensions */
-#define DEFINE_SIZE   260   /* maximum # defines - was 150 */
-#define DEFINE_BUFF  2800   /* size of define string space - was 1500*/
-#define LITER_BUFF  10000   /* size of literal string space */
-#define MAX_ERRORS     15   /* # error before termination forced */
-
-/******************************************************************
+/******************************************************************************
  Bits found in the "type" entry of symbol table, also
  used on the expression stack to keep track of element types,
  and passed to the code generation routines to identify types.
@@ -96,59 +93,58 @@
  the name in the symbol table.  The tag may be reused to dine other
  structure variables. The members of a STRUCDEF follow the it directly
  in the sysbol table and are marked as STRUCMEM.  When a structure
- variable is actually defined it is simply marked as a STRUCT and */
-#define STRUCMEM    0x04000000L     /* structure member (follows strucdef) */
-#define STRUCDEF    0x02000000L     /* struct TAG define, members follow */
-#define TYPDEF      0x01000000L     /* for type definition & struct tags */
-#define ISR         0x00800000L     /* function is interrupt type */
-#define REFERENCE   0x00400000L     /* symbol has been referenced */
-#define GLOBAL      0x00200000L     /* symbol is not local - access by name */
-#define INITED      0x00100000L     /* symbol is initialized */
-#define GLABEL      0x00080000L     /* symbol is a goto label - local only */
-#define FUNCTION    0x00040000L     /* symbol is a function */
-#define PROTO       0x00020000L     /* symbol is a prototype function */
-#define VARARGS     0x00010000L     /* function has var nParams */
-#define ARGUMENT    0x00008000L     /* symbol is a function argument */
-#define EXTERNAL    0x00004000L     /* external reference */
-#define FAR         0x00002000L     /* far - pointers and functions ONLY */
-#define STATIC      0x00001000L     /* symbol is not public or External*/
-#define CONSTANT    0x00000800L     /* warning if assigned a value */
-#define REGISTER    0x00000400L     /* register symbol */
-#define STRUCT      0x00000200L     /* a structure */
-#define ARRAY       0x00000100L     /* symbol is an array */
-#define UNSIGNED    0x00000080L     /* Use unsigned value */
-#define DWORD       0x00000040L     /* 32 bit  */
-#define WORD        0x00000020L     /* 16 bit */
-#define BYTE        0x00000010L     /* 8  bit */
-#define VOID        0x00000008L     /* functions and params only */
-#define POINTER     0x00000007L     /* 7 levels of pointer indirection max */
-#define SIZEMASK    0x00000070L     /* mask to test size only */
+ variable is actually defined it is simply marked as a STRUCT.
+******************************************************************************/
+#define STRUCMEM    0x04000000L     /* structure member (follows strucdef)   */
+#define STRUCDEF    0x02000000L     /* struct TAG define, members follow     */
+#define TYPDEF      0x01000000L     /* for type definition & struct tags     */
+#define ISR         0x00800000L     /* function is interrupt type            */
+#define REFERENCE   0x00400000L     /* symbol has been referenced            */
+#define GLOBAL      0x00200000L     /* symbol is not local - access by name  */
+#define INITED      0x00100000L     /* symbol is initialized                 */
+#define GLABEL      0x00080000L     /* symbol is a goto label - local only   */
+#define FUNCTION    0x00040000L     /* symbol is a function                  */
+#define PROTO       0x00020000L     /* symbol is a prototype function        */
+#define VARARGS     0x00010000L     /* function has var nParams              */
+#define ARGUMENT    0x00008000L     /* symbol is a function argument         */
+#define EXTERNAL    0x00004000L     /* external reference                    */
+#define FAR         0x00002000L     /* far - pointers and functions ONLY     */
+#define STATIC      0x00001000L     /* symbol is not public or External      */
+#define CONSTANT    0x00000800L     /* warning if assigned a value           */
+#define REGISTER    0x00000400L     /* register symbol                       */
+#define STRUCT      0x00000200L     /* a structure                           */
+#define ARRAY       0x00000100L     /* symbol is an array                    */
+#define UNSIGNED    0x00000080L     /* Use unsigned value                    */
+#define DWORD       0x00000040L     /* 32 bit                                */
+#define WORD        0x00000020L     /* 16 bit                                */
+#define BYTE        0x00000010L     /* 8  bit                                */
+#define VOID        0x00000008L     /* functions and params only             */
+#define POINTER     0x00000007L     /* 7 levels of pointer indirection max   */
+#define SIZEMASK    0x00000070L     /* mask to test size only                */
 
 /******************************************************************************
 * Tokens identifing value types.
 ******************************************************************************/
-#define NUMBER      100 /* numeric constant */
-#define STRING      101 /* literal constant */
-#define LABEL       102 /* label address */
-#define SYMBOL      103 /* symbol value */
-#define INEAX       104 /* value in EAX (accumulator) */
-#define INECX       105 /* value is in secondary register */
-#define INEDX       106 /* pointer in EDX reg (indirect access) */
-#define PECX        107 /* pointer in ECX reg (indirect access) */
-#define PEDX        108 /* pointer in EDX register (indirect access) */
-#define PESI        109 /* pointer in index register (indirect access) */
-
-/* EBX is used as the top of the processor stack. It's simply
-   for rapid access to stacked items. If another item is placed
-   on the stack and a token is the "active EBX item" then it
-   must be pushed onto the real stack.
+#define NUMBER      100       /* numeric constant                            */
+#define STRING      101       /* literal constant                            */
+#define LABEL       102       /* label address                               */
+#define SYMBOL      103       /* symbol value                                */
+#define INEAX       104       /* value in EAX (accumulator)                  */
+#define INECX       105       /* value is in secondary register              */
+#define INEDX       106       /* pointer in EDX reg (indirect access)        */
+#define PECX        107       /* pointer in ECX reg (indirect access)        */
+#define PEDX        108       /* pointer in EDX register (indirect access)   */
+#define PESI        109       /* pointer in index register (indirect access) */
+/*
+  EBX is used as the top of the processor stack. It's simply
+  for rapid access to stacked items. If another item is placed
+  on the stack and a token is the "active EBX item" then it
+  must be pushed onto the real stack.
 */
-
-#define STACK_TOP   110 /* Value in EBX for accessibility */
-#define ISTACK_TOP  111 /* Index to value in EBX for accessibility */
-
-#define ON_STACK    112 /* Value actually on Processor stack */
-#define ION_STACK   113 /* Index to value actually on Processor stack */
+#define STACK_TOP   110       /* Value in EBX for accessibility               */
+#define ISTACK_TOP  111       /* Index to value in EBX for accessibility      */
+#define ON_STACK    112       /* Value actually on Processor stack            */
+#define ION_STACK   113       /* Index to value actually on Processor stack   */
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 //$ CM32.H - End                                                                                                      $
@@ -159,20 +155,20 @@
 //$ TOKENS32.H - Begin                                                                                                $
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-/* TOKENS32.h
-   Tokens for the C Minus compiler:
-   The tokens are arranged in alphebetical order by the first
-   character.  From there they are grouped grouped from longest to
-   shortest (i.e. = comes after ==).
-   Derived from code Copyright (c) 1989, Dave Dunfield
-   Copyright 1991,1992,1993,1994 R.A. Burgess
+/*
+  Tokens for the C Minus compiler:
+  The tokens are arranged in alphebetical order by the first
+  character.  From there they are grouped grouped from longest to
+  shortest (i.e. = comes after ==).
+  Derived from code Copyright (c) 1989, Dave Dunfield
+  Copyright 1991,1992,1993,1994 R.A. Burgess
 */
 
 /*
-    This is an index table for the first character of the token.
-    It's ASCII numeric value provides an index to the token table.
-    This cuts searching and comparison down to less than 4 compares
-    worst case, 2 on the average!
+  This is an index table for the first character of the token.
+  It's ASCII numeric value provides an index to the token table.
+  This cuts searching and comparison down to less than 4 compares
+  worst case, 2 on the average!
 */
 static unsigned char itoken[128] =
 {
@@ -197,7 +193,7 @@ static unsigned char itoken[128] =
 static char *tokens[] =
 {
 /* token         number  priority  optype  ASCII */
-    "",          /* 00       0       0        0  */
+    "",          /* 00       0       0         0 */
     "!=",        /* 01       9       2        33 */
     "!",         /* 02       0       1           */
     "%=",        /* 03       2       3        37 */
@@ -276,89 +272,90 @@ static char *tokens[] =
     0            /* End of table                 */
 };
 
-#define NE       1      /* '!='  */
-#define NOT      2      /* '!'   */
-#define MODE     3      /* '%='  */
-#define MOD      4      /* '%'   */
-#define DAND     5      /* '&&' (marks beginning of binaries) */
-#define ANDE     6      /* '&='  */
-#define AND      7      /* '&' - And & address of */
-#define ORB      8      /* (     */
-#define CRB      9      /* )     */
-#define STARE   10      /* '*='  */
-#define STAR    11      /* '*' - multiply & pointer */
-#define INC     12      /* '++'  */
-#define ADDE    13      /* '+='  */
-#define ADD     14      /* '+'   */
-#define COMMA   15      /* ,     */
-#define DEC     16      /* '--'  */
-#define SUBE    17      /* '-='  */
-#define DEREF   18      /* '->'  */
-#define SUB     19      /* '-' - subtract & negate */
-#define ELIPSE  20      /* '...' Elipse for args */
-#define DOT     21      /* '.'   */
-#define DIVE    22      /* '/='  */
-#define DIV     23      /* '/'   */
-#define COLON   24      /* :     */
-#define SEMI    25      /* ;     */
-#define SHLE    26      /* '<<=' */
-#define SHL     27      /* '<<'  */
-#define LE      28      /* '<='  */
-#define LT      29      /* '<'   */
-#define EQ      30      /* '=='  */
-#define ASSIGN  31      /* '='   */
-#define SHRE    32      /* '>>=' */
-#define SHR     33      /* '>>'  */
-#define GE      34      /* '>='  */
-#define GT      35      /* '>'   */
-#define QUEST   36      /* '?' (marks ending of binaries) */
-#define OSB     37      /* [     */
-#define CSB     38      /* ]     */
-#define XORE    39      /* '^='  */
-#define XOR     40      /* '^'   */
-#define BREAK   41      /* 'break' statement */
-#define CASE    42      /* 'case' statement */
-#define CHAR    43      /* 'char' */
-#define CONST   44      /* 'const' */
-#define CONTIN  45      /* 'continue' statement */
-#define DEFAULT 46      /* 'default' statement */
-#define DO      47      /* 'do' statement */
-#define ELSE    48      /* 'else' modifier */
-#define EXTERN  49      /* 'extern' */
-#define FARR    50      /* 'far'  */
-#define FOR     51      /* 'for' statement */
-#define GOTO    52      /* 'goto' statement */
-#define INTR    53      /* 'interrupt' type for functions */
-#define INT     54      /* 'int'   */
-#define IF      55      /* 'if' statement */
-#define LONG    56      /* 'long'   */
-#define REGIS   57      /* 'register' */
-#define RETURN  58      /* 'return' statement */
-#define SIGNED  59      /* 'signed' */
-#define SIZEOF  60      /* 'sizeof' */
-#define STAT    61      /* 'static' */
-#define STRUC   62      /* 'struct' */
-#define SWITCH  63      /* 'switch' statement */
-#define SHORT   64      /* 'short' */
-#define TYPEDEF 65      /* 'typedef' */
-#define UNSIGN  66      /* 'unsigned' */
-#define UNION   67      /* 'union' */
-#define VOIDD   68      /* 'void' */
-#define WHILE   69      /* 'while' statement */
-#define OCB     70      /* {    */
-#define DOR     71      /* '||' */
-#define ORE     72      /* '|=' */
-#define OR      73      /* '|'  */
-#define CCB     74      /* }    */
-#define COM     75      /* '~'  */
+#define NE       1      /* '!='                                   */
+#define NOT      2      /* '!'                                    */
+#define MODE     3      /* '%='                                   */
+#define MOD      4      /* '%'                                    */
+#define DAND     5      /* '&&' (marks beginning of binaries)     */
+#define ANDE     6      /* '&='                                   */
+#define AND      7      /* '&' - And & address of                 */
+#define ORB      8      /* (                                      */
+#define CRB      9      /* )                                      */
+#define STARE   10      /* '*='                                   */
+#define STAR    11      /* '*' - multiply & pointer               */
+#define INC     12      /* '++'                                   */
+#define ADDE    13      /* '+='                                   */
+#define ADD     14      /* '+'                                    */
+#define COMMA   15      /* ,                                      */
+#define DEC     16      /* '--'                                   */
+#define SUBE    17      /* '-='                                   */
+#define DEREF   18      /* '->'                                   */
+#define SUB     19      /* '-' - subtract & negate                */
+#define ELIPSE  20      /* '...' Elipse for args                  */
+#define DOT     21      /* '.'                                    */
+#define DIVE    22      /* '/='                                   */
+#define DIV     23      /* '/'                                    */
+#define COLON   24      /* :                                      */
+#define SEMI    25      /* ;                                      */
+#define SHLE    26      /* '<<='                                  */
+#define SHL     27      /* '<<'                                   */
+#define LE      28      /* '<='                                   */
+#define LT      29      /* '<'                                    */
+#define EQ      30      /* '=='                                   */
+#define ASSIGN  31      /* '='                                    */
+#define SHRE    32      /* '>>='                                  */
+#define SHR     33      /* '>>'                                   */
+#define GE      34      /* '>='                                   */
+#define GT      35      /* '>'                                    */
+#define QUEST   36      /* '?' (marks ending of binaries)         */
+#define OSB     37      /* [                                      */
+#define CSB     38      /* ]                                      */
+#define XORE    39      /* '^='                                   */
+#define XOR     40      /* '^'                                    */
+#define BREAK   41      /* 'break' statement                      */
+#define CASE    42      /* 'case' statement                       */
+#define CHAR    43      /* 'char'                                 */
+#define CONST   44      /* 'const'                                */
+#define CONTIN  45      /* 'continue' statement                   */
+#define DEFAULT 46      /* 'default' statement                    */
+#define DO      47      /* 'do' statement                         */
+#define ELSE    48      /* 'else' modifier                        */
+#define EXTERN  49      /* 'extern'                               */
+#define FARR    50      /* 'far'                                  */
+#define FOR     51      /* 'for' statement                        */
+#define GOTO    52      /* 'goto' statement                       */
+#define INTR    53      /* 'interrupt' type for functions         */
+#define INT     54      /* 'int'                                  */
+#define IF      55      /* 'if' statement                         */
+#define LONG    56      /* 'long'                                 */
+#define REGIS   57      /* 'register'                             */
+#define RETURN  58      /* 'return' statement                     */
+#define SIGNED  59      /* 'signed'                               */
+#define SIZEOF  60      /* 'sizeof'                               */
+#define STAT    61      /* 'static'                               */
+#define STRUC   62      /* 'struct'                               */
+#define SWITCH  63      /* 'switch' statement                     */
+#define SHORT   64      /* 'short'                                */
+#define TYPEDEF 65      /* 'typedef'                              */
+#define UNSIGN  66      /* 'unsigned'                             */
+#define UNION   67      /* 'union'                                */
+#define VOIDD   68      /* 'void'                                 */
+#define WHILE   69      /* 'while' statement                      */
+#define OCB     70      /* {                                      */
+#define DOR     71      /* '||'                                   */
+#define ORE     72      /* '|='                                   */
+#define OR      73      /* '|'                                    */
+#define CCB     74      /* }                                      */
+#define COM     75      /* '~'                                    */
 #define ULT     76      /* pseudo operators for unsigned compares */
 #define ULE     77      /* pseudo operators for unsigned compares */
 #define UGT     78      /* pseudo operators for unsigned compares */
 #define UGE     79      /* pseudo operators for unsigned compares */
 
-/* Table defining expression operator precedence.
-   Position in array is token number, while value
-   in that position is priority. (15 is highest)
+/* 
+  Table defining expression operator precedence.
+  Position in array is token number, while value
+  in that position is priority. (15 is highest)
 */
 static char priority[] =
 {
@@ -380,12 +377,13 @@ static char priority[] =
   0,   0,  0,  0,  0,  0,  0,  0     /* 120- 127*/
 };
 
-/* This table determines operator type.
-   Two operators grouped Right to Left = 3.
-   Two operators grouped Left to Right = 2.
-   One operator (ALWAYS grouped Right to Left) = 1.
-   Logical operators are not included. They are handled
-   separately in the code (numbered as 4).
+/* 
+  This table determines operator type.
+  Two operators grouped Right to Left = 3.
+  Two operators grouped Left to Right = 2.
+  One operator (ALWAYS grouped Right to Left) = 1.
+  Logical operators are not included. They are handled
+  separately in the code (numbered as 4).
 */
 static char optype[] =
 {
@@ -415,64 +413,64 @@ static char optype[] =
 char line_in[LINE_MAX], *input_ptr;
 
 /* Global value storage locations (results from lexical scanner) */
-char gst[SYMBOL_SIZE+1];    /* Name if SYMBOL */
-U8   namesize;              /* size of SYMBOL name */
+char gst[SYMBOL_SIZE+1];                         /* Name if SYMBOL */
+U8   namesize;                                   /* size of SYMBOL name */
 U32  gvalue;
 
 /*
-   if token = SYMBOL then gvalue is length (number of characters).
-   if token = NUMBER then gvalue is value of NUMBER.
-   if token = STRING then gvalue is index into literal pool to the string.
+  if token = SYMBOL then gvalue is length (number of characters).
+  if token = NUMBER then gvalue is value of NUMBER.
+  if token = STRING then gvalue is index into literal pool to the string.
 */
 
 /* Symbol table and associated variables */
-char GPool[GBUFFSIZE];  /* Pool for symbol names (packed) */
-char LPool[LBUFFSIZE];  /* Pool for local symbol names (packed) */
+char GPool[GBUFFSIZE];                           /* Pool for symbol names (packed) */
+char LPool[LBUFFSIZE];                           /* Pool for local symbol names (packed) */
 
 struct sym
 {
-    U32 type;       /* 32 symbol type bits  */
-    U16 itypedef;   /* index in symtab for type definition, or zero */
-                    /* If strucmem, struct it belongs to */
-    U16 oname;      /* offset in pool to sym name */
-    U16 argoffset;  /* arg offset from EBP for locals */
-    U16 strucoff;   /* size of strucdef (also offset for next new member), */
-                    /*   if strucmem, it's member's offset in structure */
-    U16 dindex;     /* rg for index to dim */
-                    /* or index to proto list for arg types */
-                    /* or holds labels for for local Goto */
+  U32 type;                                      /* 32 symbol type bits  */
+  U16 itypedef;                                  /* index in symtab for type definition, or zero */
+                                                 /* If strucmem, struct it belongs to */
+  U16 oname;                                     /* offset in pool to sym name */
+  U16 argoffset;                                 /* arg offset from EBP for locals */
+  U16 strucoff;                                  /* size of strucdef (also offset for next new member), */
+                                                 /* if strucmem, it's member's offset in structure */
+  U16 dindex;                                    /* rg for index to dim */
+                                                 /* or index to proto list for arg types */
+                                                 /* or holds labels for for local Goto */
 };
 
-struct sym symtab[MAX_SYMBOLS];  /* SYM TABLE... */
+struct sym symtab[MAX_SYMBOLS];                  /* SYM TABLE... */
 
-U16 oNextGName = 0;     /* offset to next new name in global pool */
-U16 oNextLName = 0;     /* offset to next new name in local pool */
+U16 oNextGName = 0;                              /* offset to next new name in global pool */
+U16 oNextLName = 0;                              /* offset to next new name in local pool */
 
-U32 proto_list[MAX_PROTOS], /* list of arg types for functions */
+U32 proto_list[MAX_PROTOS],                      /* list of arg types for functions */
     global_top   = 0,
     global_count = 0,
-    iproto_next  = 1,        /* index to next available proto args (0 illegal)*/
-    icrntpro     = 0,           /* index to arg being tested */
+    iproto_next  = 1,                            /* index to next available proto args (0 illegal) */
+    icrntpro     = 0,                            /* index to arg being tested */
     iarg         = 0,
     argtype      = 0,
     local_top    = MAX_SYMBOLS,
-    arg_count,              /* number of args so far  */
+    arg_count,                                   /* number of args so far  */
     local_stack,
-    sptr,                   /* symbol ptr */
-    fptr;                   /* ptr to function symbol we are in */
+    sptr,                                        /* symbol ptr */
+    fptr;                                        /* ptr to function symbol we are in */
 
     /* structure definition use and control variables */
-    S8 fInStruct = 0;   /* true if currently defining struct members */
-    U16 CrntStrucDef;   /* iSym for Structure def we are using or working on */
+    S8 fInStruct = 0;                            /* true if currently defining struct members */
+    U16 CrntStrucDef;                            /* iSym for Structure def we are using or working on */
     char structname[12] = "0StructDef";
     U8 NxtStrucNum = 0;
-    U32 memoffset;      /* used to calculate members offset */
-    U32 strucsize;      /* used for size of struct in INC and DEC */
+    U32 memoffset;                               /* used to calculate members offset */
+    U32 strucsize;                               /* used for size of struct in INC and DEC */
 
 /* Literal + Dimension pools and associated variables */
 U32 dim_top     = 0,
     literal_top = 0,
-    dim_pool[DIM_SIZE];     /* each entry has nDims for an array */
+    dim_pool[DIM_SIZE];                          /* each entry has nDims for an array */
 
 char literal_pool[LITER_BUFF];
 
@@ -488,13 +486,13 @@ char literal_pool[LITER_BUFF];
 
 struct expr
 {
-  U32 token;      /* Number, Symbol, String, In-Accumulator, etc. */
-  U32 value;      /* varies depending on token */
-  U32 type;       /* type from symtab */
-  U32 offset;     /* Offset of pointer in structure for access */
+  U32 token;                                     /* Number, Symbol, String, In-Accumulator, etc. */
+  U32 value;                                     /* varies depending on token */
+  U32 type;                                      /* type from symtab */
+  U32 offset;                                    /* Offset of pointer in structure for access */
 };
 
-struct expr expstk[EXPR_DEPTH];  /* Expression Stack */
+struct expr expstk[EXPR_DEPTH];                  /* Expression Stack */
 
 U32 expr_ptr = 0;
 
@@ -503,7 +501,7 @@ U32 expr_ptr = 0;
 char if_flag  = 0,
      asm_flag = 0,
      not_flag = 0,
-     prefix   = 'L';              /* override with /P:x switch */
+     prefix   = 'L';                             /* override with /P:x switch */
 
 U32 break_stack[LOOP_DEPTH],
     continue_stack[LOOP_DEPTH],
@@ -518,20 +516,18 @@ U32 break_stack[LOOP_DEPTH],
     exit_flag     = 0,
     next_lab      = 0,
     line_number   = 0,
-    begin_comment = 0,      /* line that a comment starts on for errors */
+    begin_comment = 0,                           /* line that a comment starts on for errors */
     ungot_token   = 0,
     error_count   = 0,
     warn_count    = 0;
 
 
 /* input/output pointers and buffer for for preprocessor */
-
 char buffer[LINE_MAX],
      *buffin_ptr,
      *buffout_ptr;
 
-    /* macro definition: index, pool and top pointers */
-
+/* macro definition: index, pool and top pointers */
 U32  macro = 0;
 char *define_index[MACROS],
       define_pool[MAC_BUFF],
@@ -562,7 +558,6 @@ char asmname[40];
 char lstname[40];
 
 /* file open flags */
-
 char fLISTOpen = 0,
      fTEMPOpen = 0,
      fCODEOpen = 0,
@@ -578,8 +573,7 @@ char comment_flag = -1,
      fGen         = 0,
      fWarnings    = 0;
 
-    /* inlcude path */
-
+/* inlcude path */
 char *incdir = "\\CM32\\INCLUDE";
 
 U32 global_width = 0,
@@ -613,10 +607,10 @@ char zero_flag,
 #include <string.h>
 #include <stdlib.h>
 
-#define OBUF_SIZE        10     /* number of entries in peephole buffer */
-#define OLINE_SIZE      100     /* maximum size of input line */
-#define OSYMBOLS          8     /* maximum # symbols per peep */
-#define OSYMBOL_SIZE     25     /* maximum size of symbol */
+#define OBUF_SIZE        10                      /* number of entries in peephole buffer */
+#define OLINE_SIZE      100                      /* maximum size of input line */
+#define OSYMBOLS          8                      /* maximum # symbols per peep */
+#define OSYMBOL_SIZE     25                      /* maximum size of symbol */
 
 /******************************************************************************
  Peephole optimization table:
@@ -631,10 +625,8 @@ char zero_flag,
  4) Linefeeds (\n) should end each except for the last entry of a line.
 ******************************************************************************/
 
-char *peep_table[] =
+char *peep_table[] =                             /* 80386/80486 Optimizations */
 {
-  /* 80386/80486 Optimizations */
-
   /* data movement & register usage optimizations */
   "\tMOV \200,\201\n\tMOV \201,\200",
   "\tMOV \200,\201",
@@ -762,11 +754,10 @@ char *peep_table[] =
 /* circular peep hole buffer & read/write pointers */
 char peep_buffer[OBUF_SIZE][OLINE_SIZE];
 
-unsigned peep_first = 0,        /* first entry in circular buffer */
-          peep_next = 0;        /* Next place to put new entry    */
-
-/* If ((next+1) mod n entries) == top then buffer is full */
-/* If next == top then buffer is empty */
+unsigned peep_first = 0,                         /* first entry in circular buffer */
+         peep_next  = 0;                         /* Next place to put new entry    */
+                                                 /* If ((next+1) mod n entries) == top then buffer is full */
+                                                 /* If next == top then buffer is empty */
 
 /* Symbol table */
 char symbols[OSYMBOLS][OSYMBOL_SIZE];
@@ -895,9 +886,9 @@ void main(S16 argc, S8  *argv[]);
 ******************************************************************************/
 static char is_alpha(char chr)
 {
-  return ((chr >= 'a') && (chr <= 'z'))
-      || ((chr >= 'A') && (chr <= 'Z'))
-      || (chr == '_');
+  return ((chr >= 'a') && (chr <= 'z')) ||
+         ((chr >= 'A') && (chr <= 'Z')) ||
+         (chr == '_');
 }
 
 /******************************************************************************
@@ -979,7 +970,7 @@ static void skip_comment(void)
   x = 0;
   for (;;)
   {
-    if (!(c = *buffin_ptr++)) /* end of line_in */
+    if (!(c = *buffin_ptr++))                    /* end of line_in */
     {
       if (!fgets(buffin_ptr = buffer, LINE_MAX, source_fh))
       {
@@ -993,7 +984,7 @@ static void skip_comment(void)
     {
       if ((x = (x << 8) + c) == (('*' << 8) + '/'))   /* close */
         return;
-      if (x == (('/' << 8) + '*'))                /* imbedded comment */
+      if (x == (('/' << 8) + '*'))               /* imbedded comment */
         skip_comment();
     }
   }
@@ -1166,7 +1157,7 @@ static int compareT(char *ptable, int peep)
           return 0;
       }
       else                                       /* new symbol */
-      {                                       
+      {
         while (*ptr1 && (*ptr1 != c))
           *ptr2++ = *ptr1++;
         *ptr2 = 0;
@@ -1280,16 +1271,16 @@ static void optimize(void)
     for (i = 0; ptr = peep_table[i]; i += 2)
     {
       j = compareT(ptr, peep_first);
-      if (j) /* we have a match, exchange it */
+      if (j)                                     /* we have a match, exchange it */
       {
         exchange(j, peep_table[i+1]);
-        break;                      /* break to fill buffer again */
+        break;                                   /* break to fill buffer again */
       }
     }
-    if (!j) /* no matches, flush this line */
+    if (!j)                                      /* no matches, flush this line */
       write_line();
     if (peep_first == peep_next)
-      return;                   /* We are done! */
+      return;                                    /* We are done! */
   }
 }
 
@@ -1380,12 +1371,12 @@ static long readline(void)
     {
       if (ch == '#')
       {
-        if (match("#define"))                    /* define a new macro */ 
+        if (match("#define"))                    /* define a new macro */
         {
-          if (macro >= MACROS) 
+          if (macro >= MACROS)
           {
             fatal_error("Too many macro definitions");
-            exit(-1); 
+            exit(-1);
           }
           buffout_ptr = define_index[macro++] = define_ptr;
           if (!is_alpha(*buffin_ptr))
@@ -1398,7 +1389,7 @@ static long readline(void)
           *define_ptr++ = 0;
           parm = 0;
           parm_ptr = parm_pool;
-          if (*buffin_ptr == '(')                /* parameterized macro */ 
+          if (*buffin_ptr == '(')                /* parameterized macro */
           {
             *define_ptr++ = 1;
             ++buffin_ptr;
@@ -1412,7 +1403,7 @@ static long readline(void)
               parm_index[parm++] = buffout_ptr = parm_ptr;
               skip_blanks();
               copy_name();
-              parm_ptr = buffout_ptr+1; 
+              parm_ptr = buffout_ptr+1;
             }
             while (more_parms());
           }
@@ -1431,7 +1422,7 @@ static long readline(void)
               {
                 *define_ptr++ =  i + 0x80;
                 buffout_ptr = define_ptr;
-                break; 
+                break;
               }
             }
             define_ptr = buffout_ptr;
@@ -1439,7 +1430,7 @@ static long readline(void)
           else if ((c == '"') || (c == 0x27))
           {
             copy_string();
-            define_ptr = buffout_ptr; 
+            define_ptr = buffout_ptr;
           }
           else
           {
@@ -1447,10 +1438,10 @@ static long readline(void)
             {
               ++buffin_ptr;
               begin_comment = line_number;
-              skip_comment(); 
+              skip_comment();
             }
             else
-              *define_ptr++ = c; 
+              *define_ptr++ = c;
           }                                      /* skip_blanks(); */
         }
         *define_ptr++ = 0; }
@@ -1538,8 +1529,8 @@ static long readline(void)
           code_chr(';');
           code_str(buffer);
         }
-        input_ptr=line_in;  /* point to start of new line */
-        *buffout_ptr = 0;       /* null at end of line */
+        input_ptr=line_in;                       /* point to start of new line */
+        *buffout_ptr = 0;                        /* null at end of line */
         return -1;
       }
     }  /* !fgotone && !if_flag */
@@ -1554,7 +1545,7 @@ static long readline(void)
 ******************************************************************************/
 static U32 test_exit(void)
 {
-  if (exit_flag) 
+  if (exit_flag)
   {
     jump(exit_flag, -1);
     exit_used = -1;
@@ -1571,10 +1562,10 @@ static void t_warn(char *msg, char *txt)
   int i;
 
   ++warn_count;
-  if (!fWarnings) 
+  if (!fWarnings)
     return;
   incl_line[include] = line_number;
-  for (i = 0; i <= include; ++i) 
+  for (i = 0; i <= include; ++i)
   {
     put_num(incl_line[i], list_fh);
     fputc(':', list_fh);
@@ -1583,9 +1574,9 @@ static void t_warn(char *msg, char *txt)
   put_str("Warning: ", list_fh);
   put_str(msg, list_fh);
   fputc(' ', list_fh);
-  fputc(0x27, list_fh);       /* single quote */
+  fputc(0x27, list_fh);                          /* single quote */
   put_str(txt, list_fh);
-  fputc(0x27, list_fh);       /* single quote */
+  fputc(0x27, list_fh);                          /* single quote */
   fputc('\r', list_fh);
   fputc('\n', list_fh);
 }
@@ -1602,10 +1593,10 @@ static void t_error(char *msg, char *txt)
     *ptr++ = *msg++;
   *ptr++ = ':';
   *ptr++ = ' ';
-  *ptr++ = 0x27;      /* single quote */
+  *ptr++ = 0x27;                                 /* single quote */
   while (*txt)
     *ptr++ = *txt++;
-  *ptr++ = 0x27;      /* single quote */
+  *ptr++ = 0x27;                                 /* single quote */
   *ptr = 0;
   line_error(emsg);
 }
@@ -1684,7 +1675,7 @@ static void UTC_error(void)
   U32 i;
 
   incl_line[include] = line_number;
-  for (i = 0; i <= include; ++i) 
+  for (i = 0; i <= include; ++i)
   {
     put_num(incl_line[i], list_fh);
     fputc(':', list_fh);
@@ -1706,7 +1697,7 @@ static void line_error(char *message)
   U32 i;
 
   incl_line[include] = line_number;
-  for (i = 0; i <= include; ++i) 
+  for (i = 0; i <= include; ++i)
   {
     put_num(incl_line[i], list_fh);
     fputc(':', list_fh);
@@ -1728,21 +1719,21 @@ static void fatal_error(char *string)
 
   /* put this out even if fQuiet */
   put_str("Fatal error, compilation aborted\r\n", stdout);
-  if (fList) 
+  if (fList)
   {
     put_str("Fatal error, compilation aborted\r\n", list_fh);
     if (fLISTOpen)
       fclose(list_fh);
   }
   /* close files */
-  if (fTEMPOpen) 
-  { 
+  if (fTEMPOpen)
+  {
     fclose(temp_fh);
-    remove(tmpname);  /* leave out while troubleshooting */
+    remove(tmpname);                             /* leave out while troubleshooting */
   }
-  if (fASMOpen) 
+  if (fASMOpen)
     fclose(asm_fh);
-  exit(-1);  /* We are done ! */
+  exit(-1);                                      /* We are done ! */
 }
 
 /******************************************************************************
@@ -1804,7 +1795,7 @@ static U32 get_number(U32 base, U32 digits)
   char c;
 
   value = 0;
-  do 
+  do
   {
     if (is_digit(c = *input_ptr))                /* convert numeric digits */
       c -= '0';
@@ -1817,7 +1808,7 @@ static U32 get_number(U32 base, U32 digits)
     if (c >= base)                               /* outside of base */
       break;
     value = (value * base) + c;                  /* include in total */
-    ++input_ptr; 
+    ++input_ptr;
   }
   while (--digits);                              /* enforce maximum digits */
   return value;
@@ -1844,36 +1835,36 @@ static void clean_up(void)
   /* dump literal pool */
   gen_literal(literal_pool, literal_top);
   /* Generate all global variables that are not initialized */
-  for (sptr = 0; sptr < global_top; ++sptr) 
+  for (sptr = 0; sptr < global_top; ++sptr)
   {
     type = symtab[sptr].type;
-    if (!(type & (FUNCTION | INITED | EXTERNAL | TYPDEF))) 
+    if (!(type & (FUNCTION | INITED | EXTERNAL | TYPDEF)))
     {
-      if (type & (POINTER | DWORD)) 
+      if (type & (POINTER | DWORD))
         size = 4;
-      else if (type & WORD)  
+      else if (type & WORD)
         size = 2;
-      else if (type & BYTE)  
+      else if (type & BYTE)
         size = 1;
       else if (type & STRUCT)
       {
         size = symtab[sptr].strucoff;            /* contains size */
       }
-      else 
+      else
         size = 1;                                /* should be an error maybe?? */
       if (type & ARRAY)                          /* calculate size of array */
-      {              
+      {
         i = symtab[sptr].dindex;                 /* i = index to dimpool */
         j = dim_pool[i++];                       /* j = nDims */
-        while (j--) 
+        while (j--)
           size *= dim_pool[i++];
       }
       gen_global(sptr, size);
     }
   }
   fclose(temp_fh);
-  if (!error_count) /* No optimize if errors */
-  { 
+  if (!error_count)                              /* No optimize if errors */
+  {
     if (fNoOpt)
     {
       if (!(temp_fh = fopen(tmpname, "r")))
@@ -1900,7 +1891,7 @@ static void clean_up(void)
     fclose(list_fh);
   if (fCODEOpen)
     fclose(code_fh);
-  remove(tmpname); /*   leave out while troubleshooting  */
+  remove(tmpname);                               /* leave out while troubleshooting */
   if (!fQuiet)
   {
     put_num(error_count, stdout);
@@ -1918,7 +1909,7 @@ static char read_char(void)
 {
   char c;
 
-  while (!(c = *input_ptr++))  /* end of this line */ 
+  while (!(c = *input_ptr++))                    /* end of this line */
   {
     if (!readline())
     {
@@ -1949,7 +1940,7 @@ static U32 read_special(char delim)
   if (c == '\\')
     switch (c = read_char())
     {
-      case 'n':                                 /* newline */
+      case 'n':                                  /* newline */
           c = 0x0a;
           break;
       case 'r':                                  /* return */
@@ -1972,7 +1963,7 @@ static U32 read_special(char delim)
           break;
       default:
           if (is_digit(c))                       /* octal value */
-          {       
+          {
             --input_ptr;
             c = get_number(8, 3);
           }
@@ -1992,7 +1983,7 @@ static U32 get_token(void)
 
   /* if a token has been ungot, re-get it */
   /* (gvalue & gst) will not have changed */
-  if (ungot_token) 
+  if (ungot_token)
   {
     i = ungot_token;
     ungot_token = 0;
@@ -2000,53 +1991,53 @@ static U32 get_token(void)
   }
 
   /* skip any leading whilespace  */
-  do 
+  do
   {
     chr = read_char();
   }
   while (
          (chr == ' ')  ||
          (chr == '\t') ||
-         (chr == '\n') || 
+         (chr == '\n') ||
          (chr == '\r')
         );
   --input_ptr;
   /* lookup token in token table */
-  last_pos = input_ptr;               /* remember where we were */
-  if (itoken[*input_ptr] != 0)        /* start at first match char */
+  last_pos = input_ptr;                          /* remember where we were */
+  if (itoken[*input_ptr] != 0)                   /* start at first match char */
   {
-    for (i = itoken[*input_ptr]; ptr = tokens[i]; ++i) 
+    for (i = itoken[*input_ptr]; ptr = tokens[i]; ++i)
     {
       if (*input_ptr != *ptr)
         break;
       while ((chr = *input_ptr) && (*ptr == chr))
       {
         ++ptr;
-        ++input_ptr; 
+        ++input_ptr;
       }
-      if (!*ptr)                      /* we found a token */
-      {                     
+      if (!*ptr)                                 /* we found a token */
+      {
         if (is_alpha(*(ptr-1)) && is_alpha(*input_ptr))
-          continue;                   /* not this token */
+          continue;                              /* not this token */
         return i;
       }
-      input_ptr = last_pos;           /* reset pointer */
+      input_ptr = last_pos;                      /* reset pointer */
     }
   }
   /* we didn't find a token, check out special cases */
   input_ptr = last_pos;
-  if ((chr = *input_ptr) == '"')      /* string value */
-  {   
+  if ((chr = *input_ptr) == '"')                 /* string value */
+  {
     ++input_ptr;
-    gvalue = literal_top;             /* set to index to string */
+    gvalue = literal_top;                        /* set to index to string */
     do
     {
       if (literal_top >= LITER_BUFF)
         fatal_error("String space exausted");
       literal_pool[literal_top++] = i = read_special('"');
      }
-     while (!(i & 0xff00));           /* 0xff00 returned from read_special */
-     return STRING; 
+     while (!(i & 0xff00));                      /* 0xff00 returned from read_special */
+     return STRING;
   }
 
   /* Quoted values (e.g., '\n') are read into gvalue.
@@ -2056,14 +2047,14 @@ static U32 get_token(void)
       make gvalue equal 0x0D0A even though the \n (0x0A) is
       first.
     */
-  if (chr == 0x27)                    /* quoted value */
-  {                   
+  if (chr == 0x27)                               /* quoted value */
+  {
     ++input_ptr;
     while (!((i = read_special(0x27)) & 0xff00))
-      gvalue =  i & 0xff;             /* strip notify bits */
+      gvalue =  i & 0xff;                        /* strip notify bits */
     return NUMBER;
   }
-  if (is_digit(chr))                  /* numeric constant */ 
+  if (is_digit(chr))                             /* numeric constant */
   {
     if (chr == '0')
     {
@@ -2071,25 +2062,25 @@ static U32 get_token(void)
       if ((*input_ptr == 'x') || (*input_ptr == 'X'))
       {
         ++input_ptr;
-        gvalue = get_number(16, 0);   /* hex */
+        gvalue = get_number(16, 0);              /* hex */
       }
       else
-        gvalue = get_number(8, 0);    /* octal */
+        gvalue = get_number(8, 0);               /* octal */
     }
-    else 
+    else
       gvalue = get_number(10, 0);                /* decimal */
     /* Look for Unsigned and Long terminal characters */
-    if ((*input_ptr == 'U') || (*input_ptr == 'u')) 
+    if ((*input_ptr == 'U') || (*input_ptr == 'u'))
     {
       ++input_ptr;
-      if ((*input_ptr == 'L') || (*input_ptr == 'l')) 
+      if ((*input_ptr == 'L') || (*input_ptr == 'l'))
         ++input_ptr;
     }
-    else if ((*input_ptr == 'L') || (*input_ptr == 'l')) 
+    else if ((*input_ptr == 'L') || (*input_ptr == 'l'))
       ++input_ptr;
     return NUMBER;
   }
-  if (is_alpha(chr))                             /* symbol name */ 
+  if (is_alpha(chr))                             /* symbol name */
   {
     gvalue = 0;
     while (is_alnum(chr = *input_ptr))
@@ -2115,7 +2106,7 @@ static U32 lookup_local(void)
   U16 i,j;
 
   i = MAX_SYMBOLS-1;
-  while (i > local_top-1) 
+  while (i > local_top-1)
   {
     j = symtab[i].oname;
     if (equal_string(gst, &LPool[j]))
@@ -2132,7 +2123,7 @@ static U32 lookup_global(void)
 {
   U16 i, j;
 
-  for (i = 0; i < global_top; i++) 
+  for (i = 0; i < global_top; i++)
   {
     j = symtab[i].oname;
     if (equal_string(gst, &GPool[j]))
@@ -2160,7 +2151,7 @@ static U32 lookup_member(U16 CrntStruc)
   gst[0] = '0';                                  /* make it start with digit */
   ++namesize;
   CrntStrucDef = symtab[CrntStruc].itypedef;
-  if (symtab[CrntStrucDef].type & GLOBAL) 
+  if (symtab[CrntStrucDef].type & GLOBAL)
   {
     for (i = CrntStrucDef+1; i < global_top; i++)
     {
@@ -2171,9 +2162,9 @@ static U32 lookup_member(U16 CrntStruc)
         return symtab[sptr=i].type |= REFERENCE;
     }
   }
-  else                                           /* must be local */ 
+  else                                           /* must be local */
   {
-    for (i = CrntStrucDef-1; i > local_top-1; i--) 
+    for (i = CrntStrucDef-1; i > local_top-1; i--)
     {
       if (!(symtab[i].type & STRUCMEM))
         break;
@@ -2194,14 +2185,14 @@ static void define_symbol(U32 type, U32 dim_index)
   U32 index = 0;
   U16 i, j;
 
-  if (in_function)                     /* within a function, use local */
-  {       
-    if (type & PROTO)                   /* give it a false name to satisfy symbol table */ 
+  if (in_function)                               /* within a function, use local */
+  {
+    if (type & PROTO)                            /* give it a false name to satisfy symbol table */
     {
-      gst[0] = '_';                   /* 2 underscores */
+      gst[0] = '_';                              /* 2 underscores */
       gst[1] = '-';
-      gst[2] = arg_count + 65;        /* A-Z */
-      gst[3] = '\0';                  /* null terminate */
+      gst[2] = arg_count + 65;                   /* A-Z */
+      gst[3] = '\0';                             /* null terminate */
       namesize = 3;
     }
     else
@@ -2213,9 +2204,9 @@ static void define_symbol(U32 type, U32 dim_index)
       }
     }
     sptr = --local_top;
-    if (type & ARGUMENT) 
+    if (type & ARGUMENT)
     {
-      type &= ~PROTO;                 /* turn off proto warning */
+      type &= ~PROTO;                            /* turn off proto warning */
       /* if a prototype arg already exists, make sure it's the same */
       if (icrntpro)
       {
@@ -2244,25 +2235,25 @@ static void define_symbol(U32 type, U32 dim_index)
     symtab[sptr].argoffset = index;
     symtab[sptr].dindex = dim_index;
   }
-  else                                /* outside of function, use global */ 
+  else                                           /* outside of function, use global */
   {
     type |= GLOBAL;
-    if (index = lookup_global())      /* symbol already exists */ 
-    {       
-      if (index & (PROTO|FUNCTION))   /* re-definition */ 
-      {  
+    if (index = lookup_global())                 /* symbol already exists */
+    {
+      if (index & (PROTO|FUNCTION))              /* re-definition */
+      {
         if ((index | (INITED|REFERENCE|EXTERNAL|PROTO)) != (type | (INITED|REFERENCE|EXTERNAL|PROTO)))
           symbol_error("Inconsistant re-declaration");
         symtab[sptr].type = type;
         return;
       }
       else if (type & STRUCMEM)
-      {                               /* no error */
+      {                                          /* no error */
       }
       else if ((type & STRUCDEF) && (equal_string(&structname[0], &GPool[symtab[sptr].oname])))
-      {                               /* no error */
+      {                                          /* no error */
       }
-      else 
+      else
       {
         symbol_error("Duplicate global");
         return;
@@ -2321,8 +2312,8 @@ static void get_constant(U32 *token, U32 *value)
   U32 type, offset;
 
   expr_ptr = 0;
-  unget_token(do_oper(SEMI));         /* do_oper gets the token... */
-  pop(token, value, &type, &offset);  /* then we pop it into token */
+  unget_token(do_oper(SEMI));                    /* do_oper gets the token... */
+  pop(token, value, &type, &offset);             /* then we pop it into token */
   if ((*token != NUMBER) && (*token != STRING))
     line_error("Constant expression required");
 }
@@ -2339,44 +2330,44 @@ static void define_var(U32 type)
   if (in_function > 1)
     line_error("Declaration must preceed code");
   /* calculate base variable size - store in j for later use if array */
-  if (type & BYTE) 
+  if (type & BYTE)
     size = 1;
-  else if (type & WORD)  
+  else if (type & WORD)
     size = 2;
-  else if (type & DWORD) 
+  else if (type & DWORD)
     size = 4;
   else if (type & STRUCT)
     size = symtab[CrntStrucDef].strucoff;
   else
     line_error("Type specifier missing");
   if (type & (ARGUMENT | POINTER))
-    size = 4; /* pointers are 32 bit offsets */
+    size = 4;                                    /* pointers are 32 bit offsets */
   j = size;
   /* If fInStruct then this is a structure member definition.
       NOT a structure member! */
-  if (fInStruct) 
+  if (fInStruct)
   {
-    type |= (STRUCMEM|TYPDEF);        /* make it a member definition */
-    for (i = SYMBOL_SIZE; i > 0; i--)   /* fix member name  */
+    type |= (STRUCMEM|TYPDEF);                   /* make it a member definition */
+    for (i = SYMBOL_SIZE; i > 0; i--)            /* fix member name  */
       gst[i] = gst[i-1];
-    gst[0] = '0';                     /* make it start with digit */
+    gst[0] = '0';                                /* make it start with digit */
     ++namesize;
   }
   /* evaluate any array indexes */
   iDim = dim_top;
   nflag = 0;
   nDims = 0;
-  while (test_token(OSB))             /* array definition */
-  {            
+  while (test_token(OSB))                        /* array definition */
+  {
     ++nDims;
     ++dim_top;
-    if (test_token(CSB))             /* null definition */ 
+    if (test_token(CSB))                         /* null definition */
     {
       if ((nflag) || (nDims > 1))
         line_error("Null only allowed in first index");
       --nflag;
-      size *= dim_pool[dim_top] = 1;  /* dummy up unbounded array */
-      continue; 
+      size *= dim_pool[dim_top] = 1;             /* dummy up unbounded array */
+      continue;
     }
     get_constant(&token, &value);
     if (token != NUMBER)
@@ -2384,22 +2375,22 @@ static void define_var(U32 type)
     size *= dim_pool[dim_top] = value;
     expect(CSB);
   }
-  if (nDims)                          /* defining an array */ 
+  if (nDims)                                     /* defining an array */
   {
     type |= ARRAY;
     dim_pool[iDim] = nDims;
     if (++dim_top > DIM_SIZE)
       fatal_error("Dimension table full");
   }
-  if (test_token(ASSIGN))             /* initialized variable */
+  if (test_token(ASSIGN))                        /* initialized variable */
     type |= INITED;
-  local_stack += size;                /* Keep track of offset of local vars */
-  define_symbol(type, iDim);          /* Create the symbol table entry */
-  if (type & (STRUCMEM|TYPDEF)) 
+  local_stack += size;                           /* Keep track of offset of local vars */
+  define_symbol(type, iDim);                     /* Create the symbol table entry */
+  if (type & (STRUCMEM|TYPDEF))
   {
     symtab[sptr].itypedef = CrntStrucDef;
     symtab[sptr].strucoff = symtab[CrntStrucDef].strucoff;
-    symtab[CrntStrucDef].strucoff += size;  /* add to the total */
+    symtab[CrntStrucDef].strucoff += size;       /* add to the total */
   }
   if (type & (STRUCT))
   {
@@ -2410,22 +2401,22 @@ static void define_var(U32 type)
       Initialization of arrays has changed with ANSI. Nested braces and
       trailing commas are now allowed. We make sure the braces balance.
   */
-  eflag  = -1;                        /* Expexting initializer */
-  sDim1  = 0;                         /* tracks nDimensions for unbounded arrays [] */
-  eTotal = 0;                         /* Total elements initialized so far */
-  if (type & INITED)                  /* force immediate allocation */ 
+  eflag  = -1;                                   /* Expexting initializer */
+  sDim1  = 0;                                    /* tracks nDimensions for unbounded arrays [] */
+  eTotal = 0;                                    /* Total elements initialized so far */
+  if (type & INITED)                             /* force immediate allocation */
   {
     if ((in_function) || (fInStruct))
       line_error("Illegal initialization");
-    data_global(sptr);                /* generate label in DSeg */
-    ocbcnt = 0;                       /* number of open brackets */
-    index  = 0;                       /* tracks index for current dimensions */
+    data_global(sptr);                           /* generate label in DSeg */
+    ocbcnt = 0;                                  /* number of open brackets */
+    index  = 0;                                  /* tracks index for current dimensions */
     do
     {
       switch (token = get_token())
       {
         case OCB:
-          if ((nflag) && (ocbcnt == 1))   /* count for unbounded */
+          if ((nflag) && (ocbcnt == 1))          /* count for unbounded */
             ++sDim1;
           ocbcnt++;
           if (ocbcnt > nDims)
@@ -2446,26 +2437,26 @@ static void define_var(U32 type)
               ++index;
             }
           }
-          eTotal+=index;              /* total inited so far */
-          index = 0;                  /* tracks index for current dimensions */
-          eflag = 0;                  /* no constant expected now! */
+          eTotal+=index;                         /* total inited so far */
+          index = 0;                             /* tracks index for current dimensions */
+          eflag = 0;                             /* no constant expected now! */
           lasttoken = CCB;
-          break;                      /* we need a comma first/ocb first */
+          break;                                 /* we need a comma first/ocb first */
         case COMMA:
         /* secial case of char[x][y] = {"abc","def","ghi"}; */
-          if ((nDims > 1) && (ocbcnt==1) && (lasttoken==STRING) && !(type & POINTER)) 
+          if ((nDims > 1) && (ocbcnt==1) && (lasttoken==STRING) && !(type & POINTER))
           {
             while (index < dim_pool[dim_top-1])
             {
               init_static(NUMBER, 0, j);
               ++index;
             }
-            eTotal+=index;            /* total inited so far */
+            eTotal+=index;                       /* total inited so far */
             index = 0;
           }
           if (lasttoken==CCB)
             eflag = 0;
-          else 
+          else
             eflag = -1;
           lasttoken = COMMA;
           break;
@@ -2477,13 +2468,13 @@ static void define_var(U32 type)
         case SUB:
         case COM:
         case NOT:
-          unget_token(token);         /* put it back */
-          if (eflag)              /* we are expecting a constant */ 
+          unget_token(token);                    /* put it back */
+          if (eflag)                             /* we are expecting a constant */
           {
             if ((nflag) && (ocbcnt == 1))
               ++sDim1;
             get_constant(&token, &value);
-            if ((token == STRING) && !(type & POINTER)) 
+            if ((token == STRING) && !(type & POINTER))
             {
               do
               {
@@ -2503,17 +2494,17 @@ static void define_var(U32 type)
             {
               init_static(token, value, j);
               if (!nDims)
-                ++eTotal;             /* tracked by index if array */
+                ++eTotal;                        /* tracked by index if array */
               ++index;
             }
             lasttoken = token;
           }
-          else 
+          else
             line_error("Improper bracketed initialization");
           break;
         case SYMBOL:
           lasttoken=token;
-          if (eflag)                  /* we are expecting an initializer */ 
+          if (eflag)                             /* we are expecting an initializer */
           {
             if (type & POINTER)
             {
@@ -2541,18 +2532,18 @@ static void define_var(U32 type)
           break;
       }
     } while (((ocbcnt) || (lasttoken == COMMA)) && (token != SEMI)); /* End of Do */
-    if (ocbcnt)                      /* make sure brackets balance!! */
+    if (ocbcnt)                                  /* make sure brackets balance!! */
       expect(CCB);
-    if (nflag)                        /* fixup null definition */
+    if (nflag)                                   /* fixup null definition */
       dim_pool[iDim+1] = sDim1;
     /* now we make sure all the array elements were initialized
         to ensure we have allocated Dseg for them.
     */
     i = 1;
-    while (nDims) 
-      i *= dim_pool[iDim+nDims--];    /* i has total elements */
-    while (eTotal < i)                /* eTotal is total inited */
-    {        
+    while (nDims)
+      i *= dim_pool[iDim+nDims--];               /* i has total elements */
+    while (eTotal < i)                           /* eTotal is total inited */
+    {
       init_static(NUMBER, 0, j);
       ++eTotal;
     }
@@ -2569,7 +2560,7 @@ static void check_func(void)
 {
   if (in_function)
   {
-    if (in_function < 2)              /* first invocation */ 
+    if (in_function < 2)                         /* first invocation */
     {
       in_function = 2;
       enter_func(fptr, local_stack);
@@ -2604,7 +2595,7 @@ static void declare(U32 token, U32 type)
     switch (token)
     {
       case CHAR:
-        type &= ~WORD;                /* cancel WORD */
+        type &= ~WORD;                           /* cancel WORD */
         type |= BYTE;
         break;
       case INT:
@@ -2614,15 +2605,15 @@ static void declare(U32 token, U32 type)
         type |= WORD;
         break;
       case LONG:
-        type &= ~WORD;                /* cancel WORD */
+        type &= ~WORD;                           /* cancel WORD */
         type |= DWORD;
         break;
       case UNSIGN:
-        type |= WORD;                 /* cancelled for char or long */
+        type |= WORD;                            /* cancelled for char or long */
         type |= UNSIGNED;
         break;
       case SIGNED:
-        type |= WORD;                 /* this will be cancelled if it's long */
+        type |= WORD;                            /* this will be cancelled if it's long */
         type &= ~UNSIGNED;
         break;
       case STAT:
@@ -2641,7 +2632,7 @@ static void declare(U32 token, U32 type)
         type |= REGISTER;
         break;
       case INTR:
-        type |= ISR;                  /* ISR modified for functions */
+        type |= ISR;                             /* ISR modified for functions */
         break;
       case VOIDD:
         type |= VOID;
@@ -2649,27 +2640,27 @@ static void declare(U32 token, U32 type)
       case FARR:
         type |= FAR;
         break;
-      case STAR:                      /* pointer reference */
+      case STAR:                                 /* pointer reference */
         do
           ++type;
         while (test_token(STAR));
         /* allow for prototype arg pointers with no symbol name */
-        if ((type & ARGUMENT) && (test_token(COMMA))) 
+        if ((type & ARGUMENT) && (test_token(COMMA)))
         {
-          define_var(type|=PROTO);    /* tell 'em it may be symboless */
+          define_var(type|=PROTO);               /* tell 'em it may be symboless */
           return;
         }
         else
-          if (!test_token(SYMBOL)) 
+          if (!test_token(SYMBOL))
             syntax_error();
-      case SYMBOL:                    /* we have a symbol name */
+      case SYMBOL:                               /* we have a symbol name */
         /* If STRUCDEF, MUST be a Struct Tag Name (new or existing) */
-        if (type & STRUCDEF)          /* This symbol follows "struct" */ 
+        if (type & STRUCDEF)                     /* This symbol follows "struct" */
         {
-          if (lookup_global())        /* Existing tag ?? */ {
+          if (lookup_global())                   /* Existing tag ?? */ {
             if (symtab[sptr].type & STRUCDEF)
             {
-              CrntStrucDef = sptr;  /* tag we just found */
+              CrntStrucDef = sptr;               /* tag we just found */
               /* might be a pointer to a structure */
               if (test_token(STAR))
               do
@@ -2683,7 +2674,7 @@ static void declare(U32 token, U32 type)
               }
               else
               {
-                type &= ~STRUCDEF;    /* struct variable w/tag */
+                type &= ~STRUCDEF;               /* struct variable w/tag */
                 type |= STRUCT;
               }
             }
@@ -2691,15 +2682,15 @@ static void declare(U32 token, U32 type)
               line_error("struct tag name expected");
           }
           /* we didn't find the tag so it must be a new one! */
-          else /* So add the strucdef */ 
+          else /* So add the strucdef */
           {
             define_symbol(type|TYPDEF, 0);
-            CrntStrucDef = sptr;      /* symbol we just found */
-            if (!(test_token(OCB)))   /* expecting {          */
+            CrntStrucDef = sptr;                 /* symbol we just found */
+            if (!(test_token(OCB)))              /* expecting {          */
               line_error("Structure { expected");
             else
             {
-              fInStruct = 1;          /* we are in it now...  */
+              fInStruct = 1;                     /* we are in it now...  */
               type = 0;
               break;
             }
@@ -2711,27 +2702,27 @@ static void declare(U32 token, U32 type)
           return;
         }
         if (test_token(ORB))
-          define_func(type);          /* function definition */
+          define_func(type);                     /* function definition */
         else
-          define_var(type);           /* variable definition */
+          define_var(type);                      /* variable definition */
         if (test_token(COMMA))
           break;
-        test_token(SEMI);             /* eat the semicolon if there */
-        if (fInStruct) /* still defining struct members */ 
+        test_token(SEMI);                        /* eat the semicolon if there */
+        if (fInStruct)                           /* still defining struct members */
         {
           type = 0;
           break;
         }
         else
           return;
-      case OCB:                       /* '{' only allowed for immediate struct defs */
-        if (type & STRUCDEF)          /* Immediate struct definition */ 
+      case OCB:                                  /* '{' only allowed for immediate struct defs */
+        if (type & STRUCDEF)                     /* Immediate struct definition */
         {
           copystring(gst, structname);
           gvalue = 11;
           define_symbol(type|TYPDEF, 0);
-          CrntStrucDef = sptr;        /* symbol we just added */
-          fInStruct = 1;              /* we are in it now...  */
+          CrntStrucDef = sptr;                   /* symbol we just added */
+          fInStruct = 1;                         /* we are in it now...  */
           type = 0;
           break;
         }
@@ -2746,15 +2737,15 @@ static void declare(U32 token, U32 type)
         }
         else
         {
-          type &= ~STRUCDEF;          /* struct variable */
+          type &= ~STRUCDEF;                     /* struct variable */
           type |= STRUCT;
           fInStruct = 0;
         }
-        if (test_token(SEMI))         /* if semicolon, eat it and return */
+        if (test_token(SEMI))                    /* if semicolon, eat it and return */
           return;
         break;
       case CRB:
-        unget_token(token);           /* fall thru to COMMA */
+        unget_token(token);                      /* fall thru to COMMA */
       case COMMA:
         if (type & ARGUMENT)
         {
@@ -2765,7 +2756,7 @@ static void declare(U32 token, U32 type)
       default:
         syntax_error();
     }
-    type &= ~(POINTER | ARRAY);       /* clear indirection and rg of last var */
+    type &= ~(POINTER | ARRAY);                  /* clear indirection and rg of last var */
     token = get_token();
   }
 }
@@ -2816,16 +2807,16 @@ static void define_func(U32 type)
   arg_count  = 0;
   oNextLName = 0;
   /* do not allow functions or protos within functions */
-  if (in_function) 
+  if (in_function)
   {
     line_error("Illegally nested function or prototype");
     return;
   }
-  if (t = lookup_global())            /* symbol already exists */ 
+  if (t = lookup_global())                       /* symbol already exists */
   {
-    if (t & PROTO) 
+    if (t & PROTO)
     {
-      icrntpro = symtab[sptr].dindex; /* icrntpro points to arg types */
+      icrntpro = symtab[sptr].dindex;            /* icrntpro points to arg types */
     }
   }
   else
@@ -2838,11 +2829,11 @@ static void define_func(U32 type)
   /* These must be inside the parens -- ANSI style    */
   local_top   = MAX_SYMBOLS;
   dim_save    = dim_top;
-  in_function = 1;                    /* indicate inside a function */
-  do 
+  in_function = 1;                               /* indicate inside a function */
+  do
   {
-    switch(token = get_token())       /* define local arguments */
-    {   
+    switch(token = get_token())                  /* define local arguments */
+    {
       case SHORT:
       case LONG:
       case INT:
@@ -2863,10 +2854,10 @@ static void define_func(U32 type)
         symtab[fptr].type |= VARARGS;
         break;
       case VOIDD:
-        if (arg_count)                /* fall through to default */
-          syntax_error();  
+        if (arg_count)                           /* fall through to default */
+          syntax_error();
       default:
-        if (!flastarg) 
+        if (!flastarg)
         {
           proto_list[iproto_next++] = VOID;
           if (iproto_next>MAX_PROTOS)
@@ -2881,8 +2872,8 @@ static void define_func(U32 type)
   token = get_token();
   if (token != CRB)
     syntax_error();
-  if (test_token(SEMI))                /* a prototype function !! */ 
-  {      
+  if (test_token(SEMI))                          /* a prototype function !! */
+  {
     symtab[fptr].type |= PROTO;
     in_function = 0;
     exit_label  = 0;
@@ -2892,7 +2883,7 @@ static void define_func(U32 type)
     if (symtab[fptr].type & EXTERNAL)
       gen_extern_DASM(fptr);
   }
-  else 
+  else
   {
     symtab[fptr].type &= ~PROTO;
     symtab[fptr].type |= FUNCTION;
@@ -2928,7 +2919,7 @@ static void define_func(U32 type)
       stackpop += 4;
     }
     statement(token=get_token());
-    check_func();                     /* ensure enter gets written in null func */
+    check_func();                                /* ensure enter gets written in null func */
     if ((exit_label) && (exit_used))
       gen_label(exit_label);
     if (symtab[fptr].type & VARARGS)
@@ -2942,7 +2933,7 @@ static void define_func(U32 type)
     dim_top     = dim_save;
     /* Error reporting when end of func is reached and certain
         conditions exist */
-    while (local_top < MAX_SYMBOLS) 
+    while (local_top < MAX_SYMBOLS)
     {
       if ((token = symtab[local_top].type) & EXTERNAL)
         t_error("Unresolved", &LPool[symtab[local_top].oname]);
@@ -2960,7 +2951,7 @@ static void define_func(U32 type)
 ******************************************************************************/
 static void write_oper(U32 token, U32 value, U32 type, U32 offset)
 {
-  switch(token) 
+  switch(token)
   {
     case INEAX:
       code_str("EAX");
@@ -2975,11 +2966,11 @@ static void write_oper(U32 token, U32 value, U32 type, U32 offset)
       code_num(value);
       break;
     case SYMBOL:
-      if (type & GLOBAL) 
+      if (type & GLOBAL)
       {
-        code_chr('_');                /* prefix with _ */
+        code_chr('_');                           /* prefix with _ */
         code_str(&GPool[symtab[value].oname]);
-        break; 
+        break;
       }
       if (type & ARGUMENT)
       {
@@ -3026,7 +3017,7 @@ static void write_oper(U32 token, U32 value, U32 type, U32 offset)
       break;
     case PESI:
     case PEDX:
-    case PECX:                        /* pointer in other reg - indirect access */
+    case PECX:                                   /* pointer in other reg - indirect access */
     case ISTACK_TOP:
       if (type & (DWORD|POINTER))
         code_str("DWORD PTR ");
@@ -3062,9 +3053,9 @@ static void write_oper(U32 token, U32 value, U32 type, U32 offset)
     case STACK_TOP:
       code_str("EBX");
       break;
-    case ION_STACK:                   /* shouldn't happen */
+    case ION_STACK:                              /* shouldn't happen */
     case ON_STACK:
-    default:                          /* Unknown (error) */
+    default:                                     /* Unknown (error) */
       code_num(token);
       code_str(" ERROR in write_oper\n");
   }
@@ -3078,7 +3069,7 @@ static void GenCodeOper(char *ptr, U32 token, U32 value, U32 type, U32 offset)
 {
   /* interpret the output string & insert the operand */
   code_chr('\t');
-  while (*ptr) 
+  while (*ptr)
   {
     if (*ptr == '|')
       write_oper(token, value, type, offset);
@@ -3103,7 +3094,7 @@ static void StackEAX(void)
 
   for (i = 0; i < expr_ptr; ++i)
   {
-    if (expstk[i].token == INEAX)     /* Found it */
+    if (expstk[i].token == INEAX)                /* Found it */
     {
       for (j = 0; j < expr_ptr; ++j)
       {
@@ -3154,15 +3145,15 @@ static void LoadEAX(U32 token, U32 value, U32 type, U32 offset)
   if (type & FUNCTION)
       type_error();
 
-  if (token == INEAX)                 /* Already there */ 
+  if (token == INEAX)                            /* Already there */
   {
     test_not();
     return;
   }
-  token = CheckStack(token);          /* If it's on the processor stack, get it into EDX */
-  StackEAX();                         /* stack EAX if needed */
+  token = CheckStack(token);                     /* If it's on the processor stack, get it into EDX */
+  StackEAX();                                    /* stack EAX if needed */
   not_flag = 0;
-  if ((token == NUMBER) && (!value))  /* 0 Value */ 
+  if ((token == NUMBER) && (!value))             /* 0 Value */
   {
     test_not();
     code_str("\tXOR EAX,EAX\n");
@@ -3205,12 +3196,12 @@ static void LoadECX(U32 token, U32 value, U32 type, U32 offset)
   if (type & FUNCTION)
     type_error();
   if (token == INECX)
-  {                                   /* Already there */
+  {                                              /* Already there */
     return;
   }
-  token = CheckStack(token);          /* If it's on the processor stack, get it into EDX */
+  token = CheckStack(token);                     /* If it's on the processor stack, get it into EDX */
   if ((token == NUMBER) && (!value))
-  {                                   /* 0 Value */
+  {                                              /* 0 Value */
     code_str("\tXOR ECX,ECX\n");
     return;
   }
@@ -3222,7 +3213,7 @@ static void LoadECX(U32 token, U32 value, U32 type, U32 offset)
       (token == INEAX)
      )
     GenCodeOper("MOV ECX,|", token, value, type, offset);
-  else if (type & WORD) 
+  else if (type & WORD)
   {
     if (type & UNSIGNED)
       GenCodeOper("MOVZX ECX,|", token, value, type, offset);
@@ -3251,7 +3242,7 @@ static void sub_eval(U32 term)
 {
   U32 token;
 
-  for (;;) 
+  for (;;)
   {
     if ((token = do_oper(SEMI)) != COMMA)
     {
@@ -3259,7 +3250,7 @@ static void sub_eval(U32 term)
       expect(term);
       return;
     }
-    pop(&token, &token, &token, &token);    /* throw it away */
+    pop(&token, &token, &token, &token);         /* throw it away */
   }
 }
 
@@ -3328,7 +3319,7 @@ static void StackESI(void)
 
   for (i = 0; i < expr_ptr; ++i)
   {
-    if (expstk[i].token == PESI)        /* Found it */
+    if (expstk[i].token == PESI)                 /* Found it */
     {
       for (j = 0; j < expr_ptr; ++j)
       {
@@ -3354,9 +3345,9 @@ static void StackESI(void)
 static void load_index(U32 t, U32 v, U32 tt, U32 o)
 {
   StackESI();
-  if ((tt & ARGUMENT) || !(tt & ARRAY))     /* pointer or argument */
+  if ((tt & ARGUMENT) || !(tt & ARRAY))          /* pointer or argument */
     index_ptr(t, v, tt, o);
-  else                                      /* standard array */
+  else                                           /* standard array */
     index_adr(t, v, tt, o);
 }
 
@@ -3377,13 +3368,13 @@ static void do_unary(U32 oper)
     flag = -1;
     switch (oper)
     {
-      case SUB :                            /* unary minus */
+      case SUB :                                 /* unary minus */
         value = -value;
         break;
-      case COM:                             /* ones complement */
+      case COM:                                  /* ones complement */
         value = ~value;
         break;
-      case NOT:                             /* logical complement */
+      case NOT:                                  /* logical complement */
         value = !value;
         break;
       default:
@@ -3395,18 +3386,18 @@ static void do_unary(U32 oper)
   {
     switch (oper)
     {
-      case SUB:                             /* unary minus */
+      case SUB:                                  /* unary minus */
         GenCodeOper("NEG |", token, value, type, offset);
         break;
-      case COM:                             /* ones complement */
+      case COM:                                  /* ones complement */
         GenCodeOper("NOT |", token, value, type, offset);
         break;
-      case NOT:                             /* logical complement */
+      case NOT:                                  /* logical complement */
         LoadEAX(token, value, type, offset);
         token = INEAX;
         not_flag = TRUE;
         break;
-      case INC:                             /* '++' increment token & load */
+      case INC:                                  /* '++' increment token & load */
         if (ispStruct(type, value))
           GenCodeOper("ADD |,strucsize", token, value, type, offset);
         else if (isp32(type))
@@ -3416,7 +3407,7 @@ static void do_unary(U32 oper)
         else
           GenCodeOper("INC |", token, value, type, offset);
           break;
-      case DEC:                             /* '--' decrement & store */
+      case DEC:                                  /* '--' decrement & store */
         if (ispStruct(type, value))
           GenCodeOper("SUB |,strucsize", token, value, type, offset);
         else if (isp32(type))
@@ -3442,48 +3433,48 @@ static S8 eval_index(U32 t, U32 v, U32 tp, U32 ofs, U32 *tpRet)
   U32 token, tp1, dptr, iSym, vsize, ofs1;
   char fMultiDim;
 
-  fMultiDim = FALSE;                        /* true when processing second or subsequent dims */
-  if (tp & ARRAY)                           /* array, get # dimensions */ 
+  fMultiDim = FALSE;                             /* true when processing second or subsequent dims */
+  if (tp & ARRAY)                                /* array, get # dimensions */
   {
     dptr = symtab[v].dindex;
     ndim = dim_pool[dptr++];
   }
-  else                                      /* pointer, fake # dims as 1 */
+  else                                           /* pointer, fake # dims as 1 */
     dptr = ndim = 1;
-  iSym = v;                                 /* save index into symtab */
-  push(t, v, tp, ofs);                      /* save symbol we are indexing on exp stack */
-  do                                        /* calculate index */
-  {                                         /* this gets the size of variable into vsize */
+  iSym = v;                                      /* save index into symtab */
+  push(t, v, tp, ofs);                           /* save symbol we are indexing on exp stack */
+  do                                             /* calculate index */
+  {                                              /* this gets the size of variable into vsize */
     v = tp & (POINTER | ARRAY);
-    if ((v == ARRAY) || (v < 2)) 
+    if ((v == ARRAY) || (v < 2))
     {
       if (tp & BYTE)
         vsize = 1;
-      else if (tp & WORD) 
+      else if (tp & WORD)
         vsize = 2;
-      else if (tp & DWORD) 
+      else if (tp & DWORD)
         vsize = 4;
       else if (tp & STRUCT)
-        vsize = symtab[iSym].strucoff;      /* strucoff = size of struc*/
+        vsize = symtab[iSym].strucoff;           /* strucoff = size of struc*/
     }
     else
       vsize = 4;
     --ndim;
-    if (tp & ARRAY)                         /* array reference */
+    if (tp & ARRAY)                              /* array reference */
     {
       t = ++dptr;
-      if (!(v = ndim))                      /* all indices given, load pointer */
-        tp &= ~ARRAY;                       /* Not an array ref anymore, ptr instead */
+      if (!(v = ndim))                           /* all indices given, load pointer */
+        tp &= ~ARRAY;                            /* Not an array ref anymore, ptr instead */
       while (v--)
         vsize *= dim_pool[t++];
     }
     else
     {
       if (tp & POINTER)
-      {                                     /* pointer reference */
-        --tp;                               /* drop defer level by one */
+      {                                          /* pointer reference */
+        --tp;                                    /* drop defer level by one */
         if (fMultiDim)
-        {                                   /* array of pointers */
+        {                                        /* array of pointers */
           pop(&t, &v, &tp1, &ofs1);
           LoadEAX(t, v, tp1, ofs1);
           pop(&t, &v, &tp1, &ofs1);
@@ -3493,19 +3484,19 @@ static S8 eval_index(U32 t, U32 v, U32 tp, U32 ofs, U32 *tpRet)
           fMultiDim = 0;
         }
       }
-      else                                  /* invalid indexing */
+      else                                       /* invalid indexing */
         index_error();
       }
-      sub_eval(CSB);                        /* GET the value inside the [] */
+      sub_eval(CSB);                             /* GET the value inside the [] */
       /* Multiply [] by size of index */
-      if (vsize != 1)                       /* optimize away size of 1 */ 
-      {    
+      if (vsize != 1)                            /* optimize away size of 1 */
+      {
         push(NUMBER, vsize, DWORD, 0);
-        do_lr2op(STAR);                     /* multiply by size */
+        do_lr2op(STAR);                          /* multiply by size */
       }
       if (fMultiDim)
-        do_lr2op(ADD);                      /* add to last index if there */
-      fMultiDim = TRUE;                     /* if there is another... */
+        do_lr2op(ADD);                           /* add to last index if there */
+      fMultiDim = TRUE;                          /* if there is another... */
   } while (test_token(OSB));
   *tpRet = tp;
   return fMultiDim;
@@ -3522,36 +3513,36 @@ static void get_value(void)
   U32 i, j, size, token, t, v, tp, tp1, ofs, ofs1;
   char fMultiDim, fvarargs;
 
-  switch (token = get_token()) 
+  switch (token = get_token())
   {
-    case NUMBER:                            /* a constant number */
-      t   = NUMBER;                         /* constant */
-      v   = gvalue;                         /* value of number */
-      tp  = DWORD;                          /* all constants are DWORDS */
-      ofs = 0;                              /* no constant offset */
+    case NUMBER:                                 /* a constant number */
+      t   = NUMBER;                              /* constant */
+      v   = gvalue;                              /* value of number */
+      tp  = DWORD;                               /* all constants are DWORDS */
+      ofs = 0;                                   /* no constant offset */
       break;
-    case STRING:                            /* a literal string */
-      t   = STRING;                         /* will be found in lit pool */
-      v   = gvalue;                         /* length of string  */
-      tp  = BYTE | 1;                       /* 1 is level of indirection  */
-      ofs = 0;                              /* offset of zero */
+    case STRING:                                 /* a literal string */
+      t   = STRING;                              /* will be found in lit pool */
+      v   = gvalue;                              /* length of string  */
+      tp  = BYTE | 1;                            /* 1 is level of indirection  */
+      ofs = 0;                                   /* offset of zero */
       break;
-    case SYMBOL:                            /* symbol value */
-      if (!(lookup_local() || lookup_global())) /* not defined */
-      {      
-        if (test_token(ORB))                /* function, but no proto! */ 
+    case SYMBOL:                                 /* symbol value */
+      if (!(lookup_local() || lookup_global()))  /* not defined */
+      {
+        if (test_token(ORB))                     /* function, but no proto! */
         {
           symbol_error("Function not prototyped");
         }
-        else                                /* variable, report error */
+        else                                     /* variable, report error */
          symbol_error("Undefined symbol");
       }
       t   = SYMBOL;
-      v   = sptr;                           /* symtab entry */
+      v   = sptr;                                /* symtab entry */
       tp  = symtab[v].type;
-      ofs = 0;                              /* offset of zero */
+      ofs = 0;                                   /* offset of zero */
       break;
-    case STAR:                              /* pointer dereference */
+    case STAR:                                   /* pointer dereference */
       get_value();
       pop(&t, &v, &tp, &ofs);
       StackESI();
@@ -3562,7 +3553,7 @@ static void get_value(void)
       else
         index_error();
       break;
-    case AND:                               /* address of */
+    case AND:                                    /* address of */
       get_value();
       pop(&t, &v, &tp, &ofs);
       if (t == SYMBOL)
@@ -3572,7 +3563,7 @@ static void get_value(void)
         write_oper(t, v, tp, ofs);
         code_chr('\n');
         not_flag=0;
-        tp = (tp + 1) & ~FUNCTION;          /* tp + 1 ups the ptr ref count */
+        tp = (tp + 1) & ~FUNCTION;               /* tp + 1 ups the ptr ref count */
         t = INEAX;
       }
       else if (t == PESI)
@@ -3580,50 +3571,50 @@ static void get_value(void)
         StackEAX();
         not_flag = 0;
         out_inst("MOV EAX,ESI");
-        tp = (tp + 1) & ~FUNCTION;          /* tp + 1 ups the ptr ref count */
+        tp = (tp + 1) & ~FUNCTION;               /* tp + 1 ups the ptr ref count */
         t = INEAX;
       }
       else if ((t == INEAX) && (tp & POINTER))
-      { 
-        /* do nothing... it's there. */ 
+      {
+        /* do nothing... it's there. */
       }
       else
         line_error("Invalid '&' operation");
       break;
-    case ORB:                               /* sub-expression */
+    case ORB:                                    /* sub-expression */
       sub_eval(CRB);
       pop(&t, &v, &tp, &ofs);
       break;
-    case SIZEOF:                            /* sizeof */
+    case SIZEOF:                                 /* sizeof */
       if (test_token(ORB))
       {
-        get_value();                        /* look for a symbol */
+        get_value();                             /* look for a symbol */
         pop(&t, &v, &tp, &ofs);
         if (t == SYMBOL)
         {
           if (tp & POINTER)
             size = 4;
-          else if (tp & BYTE) 
+          else if (tp & BYTE)
             size = 1;
-          else if (tp & WORD) 
+          else if (tp & WORD)
             size = 2;
-          else if (tp & DWORD) 
+          else if (tp & DWORD)
             size = 4;
           else if (tp & STRUCT)
-            size = symtab[v].strucoff;      /* strucoff = size */
-          else 
+            size = symtab[v].strucoff;           /* strucoff = size */
+          else
             size = 4;
-          if ((tp & ARRAY) && (!(tp & POINTER))) /* array ref */ 
+          if ((tp & ARRAY) && (!(tp & POINTER))) /* array ref */
           {
-            i = symtab[v].dindex;           /* i = index to dimpool */
-            j = dim_pool[i++];              /* j = nDims */
-            while (j--) 
+            i = symtab[v].dindex;                /* i = index to dimpool */
+            j = dim_pool[i++];                   /* j = nDims */
+            while (j--)
               size *= dim_pool[i++];
           }
           t  = NUMBER;
-          tp = DWORD;                       /* all constants are DWORDS */
+          tp = DWORD;                            /* all constants are DWORDS */
           v  = size;
-          push(t, v, tp, 0);                /* PUSH THE "Value" ON THE EXP STACK */
+          push(t, v, tp, 0);                     /* PUSH THE "Value" ON THE EXP STACK */
           expect(CRB);
           return;
         }
@@ -3633,15 +3624,15 @@ static void get_value(void)
       else
         line_error("'(' expected");
         break;
-    default:                                /* anything else (operators) */
-      get_value();                          /* look for a value */
+    default:                                     /* anything else (operators) */
+      get_value();                               /* look for a value */
       do_unary(token);
       return;
   }
   /* Function calls  - Open Round Brackett (ORB) */
   if (test_token(ORB))
   {
-    iarg = symtab[v].dindex;                /* index to prototyped args! */
+    iarg = symtab[v].dindex;                     /* index to prototyped args! */
     push(t, v, tp, ofs);
     StackEAX();
     StackESI();
@@ -3650,24 +3641,24 @@ static void get_value(void)
     vcnt = ndim = 0;
     StackTop();
     if (!test_token(CRB))
-    {                                       /* evaluate function operands */
+    {                                            /* evaluate function operands */
       do
       {
-        argtype = proto_list[iarg];         /* current arg type */
-        if (!(argtype&VOID))                /* if not end of proto args, get next*/
-          iarg++; 
-        token = do_oper(SEMI);              /* handle operation on arg */
-        pop(&t, &v, &tp, &ofs);             /* get token arg from expstack */
+        argtype = proto_list[iarg];              /* current arg type */
+        if (!(argtype&VOID))                     /* if not end of proto args, get next*/
+          iarg++;
+        token = do_oper(SEMI);                   /* handle operation on arg */
+        pop(&t, &v, &tp, &ofs);                  /* get token arg from expstack */
         LoadEAX(t, v, tp, ofs);
         if ((t != PESI) && (ofs) && (tp&POINTER))
-        {                                   /* offset must be added */
+        {                                        /* offset must be added */
           code_str("\tADD EAX,");
           code_num(ofs);
           code_chr('\n');
         }
         out_inst("PUSH EAX");
         ++ndim;
-        if ((!fvarargs) || (fvarargs && (argtype==VOID))) 
+        if ((!fvarargs) || (fvarargs && (argtype==VOID)))
         {
           ++vcnt;
         }
@@ -3676,7 +3667,7 @@ static void get_value(void)
         syntax_error();
     }
     iarg = 0;
-    pop(&t, &v, &tp, &ofs);                 /* get function back off the expr stack */
+    pop(&t, &v, &tp, &ofs);                      /* get function back off the expr stack */
     /*  if the function we are about to call had variable parameters
         then put the count of bytes that were pushed into EDI as the
         code in a vararg function uses it to access the fixed args.
@@ -3694,7 +3685,7 @@ static void get_value(void)
     else
       ndim = 0;
     call(t, v, tp, ofs, ndim);
-    t = INEAX;                              /* set up to leave the return value in ACC */
+    t = INEAX;                                   /* set up to leave the return value in ACC */
     tp &= ~FUNCTION;
   }
   /* Indexing operations - Open Square Brackett (OSB) */
@@ -3705,36 +3696,36 @@ static void get_value(void)
     /* get index value token pushed by eval_index */
     pop(&token, &v, &t, &ofs);
     if ((token == NUMBER) & (!v))
-    {                                       /* index is 0 */
-      pop(&t, &v, &tp1, &ofs);              /* Get var base */
+    {                                            /* index is 0 */
+      pop(&t, &v, &tp1, &ofs);                   /* Get var base */
       if ((tp1 & (POINTER|ARRAY)) && (t != PESI))
-        load_index(t, v, tp1, ofs);         /* Load base into Index reg */
+        load_index(t, v, tp1, ofs);              /* Load base into Index reg */
     }
     else
     {
-      LoadEAX(token, v, t, ofs);            /* load it into ACC */
-      pop(&t, &v, &tp1, &ofs);              /* Get var base */
+      LoadEAX(token, v, t, ofs);                 /* load it into ACC */
+      pop(&t, &v, &tp1, &ofs);                   /* Get var base */
       if (tp1 & (POINTER|ARRAY) && (t != PESI))
-        load_index(t, v, tp1, ofs);         /* Load base into Index reg */
+        load_index(t, v, tp1, ofs);              /* Load base into Index reg */
       out_inst("ADD ESI,EAX");
     }
-    t = PESI;                               /* Let em know ESI pts to item */
+    t = PESI;                                    /* Let em know ESI pts to item */
   }
   /* Convert any [UNINDEXED] array references to address values.
       This is done later to structures and struct members.
   */
-  if ((tp & ARRAY) && (!(tp & (STRUCT|STRUCMEM)))) 
+  if ((tp & ARRAY) && (!(tp & (STRUCT|STRUCMEM))))
   {
-    tp = (tp + 1) & ~ARRAY;                 /* tp+1 ups the ptr ref count */
+    tp = (tp + 1) & ~ARRAY;                      /* tp+1 ups the ptr ref count */
     if (!(tp & ARGUMENT))
     {
       if (!fMultiDim)
       {
-        StackEAX();                         /* save what's in EAX and ESI */
+        StackEAX();                              /* save what's in EAX and ESI */
         StackESI();
-        index_adr(t, v, tp, ofs);           /* load address of rg into ESI */
+        index_adr(t, v, tp, ofs);                /* load address of rg into ESI */
       }
-      StackEAX();                           /* save what's in EAX if needed */
+      StackEAX();                                /* save what's in EAX if needed */
       not_flag = 0;
       out_inst("MOV EAX,ESI");
       t = INEAX;
@@ -3747,24 +3738,24 @@ static void get_value(void)
   {
     if ((tp & STRUCT) && ((tp & POINTER) || (t == PESI)))
     {
-      if (t == SYMBOL)                      /* may already be PESI */ 
+      if (t == SYMBOL)                           /* may already be PESI */
       {
-        StackEAX();                         /* save what's in EAX */
-        StackESI();                         /* stack ESI */
-        index_ptr(t, v, tp, ofs);           /* pointer base into ESI */
-        t = PESI;                           /* tell em it's indirect now */
+        StackEAX();                              /* save what's in EAX */
+        StackESI();                              /* stack ESI */
+        index_ptr(t, v, tp, ofs);                /* pointer base into ESI */
+        t = PESI;                                /* tell em it's indirect now */
       }
-      if (test_token(SYMBOL)) 
+      if (test_token(SYMBOL))
       {
         if (lookup_member(v))
         {
           memoffset = symtab[sptr].strucoff;
           tp        = symtab[sptr].type;
           v         = sptr;
-          ofs       = memoffset;            /* NEW */
+          ofs       = memoffset;                 /* NEW */
           if (tp & ARRAY)
-            tp = (tp + 1) & ~ARRAY;         /* tp+1 ups the ptr ref count */
-          t = PESI;                         /* tell em it's indirect now */
+            tp = (tp + 1) & ~ARRAY;              /* tp+1 ups the ptr ref count */
+          t = PESI;                              /* tell em it's indirect now */
         }
         else
           line_error("Not a structure member");
@@ -3775,26 +3766,26 @@ static void get_value(void)
     else
       line_error("Pointer to Struct expected");
   }
-  if (test_token(DOT)) 
+  if (test_token(DOT))
   {
     if ((tp & STRUCT) && (!(tp & POINTER)))
     {
-      if (t == SYMBOL)                      /* may already be PESI */
-      {              
-        StackEAX();                         /* save what's in EAX */
-        StackESI();                         /* stack ESI */
-        index_adr(t, v, tp, ofs);           /* ptr to base of struct into ESI */
+      if (t == SYMBOL)                           /* may already be PESI */
+      {
+        StackEAX();                              /* save what's in EAX */
+        StackESI();                              /* stack ESI */
+        index_adr(t, v, tp, ofs);                /* ptr to base of struct into ESI */
         t = PESI;
       }
-      if (test_token(SYMBOL)) 
+      if (test_token(SYMBOL))
       {
         if (lookup_member(v))
         {
           memoffset = symtab[sptr].strucoff;
-          tp = symtab[sptr].type;     /* member type */
-          v = sptr;                   /* symtab entry of member */
-          ofs = memoffset;    /* NEW */
-          t = PESI;       /* tell em it's indirect now */
+          tp = symtab[sptr].type;                /* member type */
+          v = sptr;                              /* symtab entry of member */
+          ofs = memoffset;                       /* NEW */
+          t = PESI;                              /* tell em it's indirect now */
         }
         else
           line_error("Structure member expected");
@@ -3811,30 +3802,30 @@ static void get_value(void)
   if (test_token(OSB))
   {
     fMultiDim = eval_index(t, v, tp, ofs, &tp);
-    pop(&token, &v, &t, &ofs);              /* get index value token just pushed */
+    pop(&token, &v, &t, &ofs);                   /* get index value token just pushed */
     if ((token == NUMBER) & (!v))
-    {                                       /* index is 0 */
-      pop(&t, &v, &tp1, &ofs);              /* Get var base */
+    {                                            /* index is 0 */
+      pop(&t, &v, &tp1, &ofs);                   /* Get var base */
       if (tp1 & (POINTER|ARRAY) && (t!=PESI))
       {
-        load_index(t, v, tp1, ofs);         /* Load base into Index reg */
+        load_index(t, v, tp1, ofs);              /* Load base into Index reg */
         if ((t == ISTACK_TOP) && (symtab[v].type & ARRAY))
           t = STACK_TOP;
       }
     }
     else
     {
-      LoadEAX(token, v, t, ofs);            /* load it into ACC */
-      pop(&t, &v, &tp1, &ofs);              /* Get var base */
+      LoadEAX(token, v, t, ofs);                 /* load it into ACC */
+      pop(&t, &v, &tp1, &ofs);                   /* Get var base */
       if (tp1 & (POINTER|ARRAY) && (t != PESI))
       {
         if ((t == ISTACK_TOP) && (symtab[v].type & ARRAY))
           t = STACK_TOP;
-        load_index(t, v, tp1, ofs);         /* Load base into Index reg */
+        load_index(t, v, tp1, ofs);              /* Load base into Index reg */
       }
       out_inst("ADD ESI,EAX");
     }
-    t = PESI;                               /* Let em know ESI pts to item */
+    t = PESI;                                    /* Let em know ESI pts to item */
   }
 
 
@@ -3843,24 +3834,24 @@ static void get_value(void)
   */
   if ((tp & ARRAY) && (tp & (STRUCMEM)))
   {
-    tp = (tp + 1) & ~ARRAY;                 /* tp+1 ups the ptr ref count */
+    tp = (tp + 1) & ~ARRAY;                      /* tp+1 ups the ptr ref count */
     if (!(tp & ARGUMENT))
     {
       if (!fMultiDim)
       {
-        StackEAX();                         /* stack EAX */
-        StackESI();                         /* stack ESI */
-        index_adr(t, v, tp, ofs);           /* load address of rg into ESI */
+        StackEAX();                              /* stack EAX */
+        StackESI();                              /* stack ESI */
+        index_adr(t, v, tp, ofs);                /* load address of rg into ESI */
       }
-      StackEAX();                           /* stack EAX if needed */
+      StackEAX();                                /* stack EAX if needed */
       not_flag = 0;
       out_inst("MOV EAX,ESI");
       t = INEAX;
     }
   }
   /* handle any post operators (++ and --) if present */
-  if (test_token(INC))                      /* post '++' */
-  {           
+  if (test_token(INC))                           /* post '++' */
+  {
     if (tp & POINTER)
     {
       load_index(t, v, tp, ofs);
@@ -3883,7 +3874,7 @@ static void get_value(void)
       t = INEAX;
   }
   else if (test_token(DEC))
-  {                                         /* post '--' */
+  {                                              /* post '--' */
     if (tp & POINTER)
     {
       load_index(t, v, tp, ofs);
@@ -3905,7 +3896,7 @@ static void get_value(void)
     else
       t = INEAX;
   }
-  push(t, v, tp, ofs);                      /* FINALLY PUSH THE "Value" ON THE EXP STACK */
+  push(t, v, tp, ofs);                           /* FINALLY PUSH THE "Value" ON THE EXP STACK */
 }
 
 /******************************************************************************
@@ -3925,11 +3916,11 @@ static U32 combine(U32 type1, U32 type2)
   else
     new_type = type2 & POINTER;
   /* raise to lowest common type */
-  if ((type1 & DWORD) || (type2 & DWORD)) 
+  if ((type1 & DWORD) || (type2 & DWORD))
     new_type |= DWORD;
-  else if ((type1 & WORD) || (type2 & WORD)) 
+  else if ((type1 & WORD) || (type2 & WORD))
     new_type |= WORD;
-  else 
+  else
     new_type |= BYTE;
   /* ANSI says: If combining unsigned and signed types and signed var
      is large enough to hold all values of unsigned then combined type
@@ -3937,7 +3928,7 @@ static U32 combine(U32 type1, U32 type2)
   */
   if (!((type1 & type2) & UNSIGNED))             /* both signed */
     return new_type;
-  if ((type1 & UNSIGNED) && (type2 & UNSIGNED))  /* both unsigned */ 
+  if ((type1 & UNSIGNED) && (type2 & UNSIGNED))  /* both unsigned */
   {
     new_type |=UNSIGNED;
     return new_type;
@@ -4042,7 +4033,7 @@ static void do_lr2op(U32 oper)
   }
   ctype = combine(type, type1);
   /* Do any operations that can be performed at compile time */
-  if ((token == NUMBER) && (token1 == NUMBER) && (oper != DAND) && (oper != DOR)) 
+  if ((token == NUMBER) && (token1 == NUMBER) && (oper != DAND) && (oper != DOR))
   {
     switch (oper)
     {
@@ -4175,7 +4166,7 @@ static void do_lr2op(U32 oper)
         order = 1;
         break;
       case LT:
-        if (swap) 
+        if (swap)
         {
           if (uflag)
             oper = UGT;
@@ -4186,7 +4177,7 @@ static void do_lr2op(U32 oper)
           oper = ULT;
           break;
       case LE:
-        if (swap) 
+        if (swap)
         {
           if (uflag)
             oper = UGE;
@@ -4258,7 +4249,7 @@ static void do_lr2op(U32 oper)
         {
           store(token1, value1, type1, offset1);
         }
-        else  /* token1 may not be loaded already */
+        else                                     /* token1 may not be loaded already */
         {
           LoadEAX(token1, value1, type1, offset1);
           store(token, value, type, offset);
@@ -4426,7 +4417,7 @@ static void store(U32 token, U32 value, U32 type, U32 offset)
   char *ptr;
 
   token = CheckStack(token);                     /* get stack operand to EDX if needed */
-  switch (token) 
+  switch (token)
   {
     case SYMBOL:
     case PESI:
@@ -4454,7 +4445,7 @@ static U32 ispStruct(U32 type, U32 value)
 {
   if ((type & POINTER) > 1)                      /* pointer to pointer */
     return 0;
-  if ((type & STRUCT) && (type & POINTER)) 
+  if ((type & STRUCT) && (type & POINTER))
   {
     strucsize = symtab[value].strucoff;
     return 1;
@@ -4503,55 +4494,55 @@ static void init_static(U32 token, U32 value, char word)
   ptr = "";
   if (global_width)                              /* continuing definition */
     ptr = ",";
-  else 
+  else
   {                                              /* new definition */
-    if (word == 1) 
+    if (word == 1)
       ptr = " DB ";
-    else if (word == 2) 
+    else if (word == 2)
       ptr = " DW ";
-    else if (word == 4) 
+    else if (word == 4)
       ptr = " DD ";
   }
   if (token == SYMBOL)                           /* Symbol - MUST BE GLOBAL - NOT EXTERNAL */
-  {       
+  {
     ptr1 = "OFFSET ";
-    global_width += 7; 
+    global_width += 7;
   }
-  else if (token == STRING)                      /* literal pool entry */ 
+  else if (token == STRING)                      /* literal pool entry */
   {
     ptr1 = "OFFSET L_lit+";
     *(ptr1+7) = prefix;
     global_width += 23;
   }
-  else if (token == LABEL)                       /* instruction label */ 
-  {   
+  else if (token == LABEL)                       /* instruction label */
+  {
     ptr1 = "L_";
     *ptr1 = prefix;
     global_width += 4;
   }
   else                                           /* constant value */
-  {                                       
+  {
     ptr1 = "";
     global_width += 6;
   }
 
-  if (*ptr) 
+  if (*ptr)
     data_str(ptr);
-  if (*ptr1) 
+  if (*ptr1)
     data_str(ptr1);
   if (token!=SYMBOL)
     data_num(value);
-  else 
+  else
   {
     nptr = &GPool[symtab[value].oname];
     data_str(nptr);
-    i = 0; 
+    i = 0;
     while (*nptr++)
       i+=1;
     global_width += i;
   }
 
-  if (global_width > 60) 
+  if (global_width > 60)
   {
     global_width = 0;
     data_chr('\n');
@@ -4563,7 +4554,7 @@ static void init_static(U32 token, U32 value, char word)
 ******************************************************************************/
 static void end_static(void)
 {
-  if (global_width) 
+  if (global_width)
   {
     data_chr('\n');
     global_width = 0;
@@ -4576,7 +4567,7 @@ static void end_static(void)
 static void gen_global(U32 symbol, U32 size)
 {
   data_global(symbol);
-  if (symtab[symbol].type & (POINTER | DWORD)) 
+  if (symtab[symbol].type & (POINTER | DWORD))
   {
     if (size == 4)
       data_str(" DD 0h\n");
@@ -4598,11 +4589,11 @@ static void gen_global(U32 symbol, U32 size)
       data_str(" DUP(0)\n");
     }
   }
-  else if (symtab[symbol].type & (BYTE|STRUCT)) 
+  else if (symtab[symbol].type & (BYTE|STRUCT))
   {
     if (size == 1)
       data_str(" DB 0h\n");
-    else 
+    else
     {
       data_str(" DB ");
       data_num(size);
@@ -4621,7 +4612,7 @@ static void gen_extern_DASM (U32 symbol)
   U32 type;
 
   type = symtab[symbol].type;
-  if (type & FAR) 
+  if (type & FAR)
   {
     data_str("EXTRN ");
     data_chr('_');
@@ -4675,15 +4666,15 @@ static void enter_func(U32 symbol, U32 size)
   {
     out_inst("PUSHAD");
   }
-  else 
+  else
   {
     out_inst("PUSH EBP");
     out_inst("MOV EBP,ESP");
-    if (size) 
+    if (size)
     {
       code_str("\tSUB ESP,");
       code_num(size);
-      code_chr('\n'); 
+      code_chr('\n');
     }
   }
 }
@@ -4698,23 +4689,23 @@ static void end_func(U32 stackpop)
     out_inst("POPAD");
     out_inst("IRETD");
   }
-  else 
+  else
   {
     if (local_stack)
       out_inst("MOV ESP,EBP");
     out_inst("POP EBP");
     if (stackpop)
     {
-      if (symtab[fptr].type & FAR) 
+      if (symtab[fptr].type & FAR)
         code_str("\tRETF ");
       else
         code_str("\tRETN ");
       code_num(stackpop);
       code_chr('\n');
     }
-    else if (symtab[fptr].type & FAR) 
+    else if (symtab[fptr].type & FAR)
       out_inst("\tRETF");
-    else 
+    else
       out_inst("RETN");
   }
 }
@@ -4742,7 +4733,7 @@ static void gen_literal(unsigned char *ptr, U32 size)
     i = 0;
     data_chr(prefix);
     data_str("_lit");
-    while (i < size) 
+    while (i < size)
     {
       data_str((i % 16) ? "," : " DB ");
       data_num(*ptr++);
@@ -4764,7 +4755,7 @@ static void call(U32 token, U32 value, U32 type, U32 offset, U32 clean)
   {
     code_str("\tCALL FWORD PTR ");
   }
-  else 
+  else
     code_str("\tCALL ");
   if (token == NUMBER)
     code_num(value);
@@ -4798,7 +4789,7 @@ static void jump(U32 label, char ljmp)
 ******************************************************************************/
 static void jump_if(char cond, U32 label, char ljmp)
 {                                                /* condition TRUE or FALSE, destination, long jump required */
-  if (ljmp) 
+  if (ljmp)
     code_str(cond ? "\tJNZ " : "\tJZ ");
   else
     code_str(cond ? "\tJNZ SHORT " : "\tJZ SHORT ");
@@ -4826,7 +4817,7 @@ static void do_switch(U32 label)
 ******************************************************************************/
 static void build_switch(U32 d)
 {
-  while (switch_ptr > d) 
+  while (switch_ptr > d)
   {
     code_str("\tCMP EAX,");
     code_num(switch_stack[--switch_ptr]);
@@ -4980,10 +4971,10 @@ static void put_num(U32 value, FILE *outfile)
   char stack[10];
   register U16 i;
 
-  if (value & 0x80000000) 
+  if (value & 0x80000000)
   {
     fputc('-', outfile);
-    value = -value; 
+    value = -value;
   }
   i = 0;
   do
@@ -5002,14 +4993,14 @@ static void put_hex(U8 num, FILE *outfile)
   U8 c;
 
   c = ((num & 0xf0) >> 4) + '0';
-  if (c > 0x39) 
+  if (c > 0x39)
   {
     c += 7;
     fputc('0', outfile);                         /* leading zero needed */
   }
   fputc(c, outfile);
   c = ((num & 0xf0) >> 4) + '0';
-  if (c > 0x39) 
+  if (c > 0x39)
     c += 7;
   fputc(c, outfile);
   fputc('h', outfile);
@@ -5052,7 +5043,7 @@ static void statement(U32 token)
       eval(CRB, 0);
       cond_jump(FALSE, a = ++next_lab, -1);
       statement(get_token());
-      if (test_token(ELSE)) 
+      if (test_token(ELSE))
       {
         test_jump(b = ++next_lab);
         gen_label(a);
@@ -5094,7 +5085,7 @@ static void statement(U32 token)
         eval(SEMI, -1);
       gen_label(d = a = ++next_lab);
       break_stack[loop_ptr] = b = ++next_lab;
-      if (!test_token(SEMI)) 
+      if (!test_token(SEMI))
       {                                          /* test */
         eval(SEMI, 0);
         cond_jump(FALSE, b, -1);
@@ -5162,24 +5153,24 @@ static void statement(U32 token)
       if (get_token() != SYMBOL)
       {
         syntax_error();
-        break; 
+        break;
       }
-      if (a = lookup_local()) 
+      if (a = lookup_local())
       {
         if (!(a & GLABEL))
-          type_error(); 
+          type_error();
       }
       else
         define_symbol(REFERENCE|GLABEL, ++next_lab);
       jump(symtab[sptr].dindex, -1);
       break;
     case SYMBOL:                                 /* a symbol table entry */
-      if (!in_function)                          /* global definition */ 
+      if (!in_function)                          /* global definition */
       {
         declare(token, 0);
-        break; 
+        break;
       }
-      if (*input_ptr == ':')                     /* label definition */ 
+      if (*input_ptr == ':')                     /* label definition */
       {
         check_func();
         ++input_ptr;
@@ -5224,9 +5215,9 @@ void main(S16 argc, char *argv[])
   /* first process any filenames and command line options */
   list_fh = stdout;                              /* default the list file */
   for (i = 1; i < argc; ++i)                     /* start at arg 1 */
-  {           
+  {
     ptr = argv[i];
-    if (*ptr == '/') 
+    if (*ptr == '/')
     {
       ptr++;
       switch (*ptr)
@@ -5235,31 +5226,31 @@ void main(S16 argc, char *argv[])
         case 's' :
           fQuiet = 1;
           break;
-        case 'L' :          /* List file ON */
+        case 'L' :                               /* List file ON */
         case 'l' :
           fList = 1;
           break;
-        case 'E' :          /* Embedded source mode */
+        case 'E' :                               /* Embedded source mode */
         case 'e' :
           fSource = 1;
           break;
-        case 'G' :          /* Generate separate modules */
+        case 'G' :                               /* Generate separate modules */
         case 'g' :
           fGen = 1;
           break;
-        case 'N' :          /* NO optimize */
+        case 'N' :                               /* NO optimize */
         case 'n' :
           fNoOpt = 1;
           break;
-        case 'O' :          /* Optimize for speed */
+        case 'O' :                               /* Optimize for speed */
         case 'o' :
           fOptS = 1;
           break;
-        case 'W' :          /* Warnings ON */
+        case 'W' :                               /* Warnings ON */
         case 'w' :
           fWarnings = 1;
           break;
-        case 'P' :          /* Prefix label character */
+        case 'P' :                               /* Prefix label character */
         case 'p' :
           ptr++;
           if (!is_alpha(*ptr))
@@ -5293,7 +5284,7 @@ void main(S16 argc, char *argv[])
   }
 
   /* Input file not explicitly named errors out */
-  if (!source_fh)                                /* default to standard input */ 
+  if (!source_fh)                                /* default to standard input */
   {
     put_str("C Minus 32 Compiler, Version 2.2\r\n", stdout);
     put_str("Usage: SourceFile [AsmFile] /S /E /G /L /W /Px\r\n", stdout);
@@ -5310,20 +5301,20 @@ void main(S16 argc, char *argv[])
   }
 
   /* Output file not explicitly named defaults to Source.asm */
-  if (!asm_fh) /* default asm name to SourceName.asm */ 
+  if (!asm_fh)                                   /* default asm name to SourceName.asm */
   {
     copystring(asmname, srcname);
     pname=asmname;
     while ((*pname != '.') && (*pname!= '\0'))
       pname++;
-    if (fGen) 
+    if (fGen)
     {
       *pname++ = '.';
       *pname++ = 'D';
       *pname++ = 'A';
       *pname++ = 'S';
     }
-    else 
+    else
     {
       *pname++ = '.';
       *pname++ = 'A';
@@ -5344,7 +5335,7 @@ void main(S16 argc, char *argv[])
   {
     copystring(lstname, srcname);
     pname=lstname;
-    while ((*pname != '.') && (*pname!= '\0')) 
+    while ((*pname != '.') && (*pname!= '\0'))
       pname++;
     *pname++ = '.';
     *pname++ = 'L';
@@ -5353,15 +5344,15 @@ void main(S16 argc, char *argv[])
     *pname   = '\0';
     if (!(list_fh = fopen(lstname, "w")))
       fatal_error("Cannot open LIST file");
-    else 
+    else
       fLISTOpen = TRUE;
   }
   /* open code segment tmp file  or Gen file */
-  if (fGen) 
+  if (fGen)
   {
     copystring(codename, srcname);
     pname=codename;
-    while ((*pname != '.') && (*pname!= '\0')) 
+    while ((*pname != '.') && (*pname!= '\0'))
       pname++;
     *pname++ = '.';
     *pname++ = 'C';
