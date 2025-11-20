@@ -787,7 +787,7 @@ static void copy_string(void);
 static U32  lookup_macro(S8 eflag);
 static void resolve_macro(void);
 static U32  match(S8 *ptr);
-static S16  compare(S8 *ptable, S16 peep);
+static S16  compareT(S8 *ptable, S16 peep);
 static void exchange(U16 old, S8 *pnew);
 static S32  read_line(void);
 static void write_line(void);
@@ -800,7 +800,6 @@ static void symbol_error(S8 *msg);
 static void syntax_error(void);
 static void type_error(void);
 static void index_error(void);
-static S8   test_next(U32  token);
 static void expect(U32  token);
 static void put_str(S8 *ptr, FILE *fh);
 static void UTC_error(void);
@@ -886,7 +885,7 @@ void main(S16 argc, S8  *argv[]);
 * Determine if a character is alphabetic
 * or is underscore.
 ******************************************************************************/
-static char is_alpha(char chr)
+static S8 is_alpha(S8 chr)
 {
   return ((chr >= 'a') && (chr <= 'z')) ||
          ((chr >= 'A') && (chr <= 'Z')) ||
@@ -896,7 +895,7 @@ static char is_alpha(char chr)
 /******************************************************************************
 * Determine if a character is a numeric digit
 ******************************************************************************/
-static char is_digit(char chr)
+static S8 is_digit(S8 chr)
 {
   return (chr >= '0') && (chr <= '9');
 }
@@ -904,7 +903,7 @@ static char is_digit(char chr)
 /******************************************************************************
 * Test for valid character in a name.
 ******************************************************************************/
-static char is_alnum(char c)
+static S8 is_alnum(S8 c)
 {
   return is_alpha(c) || is_digit(c);
 }
@@ -912,7 +911,7 @@ static char is_alnum(char c)
 /******************************************************************************
 * Copy a string
 ******************************************************************************/
-static void copystring(char *dest, char *source)
+static void copystring(S8 *dest, S8 *source)
 {
   while (*dest++ = *source++);
 }
@@ -920,7 +919,7 @@ static void copystring(char *dest, char *source)
 /******************************************************************************
 * Test for string equality
 ******************************************************************************/
-static char equal_string(char *str1, char *str2)
+static S8 equal_string(S8 *str1, S8 *str2)
 {
   do
   {
@@ -1031,7 +1030,7 @@ static void copy_string(void)
 /******************************************************************************
 * Lookup a word from the input stream to see if it is a macro
 ******************************************************************************/
-static U32 lookup_macro(char eflag)
+static U32 lookup_macro(S8 eflag)
 {
   register long i;
   register char *name;
@@ -1098,7 +1097,7 @@ static void resolve_macro(void)
 /******************************************************************************
 * Test for a string in input stream
 ******************************************************************************/
-static unsigned long match(char *ptr)
+static unsigned long match(S8 *ptr)
 {
   register char *ptr1;
 
@@ -1120,7 +1119,7 @@ static unsigned long match(char *ptr)
 *           n   = Full match begining at peep_first
 *                 and ending at entry 'n'
 ******************************************************************************/
-static int compareT(char *ptable, int peep)
+static S16 compareT(S8 *ptable, S16 peep)
 {
   int i;
   char *ptr1, *ptr2, c;
@@ -1177,7 +1176,7 @@ static int compareT(char *ptable, int peep)
 * pnew points to the first char of the new code.
 * old points to last entry of buffer code to be replaced.
 ******************************************************************************/
-static void exchange(unsigned old, char *pnew)
+static void exchange(U16 old, S8 *pnew)
 {
   char *ptr1, *ptr2;
 
@@ -1559,7 +1558,7 @@ static U32 test_exit(void)
 /******************************************************************************
 * Output an warning message with quoted text
 ******************************************************************************/
-static void t_warn(char *msg, char *txt)
+static void t_warn(S8 *msg, S8 *txt)
 {
   int i;
 
@@ -1586,7 +1585,7 @@ static void t_warn(char *msg, char *txt)
 /******************************************************************************
 * Output an error message with quoted text
 ******************************************************************************/
-static void t_error(char *msg, char *txt)
+static void t_error(S8 *msg, S8 *txt)
 {
   char emsg[50], *ptr;
 
@@ -1606,7 +1605,7 @@ static void t_error(char *msg, char *txt)
 /******************************************************************************
 * Report an error involving a freshly parsed symbol name
 ******************************************************************************/
-static void symbol_error(char *msg)
+static void symbol_error(S8 *msg)
 {
   t_error(msg, gst);
 }
@@ -1663,7 +1662,7 @@ static void expect(U32 token)
 /******************************************************************************
 * Write a string to device indicated by "fh"
 ******************************************************************************/
-static void put_str(char *ptr, FILE *fh)
+static void put_str(S8 *ptr, FILE *fh)
 {
   while (*ptr)
     fputc(*ptr++, fh);
@@ -1694,7 +1693,7 @@ static void UTC_error(void)
 /******************************************************************************
 * Report a compile error
 ******************************************************************************/
-static void line_error(char *message)
+static void line_error(S8 *message)
 {
   U32 i;
 
@@ -1715,7 +1714,7 @@ static void line_error(char *message)
 /******************************************************************************
 * Report a non-recoverable compile error
 ******************************************************************************/
-static void fatal_error(char *string)
+static void fatal_error(S8 *string)
 {
   line_error(string);
 
@@ -1776,7 +1775,7 @@ static void test_jump(U32 label)
 * Compile a conditional jump and
 * set up 'Z' flag if necessary.
 ******************************************************************************/
-static void cond_jump(char cond, U32 label, char ljmp)
+static void cond_jump(S8 cond, U32 label, S8 ljmp)
 {
   if (zero_flag)
   {
@@ -1933,7 +1932,7 @@ static void unget_token(U32 token)
 /******************************************************************************
 * Read special character (with translations)
 ******************************************************************************/
-static U32 read_special(char delim)
+static U32 read_special(S8 delim)
 {
   S32 c;
 
@@ -3260,7 +3259,7 @@ static void sub_eval(U32 term)
 * Evaluate a full expression at the highest level, and
 * load the result into the accumulator if necessary.
 ******************************************************************************/
-static void eval(U32 term, char flag)
+static void eval(U32 term, S8 flag)
 {
   U32 token, value, type, offset;
 
@@ -3276,7 +3275,7 @@ static void eval(U32 term, char flag)
 * Write an instruction with text formatting
   to the code tmp file
 ******************************************************************************/
-static void out_inst(char *ptr)
+static void out_inst(S8 *ptr)
 {
   code_chr('\t');
   code_str(ptr);
@@ -4480,7 +4479,7 @@ static U32 isp16(U32 type)
 /******************************************************************************
  Output a string to the assembler followed by newline.
 ******************************************************************************/
-static void do_asm(char *ptr)
+static void do_asm(S8 *ptr)
 {
   code_str(ptr);
 }
@@ -4488,7 +4487,7 @@ static void do_asm(char *ptr)
 /******************************************************************************
  Initialize static storage
 ******************************************************************************/
-static void init_static(U32 token, U32 value, char word)
+static void init_static(U32 token, U32 value, S8 word)
 {
   char *ptr, *ptr1, *nptr;
   U32  i;
@@ -4726,7 +4725,7 @@ static void gen_label(U32 label)
 /******************************************************************************
  Define literal pool
 ******************************************************************************/
-static void gen_literal(unsigned char *ptr, U32 size)
+static void gen_literal(U8 *ptr, U32 size)
 {
   U32 i;
 
@@ -4777,7 +4776,7 @@ static void call(U32 token, U32 value, U32 type, U32 offset, U32 clean)
 /******************************************************************************
 * Unconditional jump to label
 ******************************************************************************/
-static void jump(U32 label, char ljmp)
+static void jump(U32 label, S8 ljmp)
 {
   code_str(ljmp ? "\tJMP " : "\tJMP SHORT ");
   code_chr(prefix);
@@ -4789,7 +4788,7 @@ static void jump(U32 label, char ljmp)
 /******************************************************************************
 * Conditional jump to label
 ******************************************************************************/
-static void jump_if(char cond, U32 label, char ljmp)
+static void jump_if(S8 cond, U32 label, S8 ljmp)
 {                                                /* condition TRUE or FALSE, destination, long jump required */
   if (ljmp)
     code_str(cond ? "\tJNZ " : "\tJZ ");
@@ -4901,7 +4900,7 @@ static void data_global(U32 symbol)
  CODE FILE OUTPUT ROUTINES
 ******************************************************************************/
 /* Write a string to the code tmp file */
-static void code_str(char *ptr)
+static void code_str(S8 *ptr)
 {
   while (*ptr)
     fputc(*ptr++, temp_fh);
@@ -4910,7 +4909,7 @@ static void code_str(char *ptr)
 /******************************************************************************
  Write a char to the code tmp file
 ******************************************************************************/
-static void code_chr(char chr)
+static void code_chr(S8 chr)
 {
   fputc(chr, temp_fh);
 }
@@ -4935,7 +4934,7 @@ static void code_hex(U32 value)
  ASM FILE OUTPUT ROUTINES (INITIAL DATA SEG)
 ******************************************************************************/
 /* Write a string to the asm file (all data) */
-static void data_str(char *ptr)
+static void data_str(S8 *ptr)
 {
   while (*ptr)
     fputc(*ptr++, asm_fh);
@@ -4944,7 +4943,7 @@ static void data_str(char *ptr)
 /******************************************************************************
 * Write a char to the asm file (all data)
 ******************************************************************************/
-static void data_chr(char chr)
+static void data_chr(S8 chr)
 {
   fputc(chr, asm_fh);
 }
@@ -5209,7 +5208,7 @@ static void compile(void)
 /******************************************************************************
 * Initialize I/O & execute compiler  MAIN MAIN MAIN
 ******************************************************************************/
-void main(S16 argc, char *argv[])
+void main(S16 argc, S8 *argv[])
 {
   S16 i;
   char *ptr, *pname;
