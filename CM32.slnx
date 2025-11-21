@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="CM32.vcxproj" Id="f24c7e9c-b2fb-4fcd-b760-0af6347f3441" />
+</Solution>

@@ -1,6 +1,3 @@
-# Ignore everything
-*
-
-# Except these these files...
-!.gitignore
-!CM32.c
+x64/
+CM32/
+.vs/

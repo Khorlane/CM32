@@ -1,14 +1,16 @@
 # CM32
 
-MMURTL, a 32 Bit Computer Operating System by Richard A. Burgess, includes a C compiler, CM32, that compiles C code into Assembler which is then passed through DASM, a 32-Bit Intel-Based Assembler that is also include with MMURTL.
+Small C compiler (CM32) for the MMURTL OS that emits 80386 assembly for the DASM assembler.
 
-The code in this repository is all found in a single file CM32.c which has all the non-library header files 'in-lined'. This was done to make studying the code easier for me. Using Visual Studio 2026 Community Edition, CM32.c compiles successfully with addition of 3 #pragma statements. However it does not execute correctly, due to these definitions which are corrected in commit a991ced:
+## Overview
+- Origin: Part of MMURTL by Richard A. Burgess (see header comments in `CM32.c` for original authorship and license notes).
+- Scope: This repository contains a single-file port of the compiler: `CM32.c`. Non-library headers are in-lined to make reading easier.
 
-\#define U32 unsigned long
+## Repository layout
+- `CM32.c` — single-file compiler and in-lined headers.
+- `CM32.slnx`, `CM32.vcxproj*`, — Visual Studio project files.
+- `README.md` — this file.
 
-\#define S32 long
-
-\#define U16 unsigned int
-
-\#define S16 int
-
+## Building
+Recommended: Open the `CM32.slnx` in Visual Studio 2026 Community Edition.
+- From the top menu, select `Build` -> `Build Solution`.
