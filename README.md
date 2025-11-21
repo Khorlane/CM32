@@ -1,6 +1,6 @@
 # CM32
 
-Small C compiler (CM32) for the MMURTL OS that emits 80386 assembly for the DASM assembler.
+Small C compiler (CM32) from MMURTL (a 32-bit operating system by Richard A. Burgess) that emits 80386 assembly for the DASM assembler.
 
 ## Overview
 - Origin: Part of MMURTL by Richard A. Burgess (see header comments in `CM32.c` for original authorship and license notes).
